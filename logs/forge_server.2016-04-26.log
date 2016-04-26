@@ -1,0 +1,50 @@
+16:33:14.223 [main] INFO  SkelServer - Server started.
+16:33:14.227 [main] INFO  ServerTools - Found DB config for jdbc:mysql://localhost/forge
+16:33:14.493 [Thread-1] INFO  org.eclipse.jetty.util.log - Logging initialized @763ms
+16:33:14.558 [Thread-1] INFO  spark.webserver.JettySparkServer - == Spark has ignited ...
+16:33:14.558 [Thread-1] INFO  spark.webserver.JettySparkServer - >> Listening on 0.0.0.0:8081
+16:33:14.560 [Thread-1] INFO  org.eclipse.jetty.server.Server - jetty-9.3.2.v20150730
+16:33:14.590 [Thread-1] INFO  o.e.jetty.server.ServerConnector - Started ServerConnector@75277db8{HTTP/1.1,[http/1.1]}{0.0.0.0:8081}
+16:33:14.591 [Thread-1] INFO  org.eclipse.jetty.server.Server - Started @861ms
+19:05:11.274 [main] INFO  SkelServer - Server started.
+19:05:11.277 [main] INFO  ServerTools - Found DB config for jdbc:mysql://localhost/forge_skeleton
+19:05:11.506 [Thread-1] INFO  org.eclipse.jetty.util.log - Logging initialized @706ms
+19:05:11.571 [Thread-1] INFO  spark.webserver.JettySparkServer - == Spark has ignited ...
+19:05:11.572 [Thread-1] INFO  spark.webserver.JettySparkServer - >> Listening on 0.0.0.0:8081
+19:05:11.574 [Thread-1] INFO  org.eclipse.jetty.server.Server - jetty-9.3.2.v20150730
+19:05:11.603 [Thread-1] INFO  o.e.jetty.server.ServerConnector - Started ServerConnector@12dbfdf{HTTP/1.1,[http/1.1]}{0.0.0.0:8081}
+19:05:11.604 [Thread-1] INFO  org.eclipse.jetty.server.Server - Started @804ms
+19:05:58.144 [main] INFO  SkelServer - Server started.
+19:05:58.147 [main] INFO  ServerTools - Found DB config for jdbc:mysql://localhost/forge_skeleton
+19:05:58.417 [Thread-1] INFO  org.eclipse.jetty.util.log - Logging initialized @757ms
+19:05:58.475 [Thread-1] INFO  spark.webserver.JettySparkServer - == Spark has ignited ...
+19:05:58.475 [Thread-1] INFO  spark.webserver.JettySparkServer - >> Listening on 0.0.0.0:8081
+19:05:58.477 [Thread-1] INFO  org.eclipse.jetty.server.Server - jetty-9.3.2.v20150730
+19:05:58.505 [Thread-1] INFO  o.e.jetty.server.ServerConnector - Started ServerConnector@50d32f24{HTTP/1.1,[http/1.1]}{0.0.0.0:8081}
+19:05:58.506 [Thread-1] INFO  org.eclipse.jetty.server.Server - Started @846ms
+19:06:04.208 [qtp832155920-23] ERROR MavEndpointRegisterImpl - Error handling login:GET  com.bolyartech.forge.server.HandlerException: java.sql.SQLException: Invalid value for getLong() - 'ogre'
+19:09:36.831 [main] INFO  SkelServer - Server started.
+19:09:36.834 [main] INFO  ServerTools - Found DB config for jdbc:mysql://localhost/forge_skeleton
+19:09:37.094 [Thread-1] INFO  org.eclipse.jetty.util.log - Logging initialized @604ms
+19:09:37.165 [Thread-1] INFO  spark.webserver.JettySparkServer - == Spark has ignited ...
+19:09:37.165 [Thread-1] INFO  spark.webserver.JettySparkServer - >> Listening on 0.0.0.0:8081
+19:09:37.171 [Thread-1] INFO  org.eclipse.jetty.server.Server - jetty-9.3.2.v20150730
+19:09:37.213 [Thread-1] INFO  o.e.jetty.server.ServerConnector - Started ServerConnector@54d962f2{HTTP/1.1,[http/1.1]}{0.0.0.0:8081}
+19:09:37.213 [Thread-1] INFO  org.eclipse.jetty.server.Server - Started @723ms
+19:10:47.585 [qtp2096870805-23] ERROR MavEndpointRegisterImpl - Error handling login:GET  com.bolyartech.forge.server.HandlerException: java.sql.SQLException: Invalid value for getLong() - 'ogre'
+19:10:50.799 [main] INFO  SkelServer - Server started.
+19:10:50.802 [main] INFO  ServerTools - Found DB config for jdbc:mysql://localhost/forge_skeleton
+19:10:51.005 [Thread-1] INFO  org.eclipse.jetty.util.log - Logging initialized @450ms
+19:10:51.065 [Thread-1] INFO  spark.webserver.JettySparkServer - == Spark has ignited ...
+19:10:51.065 [Thread-1] INFO  spark.webserver.JettySparkServer - >> Listening on 0.0.0.0:8081
+19:10:51.067 [Thread-1] INFO  org.eclipse.jetty.server.Server - jetty-9.3.2.v20150730
+19:10:51.093 [Thread-1] INFO  o.e.jetty.server.ServerConnector - Started ServerConnector@50d32f24{HTTP/1.1,[http/1.1]}{0.0.0.0:8081}
+19:10:51.093 [Thread-1] INFO  org.eclipse.jetty.server.Server - Started @538ms
+19:11:16.481 [main] INFO  SkelServer - Server started.
+19:11:16.485 [main] INFO  ServerTools - Found DB config for jdbc:mysql://localhost/forge_skeleton
+19:11:16.740 [Thread-1] INFO  org.eclipse.jetty.util.log - Logging initialized @607ms
+19:11:16.848 [Thread-1] INFO  spark.webserver.JettySparkServer - == Spark has ignited ...
+19:11:16.849 [Thread-1] INFO  spark.webserver.JettySparkServer - >> Listening on 0.0.0.0:8081
+19:11:16.853 [Thread-1] INFO  org.eclipse.jetty.server.Server - jetty-9.3.2.v20150730
+19:11:16.908 [Thread-1] INFO  o.e.jetty.server.ServerConnector - Started ServerConnector@1e2b51cf{HTTP/1.1,[http/1.1]}{0.0.0.0:8081}
+19:11:16.908 [Thread-1] INFO  org.eclipse.jetty.server.Server - Started @775ms

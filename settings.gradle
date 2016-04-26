@@ -1,0 +1,6 @@
+rootProject.name = 'forge-server-skeleton'
+
+include ':forge-server-spark'
+project(':forge-server-spark').projectDir=new File("$settingsDir/../forge-server-spark")
+
+

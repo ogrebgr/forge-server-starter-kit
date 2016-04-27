@@ -4,15 +4,10 @@ package com.bolyartech.forge.server.skeleton.modules.main;
 import com.bolyartech.forge.server.Handler;
 import com.bolyartech.forge.server.HttpMethod;
 import com.bolyartech.forge.server.ModelAndViewEndpoint;
-import com.bolyartech.forge.server.db.DbPool;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 

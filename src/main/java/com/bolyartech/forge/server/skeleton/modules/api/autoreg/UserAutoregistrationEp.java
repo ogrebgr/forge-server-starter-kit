@@ -38,7 +38,7 @@ public class UserAutoregistrationEp extends SimpleEndpoint {
 
 
             SessionInfo si = new SessionInfo(user.getId(), "");
-            return gson.toJson(new ResponseAutoregistrationOK(user.getUsername(),
+            return gson.toJson(new RokResponseAutoregistration(user.getUsername(),
                     user.getEncryptedPassword(),
                     sess.maxInactiveInterval(),
                     si

@@ -17,6 +17,8 @@ import static spark.Spark.stop;
 
 
 public class SkelServer extends ForgeServerImpl {
+    public static final int DEFAULT_SESSION_TIMEOUT = 1440; // seconds
+
     private DbPool mDbPool;
 
     private TemplateEngine mTemplateEngine;
@@ -33,7 +35,7 @@ public class SkelServer extends ForgeServerImpl {
         try {
             mDbPool = createDbPool();
             mTemplateEngine = createTemplateEngine();
-            mMavEndpointRegister = new MavEndpointRegisterImpl(mTemplateEngine);
+            mMavEndpointRegister = new MavEndpointRegisterImpl(getServerConfiguration().getSessionTimeout(), mTemplateEngine);
 
             initModules();
         } catch (Exception e) {

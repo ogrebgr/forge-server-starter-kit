@@ -10,7 +10,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 
-abstract public class DbHandler implements Handler<String> {
+abstract public class DbHandler extends FssHandler {
     private final DbPool mDbPool;
 
 

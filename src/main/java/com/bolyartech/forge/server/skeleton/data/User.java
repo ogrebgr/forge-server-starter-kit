@@ -115,4 +115,9 @@ public class User {
     public boolean isDisabled() {
         return mIsDisabled;
     }
+
+
+    public static boolean isValidUsername(String username) {
+        return username.matches("/^[a-zA-Z]{1}[a-zA-Z0-9 _.?]{1,48}[a-zA-Z0-9]{1}$/u");
+    }
 }

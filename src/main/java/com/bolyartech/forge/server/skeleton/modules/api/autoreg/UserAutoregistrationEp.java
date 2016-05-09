@@ -4,9 +4,11 @@ import com.bolyartech.forge.server.Handler;
 import com.bolyartech.forge.server.HttpMethod;
 import com.bolyartech.forge.server.SimpleEndpoint;
 import com.bolyartech.forge.server.db.DbPool;
+import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.skeleton.data.User;
 import com.bolyartech.forge.server.skeleton.json.SessionInfo;
 import com.bolyartech.forge.server.skeleton.misc.DbHandler;
+import com.bolyartech.forge.server.skeleton.modules.api.ResponseCodes;
 import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
@@ -18,7 +20,7 @@ import java.sql.SQLException;
 public class UserAutoregistrationEp extends SimpleEndpoint {
 
     public UserAutoregistrationEp(Handler<String> handler) {
-        super(HttpMethod.GET, "/autoregister", handler);
+        super(HttpMethod.POST, "/api/user/autoregister", handler);
     }
 
 
@@ -29,7 +31,7 @@ public class UserAutoregistrationEp extends SimpleEndpoint {
 
 
         @Override
-        protected String handle(Request request, Response response, Connection dbc) throws SQLException {
+        protected ForgeResponse handleForgeSecure(Request request, Response response, Connection dbc) throws SQLException {
             Session sess = request.session();
 
             User user = User.generateAnonymousUser(dbc);
@@ -38,11 +40,14 @@ public class UserAutoregistrationEp extends SimpleEndpoint {
 
 
             SessionInfo si = new SessionInfo(user.getId(), "");
-            return gson.toJson(new RokResponseAutoregistration(user.getUsername(),
+
+
+            return new ForgeResponse(ResponseCodes.Oks.REGISTER_AUTO_OK.getCode(),
+                    gson.toJson(new RokResponseAutoregistration(user.getUsername(),
                     user.getEncryptedPassword(),
                     sess.maxInactiveInterval(),
                     si
-                    ));
+            )));
         }
     }
 }

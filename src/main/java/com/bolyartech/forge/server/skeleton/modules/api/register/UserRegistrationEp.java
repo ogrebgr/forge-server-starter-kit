@@ -4,6 +4,7 @@ import com.bolyartech.forge.server.Handler;
 import com.bolyartech.forge.server.HttpMethod;
 import com.bolyartech.forge.server.SimpleEndpoint;
 import com.bolyartech.forge.server.db.DbPool;
+import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
 import com.bolyartech.forge.server.skeleton.misc.DbHandler;
 import com.google.common.base.Strings;
@@ -26,7 +27,7 @@ public class UserRegistrationEp extends SimpleEndpoint {
 
 
         @Override
-        protected String handle(Request request, Response response, Connection dbc) throws SQLException {
+        protected ForgeResponse handleForgeSecure(Request request, Response response, Connection dbc) throws SQLException {
             String username = request.params("username");
             String password = request.params("password");
             String newUsername = request.params("new_username");
@@ -38,7 +39,7 @@ public class UserRegistrationEp extends SimpleEndpoint {
             }
 
 
-            return request.queryParams("foo");
+            return new ForgeResponse(2, request.queryParams("foo"));
         }
     }
 }

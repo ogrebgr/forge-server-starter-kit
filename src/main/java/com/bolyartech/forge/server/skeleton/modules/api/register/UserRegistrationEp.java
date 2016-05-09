@@ -7,7 +7,6 @@ import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
 import com.bolyartech.forge.server.skeleton.misc.DbHandler;
-import com.google.common.base.Strings;
 import spark.Request;
 import spark.Response;
 
@@ -34,7 +33,7 @@ public class UserRegistrationEp extends SimpleEndpoint {
             String newPassword = request.params("new_password");
             String screenName = request.params("screenName");
 
-            if (!Params.allAllPresent(username, password, newUsername, newPassword, screenName)) {
+            if (!Params.areAllPresent(username, password, newUsername, newPassword, screenName)) {
 
             }
 

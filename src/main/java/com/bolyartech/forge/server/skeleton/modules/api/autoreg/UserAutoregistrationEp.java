@@ -42,7 +42,7 @@ public class UserAutoregistrationEp extends SimpleEndpoint {
             SessionInfo si = new SessionInfo(user.getId(), "");
 
 
-            return new ForgeResponse(ResponseCodes.Oks.REGISTER_AUTO_OK.getCode(),
+            return new ForgeResponse(ResponseCodes.Oks.OK.getCode(),
                     gson.toJson(new RokResponseAutoregistration(user.getUsername(),
                     user.getEncryptedPassword(),
                     sess.maxInactiveInterval(),

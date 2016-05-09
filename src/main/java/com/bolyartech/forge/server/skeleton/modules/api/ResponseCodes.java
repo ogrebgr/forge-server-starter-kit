@@ -10,12 +10,7 @@ import java.util.Map;
 public class ResponseCodes {
     public enum Oks {
         OK(1), // used as general mCode that indicates success
-        REGISTER_AUTO_OK(2),
-        REGISTER_OK(3),
-        LOGIN_OK(4),
-        SCREEN_NAME_OK(5),
-        LOGOUT_OK(6),
-        GCM_TOKEN_OK(50),;
+        ;
 
 
         private final int code;

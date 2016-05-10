@@ -21,6 +21,11 @@ public class User {
 
 
     public static User loadById(Connection dbc, long id) throws SQLException {
+        if (dbc.isClosed()) {
+            throw new IllegalArgumentException("DB connection is closed.");
+        }
+
+
         String sql = "SELECT username, password, is_disabled FROM users WHERE id = ?";
 
         PreparedStatement psLoad = dbc.prepareStatement(sql);
@@ -36,6 +41,11 @@ public class User {
 
 
     public static User generateAnonymousUser(Connection dbc) throws SQLException {
+        if (dbc.isClosed()) {
+            throw new IllegalArgumentException("DB connection is closed.");
+        }
+
+
         Statement lockSt = dbc.createStatement();
         lockSt.execute("LOCK TABLES users WRITE");
 
@@ -53,7 +63,17 @@ public class User {
     }
 
 
+    public void auto2registered(String username, String password) {
+
+    }
+
+
     private static boolean usernameExists(Connection dbc, String username) throws SQLException {
+        if (dbc.isClosed()) {
+            throw new IllegalArgumentException("DB connection is closed.");
+        }
+
+
         PreparedStatement st = null;
         boolean exist = false;
         try {
@@ -78,7 +98,7 @@ public class User {
             st = dbc.prepareStatement("INSERT INTO users (username, `password`, is_disabled) VALUES (?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             st.setString(1, username);
-            String encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt(10));
+            String encryptedPassword = encryptPassword(password);
             st.setString(2, encryptedPassword);
             st.setInt(3, isDisabled ? 1 : 0);
             st.execute();
@@ -94,6 +114,37 @@ public class User {
                 st.close();
             }
         }
+    }
+
+
+    public static User checkLogin(Connection dbc, String username, String password) throws SQLException {
+        if (dbc.isClosed()) {
+            throw new IllegalArgumentException("DB connection is closed.");
+        }
+
+
+
+        PreparedStatement st = null;
+        try {
+            st = dbc.prepareStatement("SELECT id FROM users WHERE username = ? AND password = ? AND is_disabled = 0");
+            st.setString(1, username);
+            st.setString(2, encryptedPassword);
+            ResultSet res = st.executeQuery();
+            if (res.next()) {
+                return loadById(dbc, res.getLong(1));
+            } else {
+                return null;
+            }
+        } finally {
+            if (st != null) {
+                st.close();
+            }
+        }
+    }
+
+
+    private static String encryptPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt(10));
     }
 
 

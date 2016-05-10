@@ -18,15 +18,17 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class UserAutoregistrationEp extends SimpleEndpoint {
-
     public UserAutoregistrationEp(Handler<String> handler) {
         super(HttpMethod.POST, "/api/user/autoregister", handler);
     }
 
 
     public static class UserAutoregistrationHandler extends DbHandler {
+        private Gson mGson;
+
         public UserAutoregistrationHandler(DbPool dbPool) {
             super(dbPool);
+            mGson = new Gson();
         }
 
 
@@ -36,14 +38,10 @@ public class UserAutoregistrationEp extends SimpleEndpoint {
 
             User user = User.generateAnonymousUser(dbc);
 
-            Gson gson = new Gson();
-
-
             SessionInfo si = new SessionInfo(user.getId(), "");
 
-
             return new ForgeResponse(ResponseCodes.Oks.OK.getCode(),
-                    gson.toJson(new RokResponseAutoregistration(user.getUsername(),
+                    mGson.toJson(new RokResponseAutoregistration(user.getUsername(),
                     user.getEncryptedPassword(),
                     sess.maxInactiveInterval(),
                     si

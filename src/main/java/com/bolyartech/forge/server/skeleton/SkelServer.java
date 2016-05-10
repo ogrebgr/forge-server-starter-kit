@@ -13,6 +13,7 @@ import spark.TemplateEngine;
 import spark.template.velocity.VelocityTemplateEngine;
 
 import static spark.Spark.awaitInitialization;
+import static spark.Spark.get;
 import static spark.Spark.stop;
 
 

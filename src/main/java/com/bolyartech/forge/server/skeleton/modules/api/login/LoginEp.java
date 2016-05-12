@@ -46,7 +46,14 @@ public class LoginEp extends SimpleEndpoint {
                 if (user != null) {
                     ScreenName sn = ScreenName.loadByUser(dbc, user.getId());
 
-                    SessionInfo si = new SessionInfo(user.getId(), sn != null ? sn.getScreenName() : "");
+                    String screenName;
+                    if (sn != null) {
+                        screenName = sn.getScreenName();
+                    } else {
+                        screenName = ScreenName.createDefault(user.getId());
+                    }
+
+                    SessionInfo si = new SessionInfo(user.getId(), screenName);
 
                     return new ForgeResponse(ResponseCodes.Oks.OK.getCode(),
                             mGson.toJson(new RokLogin(request.session().maxInactiveInterval(), si)));

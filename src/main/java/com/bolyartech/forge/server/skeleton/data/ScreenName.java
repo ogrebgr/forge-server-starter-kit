@@ -4,6 +4,8 @@ import java.sql.*;
 
 
 public class ScreenName {
+    private static final String ANONYMOUS_USER_PREFIX = "user";
+
     private long mId;
     private long mUserId;
     private String mScreenName;
@@ -78,38 +80,26 @@ public class ScreenName {
             throw new IllegalArgumentException("screenName is null");
         }
 
-        Statement lockSt = dbc.createStatement();
-        lockSt.execute("LOCK TABLES user_screen_names WRITE");
+        PreparedStatement st = null;
+        try {
+            st = dbc.prepareStatement("INSERT INTO user_screen_names (user, screen_name, screen_name_lc) VALUES (?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
 
-        if (!exists(dbc, screenName)) {
-            PreparedStatement st = null;
-            try {
-                st = dbc.prepareStatement("INSERT INTO user_screen_names (user, screen_name) VALUES (?, ?)",
-                        Statement.RETURN_GENERATED_KEYS);
+            st.setLong(1, userId);
+            st.setString(2, screenName);
+            st.setString(3, screenName.toLowerCase());
+            st.execute();
 
-                st.setLong(1, userId);
-                st.setString(2, screenName);
-                st.execute();
-
-                ResultSet res = st.getGeneratedKeys();
-                if (res.next()) {
-                    return new ScreenName(res.getLong(1), userId, screenName);
-                } else {
-                    throw new IllegalStateException("No generated ID for user_screen_names");
-                }
-            } finally {
-                Statement unlockSt = dbc.createStatement();
-                unlockSt.execute("UNLOCK TABLES");
-
-                if (st != null) {
-                    st.close();
-                }
+            ResultSet res = st.getGeneratedKeys();
+            if (res.next()) {
+                return new ScreenName(res.getLong(1), userId, screenName);
+            } else {
+                throw new IllegalStateException("No generated ID for user_screen_names");
             }
-        } else {
-            Statement unlockSt = dbc.createStatement();
-            unlockSt.execute("UNLOCK TABLES");
-
-            return null;
+        } finally {
+            if (st != null) {
+                st.close();
+            }
         }
     }
 
@@ -130,6 +120,16 @@ public class ScreenName {
         ResultSet rs = psLoad.executeQuery();
 
         return rs.next();
+    }
+
+
+    public static boolean isValid(String screenName) {
+        return screenName.matches("^[\\p{L}]{1}[\\p{L}\\p{N} ?]{1,33}[\\p{L}\\p{N}]{1}$");
+    }
+
+
+    public static String createDefault(long userId) {
+        return ANONYMOUS_USER_PREFIX + userId;
     }
 
 

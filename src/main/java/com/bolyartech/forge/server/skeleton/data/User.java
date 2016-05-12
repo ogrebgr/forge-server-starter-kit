@@ -1,11 +1,15 @@
 package com.bolyartech.forge.server.skeleton.data;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.text.MessageFormat;
 import java.util.UUID;
 
 public class User {
+    private final org.slf4j.Logger mLogger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+
     private long mId;
     private String mUsername;
     private String mEncryptedPassword;
@@ -40,6 +44,25 @@ public class User {
     }
 
 
+    public static User loadByUsername(Connection dbc, String username) throws SQLException {
+        if (dbc.isClosed()) {
+            throw new IllegalArgumentException("DB connection is closed.");
+        }
+
+        String sql = "SELECT id, password, is_disabled FROM users WHERE username = ?";
+
+        PreparedStatement psLoad = dbc.prepareStatement(sql);
+        psLoad.setString(1, username);
+        ResultSet rs = psLoad.executeQuery();
+
+        if (rs.next()) {
+            return new User(rs.getLong(1), username, rs.getString(2), rs.getInt(3) == 1);
+        } else {
+            return null;
+        }
+    }
+
+
     public static User generateAnonymousUser(Connection dbc) throws SQLException {
         if (dbc.isClosed()) {
             throw new IllegalArgumentException("DB connection is closed.");
@@ -63,12 +86,34 @@ public class User {
     }
 
 
-    public void auto2registered(String username, String password) {
+    public void auto2registered(Connection dbc, String username, String password, String screenName) throws SQLException {
+        String encryptedPassword = encryptPassword(password);
 
+        PreparedStatement st = null;
+        try {
+            dbc.setAutoCommit(false);
+            st = dbc.prepareStatement("UPDATE users SET username = ?, password = ? WHERE id = ?");
+            st.setString(1, username);
+            st.setString(2, encryptedPassword);
+            st.setLong(3, getId());
+            st.execute();
+
+            ScreenName.createNew(dbc, getId(), screenName);
+        } catch (Exception e) {
+            mLogger.error("DB error {}", e);
+            dbc.rollback();
+            throw e;
+        } finally {
+            if (st != null) {
+                st.close();
+            }
+
+            dbc.setAutoCommit(true);
+        }
     }
 
 
-    private static boolean usernameExists(Connection dbc, String username) throws SQLException {
+    public static boolean usernameExists(Connection dbc, String username) throws SQLException {
         if (dbc.isClosed()) {
             throw new IllegalArgumentException("DB connection is closed.");
         }
@@ -122,23 +167,15 @@ public class User {
             throw new IllegalArgumentException("DB connection is closed.");
         }
 
-
-
-        PreparedStatement st = null;
-        try {
-            st = dbc.prepareStatement("SELECT id FROM users WHERE username = ? AND password = ? AND is_disabled = 0");
-            st.setString(1, username);
-            st.setString(2, encryptedPassword);
-            ResultSet res = st.executeQuery();
-            if (res.next()) {
-                return loadById(dbc, res.getLong(1));
+        User user = User.loadByUsername(dbc, username);
+        if (user != null) {
+            if (BCrypt.checkpw(password, user.getEncryptedPassword())) {
+                return user;
             } else {
                 return null;
             }
-        } finally {
-            if (st != null) {
-                st.close();
-            }
+        } else {
+            return null;
         }
     }
 
@@ -169,6 +206,6 @@ public class User {
 
 
     public static boolean isValidUsername(String username) {
-        return username.matches("/^[a-zA-Z]{1}[a-zA-Z0-9 _.?]{1,48}[a-zA-Z0-9]{1}$/u");
+        return username.matches("^[a-zA-Z]{1}[a-zA-Z0-9 _.?]{1,48}[a-zA-Z0-9]{1}$");
     }
 }

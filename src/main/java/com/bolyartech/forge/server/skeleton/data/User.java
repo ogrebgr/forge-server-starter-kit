@@ -4,11 +4,10 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.text.MessageFormat;
 import java.util.UUID;
 
 public class User {
-    private final org.slf4j.Logger mLogger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+    private static final org.slf4j.Logger sLogger = LoggerFactory.getLogger("User");
 
     private long mId;
     private String mUsername;
@@ -77,7 +76,7 @@ public class User {
             username = UUID.randomUUID().toString();
         } while (usernameExists(dbc, username));
 
-        User user = createNewUser(dbc, username, UUID.randomUUID().toString(), false);
+        User user = createNew(dbc, username, UUID.randomUUID().toString(), false);
 
         Statement unlockSt = dbc.createStatement();
         unlockSt.execute("UNLOCK TABLES");
@@ -100,7 +99,7 @@ public class User {
 
             ScreenName.createNew(dbc, getId(), screenName);
         } catch (Exception e) {
-            mLogger.error("DB error {}", e);
+            sLogger.error("DB error {}", e);
             dbc.rollback();
             throw e;
         } finally {
@@ -137,7 +136,7 @@ public class User {
     }
 
 
-    private static User createNewUser(Connection dbc, String username, String password, boolean isDisabled) throws SQLException {
+    private static User createNew(Connection dbc, String username, String password, boolean isDisabled) throws SQLException {
         PreparedStatement st = null;
         try {
             st = dbc.prepareStatement("INSERT INTO users (username, `password`, is_disabled) VALUES (?, ?, ?)",
@@ -161,6 +160,20 @@ public class User {
         }
     }
 
+
+    public static void createNew(Connection dbc, String username, String password, boolean isDisabled, String screenName) throws SQLException {
+        try {
+            dbc.setAutoCommit(false);
+            User user = createNew(dbc, username, password, isDisabled);
+            ScreenName.createNew(dbc, user.getId(), screenName);
+        } catch (Exception e) {
+            sLogger.error("DB error {}", e);
+            dbc.rollback();
+            throw e;
+        } finally {
+            dbc.setAutoCommit(true);
+        }
+    }
 
     public static User checkLogin(Connection dbc, String username, String password) throws SQLException {
         if (dbc.isClosed()) {

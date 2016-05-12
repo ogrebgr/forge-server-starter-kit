@@ -10,7 +10,6 @@ import com.bolyartech.forge.server.skeleton.data.ScreenName;
 import com.bolyartech.forge.server.skeleton.data.User;
 import com.bolyartech.forge.server.skeleton.misc.DbHandler;
 import com.bolyartech.forge.server.skeleton.modules.api.ResponseCodes;
-import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 
@@ -76,7 +75,7 @@ public class UserRegistrationPostAutoEp extends SimpleEndpoint {
                     unlockSt.execute("UNLOCK TABLES");
                 }
             } else {
-                return new ForgeResponse(ResponseCodes.Errors.MISSING_PARAMETERS.getCode(), null);
+                return new ForgeResponse(ResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
             }
         }
     }

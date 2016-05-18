@@ -1,4 +1,4 @@
-package com.bolyartech.forge.server.skeleton.data;
+package com.bolyartech.forge.server.modules.user.data;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.LoggerFactory;
@@ -9,10 +9,10 @@ import java.util.UUID;
 public class User {
     private static final org.slf4j.Logger sLogger = LoggerFactory.getLogger("User");
 
-    private long mId;
-    private String mUsername;
-    private String mEncryptedPassword;
-    private boolean mIsDisabled;
+    private final long mId;
+    private final String mUsername;
+    private final String mEncryptedPassword;
+    private final boolean mIsDisabled;
 
 
     public User(long id, String username, String encryptedPassword, boolean isDisabled) {
@@ -118,18 +118,15 @@ public class User {
         }
 
 
-        PreparedStatement st = null;
         boolean exist = false;
-        try {
-            st = dbc.prepareStatement("SELECT id FROM users WHERE username = ?");
+        try (PreparedStatement st = dbc.prepareStatement("SELECT id FROM users WHERE username = ?")) {
             st.setString(1, username);
 
             ResultSet res = st.executeQuery();
             exist = res.next();
-        } finally {
-            if (st != null) {
-                st.close();
-            }
+        } catch (Exception e) {
+            int i = 1;
+            i++;
         }
 
         return exist;

@@ -1,4 +1,4 @@
-package com.bolyartech.forge.server.skeleton.data;
+package com.bolyartech.forge.server.modules.user.data;
 
 import java.sql.*;
 

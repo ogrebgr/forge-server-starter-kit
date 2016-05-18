@@ -1,4 +1,4 @@
-package com.bolyartech.forge.server.skeleton.json;
+package com.bolyartech.forge.server.modules.user.data;
 
 import com.google.gson.annotations.SerializedName;
 

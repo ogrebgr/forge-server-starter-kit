@@ -4,29 +4,30 @@ import com.bolyartech.forge.server.ForgeServerImpl;
 import com.bolyartech.forge.server.config.DbConfiguration;
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.misc.ServerTools;
-import com.bolyartech.forge.server.register.MavEndpointRegister;
-import com.bolyartech.forge.server.register.MavEndpointRegisterImpl;
-import com.bolyartech.forge.server.skeleton.modules.api.ApiModule;
-import com.bolyartech.forge.server.skeleton.modules.main.MainModule;
+import com.bolyartech.forge.server.modules.admin.AdminModule;
+import com.bolyartech.forge.server.modules.main.MainModule;
+import com.bolyartech.forge.server.modules.user.UserModule;
+import com.bolyartech.forge.server.register.StringEndpointRegister;
+import com.bolyartech.forge.server.register.StringEndpointRegisterImpl;
 import org.slf4j.LoggerFactory;
-import spark.TemplateEngine;
 import spark.template.velocity.VelocityTemplateEngine;
 
 import static spark.Spark.awaitInitialization;
-import static spark.Spark.get;
 import static spark.Spark.stop;
 
 
 public class SkelServer extends ForgeServerImpl {
+    private static final String mPathPrefix = "/";
+
     public static final int DEFAULT_SESSION_TIMEOUT = 1440; // seconds
 
     private DbPool mDbPool;
 
-    private TemplateEngine mTemplateEngine;
-
     private final org.slf4j.Logger mLogger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-    private MavEndpointRegister mMavEndpointRegister;
+    private StringEndpointRegister mStringEndpointRegister;
+
+    private VelocityTemplateEngine mTemplateEngine;
 
 
     @Override
@@ -35,11 +36,13 @@ public class SkelServer extends ForgeServerImpl {
 
         try {
             mDbPool = createDbPool();
-            mTemplateEngine = createTemplateEngine();
-            mMavEndpointRegister = new MavEndpointRegisterImpl(getServerConfiguration().getSessionTimeout(), mTemplateEngine);
+            mTemplateEngine = createVelocityTemplateEngine();
+
+            mStringEndpointRegister = new StringEndpointRegisterImpl(DEFAULT_SESSION_TIMEOUT);
 
             initModules();
         } catch (Exception e) {
+            mLogger.error("Error: {}", e);
             awaitInitialization();
             stop();
         }
@@ -47,12 +50,9 @@ public class SkelServer extends ForgeServerImpl {
 
 
     private void initModules() {
-        MainModule tm = new MainModule(mDbPool);
-        tm.registerEndpoints(mMavEndpointRegister);
-
-
-        ApiModule apiMod = new ApiModule(mDbPool);
-        apiMod.registerEndpoints(mMavEndpointRegister);
+        new MainModule(mTemplateEngine, mPathPrefix, mStringEndpointRegister);
+        new UserModule(mDbPool, mPathPrefix, mStringEndpointRegister);
+        new AdminModule(mDbPool, mPathPrefix, mStringEndpointRegister);
     }
 
 
@@ -66,7 +66,7 @@ public class SkelServer extends ForgeServerImpl {
     }
 
 
-    private TemplateEngine createTemplateEngine() {
+    private VelocityTemplateEngine createVelocityTemplateEngine() {
         return new VelocityTemplateEngine();
     }
 

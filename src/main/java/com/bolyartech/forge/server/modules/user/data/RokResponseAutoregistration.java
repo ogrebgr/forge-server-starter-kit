@@ -1,6 +1,5 @@
-package com.bolyartech.forge.server.skeleton.modules.api.autoreg;
+package com.bolyartech.forge.server.modules.user.data;
 
-import com.bolyartech.forge.server.skeleton.json.SessionInfo;
 import com.google.gson.annotations.SerializedName;
 
 public class RokResponseAutoregistration {

@@ -1,32 +1,33 @@
-package com.bolyartech.forge.server.skeleton.modules.api.login;
+package com.bolyartech.forge.server.modules.user.endpoints;
 
 import com.bolyartech.forge.server.Handler;
 import com.bolyartech.forge.server.HttpMethod;
-import com.bolyartech.forge.server.SimpleEndpoint;
+import com.bolyartech.forge.server.StringEndpoint;
 import com.bolyartech.forge.server.db.DbPool;
+import com.bolyartech.forge.server.handlers.db.SecureDbHandler;
+import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
-import com.bolyartech.forge.server.skeleton.data.ScreenName;
-import com.bolyartech.forge.server.skeleton.data.User;
-import com.bolyartech.forge.server.skeleton.json.SessionInfo;
-import com.bolyartech.forge.server.skeleton.misc.DbHandler;
-import com.bolyartech.forge.server.skeleton.modules.api.ResponseCodes;
+import com.bolyartech.forge.server.modules.user.UserResponseCodes;
+import com.bolyartech.forge.server.modules.user.data.ScreenName;
+import com.bolyartech.forge.server.modules.user.data.User;
+import com.bolyartech.forge.server.modules.user.data.SessionInfo;
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import spark.Request;
 import spark.Response;
-import spark.Session;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 
-public class LoginEp extends SimpleEndpoint {
+public class LoginEp extends StringEndpoint {
     public LoginEp(Handler<String> handler) {
         super(HttpMethod.POST, "/api/user/login", handler);
     }
 
 
-    public static class LoginHandler extends DbHandler {
+    public static class LoginHandler extends SecureDbHandler {
         private Gson mGson;
 
 
@@ -37,7 +38,7 @@ public class LoginEp extends SimpleEndpoint {
 
 
         @Override
-        protected ForgeResponse handleForgeSecure(Request request, Response response, Connection dbc) throws SQLException {
+        public ForgeResponse handleWithDb(Request request, Response response, Connection dbc) throws SQLException {
             String username = request.queryParams("username");
             String password = request.queryParams("password");
 
@@ -55,14 +56,29 @@ public class LoginEp extends SimpleEndpoint {
 
                     SessionInfo si = new SessionInfo(user.getId(), screenName);
 
-                    return new ForgeResponse(ResponseCodes.Oks.OK.getCode(),
+                    return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
                             mGson.toJson(new RokLogin(request.session().maxInactiveInterval(), si)));
                 } else {
-                    return new ForgeResponse(ResponseCodes.Errors.INVALID_LOGIN.getCode(), "Invalid login");
+                    return new ForgeResponse(UserResponseCodes.Errors.INVALID_LOGIN.getCode(), "Invalid login");
                 }
             } else {
-                return new ForgeResponse(ResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
+                return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
             }
         }
     }
+
+
+    public static class RokLogin {
+        @SerializedName("session_ttl")
+        public final int sessionTtl;
+        @SerializedName("session_info")
+        public final SessionInfo sessionInfo;
+
+
+        public RokLogin(int sessionTtl, SessionInfo sessionInfo) {
+            this.sessionTtl = sessionTtl;
+            this.sessionInfo = sessionInfo;
+        }
+    }
+
 }

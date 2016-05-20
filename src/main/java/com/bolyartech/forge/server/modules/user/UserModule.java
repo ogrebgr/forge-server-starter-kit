@@ -50,6 +50,9 @@ public class UserModule extends AbstractForgeModule {
 
         mRegister.register(pathPrefix,
                 new ScreenNameEp(new ScreenNameEp.ScreenNameHandler(mDbPool)));
+
+        mRegister.register(pathPrefix,
+                new LogoutEp(new LogoutEp.LogoutHandler(mDbPool)));
     }
 
 

@@ -20,7 +20,7 @@ import java.sql.SQLException;
 
 public class UserAutoregistrationEp extends StringEndpoint {
     public UserAutoregistrationEp(Handler<String> handler) {
-        super(HttpMethod.POST, "/api/user/autoregister", handler);
+        super(HttpMethod.POST, "autoregister", handler);
     }
 
 

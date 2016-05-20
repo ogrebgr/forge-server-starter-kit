@@ -23,7 +23,7 @@ import java.sql.SQLException;
 
 public class LoginEp extends StringEndpoint {
     public LoginEp(Handler<String> handler) {
-        super(HttpMethod.POST, "/api/user/login", handler);
+        super(HttpMethod.POST, "login", handler);
     }
 
 

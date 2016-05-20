@@ -19,7 +19,7 @@ import java.sql.SQLException;
 
 public class ChangeOwnPasswordEp extends StringEndpoint {
     public ChangeOwnPasswordEp(Handler<String> handler) {
-        super(HttpMethod.POST, "/api/admin/change_own_password", handler);
+        super(HttpMethod.POST, "change_own_password", handler);
     }
 
 

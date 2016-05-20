@@ -21,7 +21,7 @@ import java.sql.Statement;
 
 public class UserRegistrationPostAutoEp extends StringEndpoint {
     public UserRegistrationPostAutoEp(Handler<String> handler) {
-        super(HttpMethod.POST, "/api/user/register_postauto", handler);
+        super(HttpMethod.POST, "register_postauto", handler);
     }
 
 

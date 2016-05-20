@@ -20,7 +20,7 @@ import java.sql.Statement;
 
 public class UserRegistrationEp extends StringEndpoint {
     public UserRegistrationEp(Handler<String> handler) {
-        super(HttpMethod.POST, "/api/user/register", handler);
+        super(HttpMethod.POST, "register", handler);
     }
 
 

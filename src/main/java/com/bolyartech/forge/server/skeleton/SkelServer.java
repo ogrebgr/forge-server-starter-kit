@@ -7,6 +7,8 @@ import com.bolyartech.forge.server.misc.ServerTools;
 import com.bolyartech.forge.server.modules.admin.AdminModule;
 import com.bolyartech.forge.server.modules.main.MainModule;
 import com.bolyartech.forge.server.modules.user.UserModule;
+import com.bolyartech.forge.server.register.RootRegister;
+import com.bolyartech.forge.server.register.RootRegisterImpl;
 import com.bolyartech.forge.server.register.StringEndpointRegister;
 import com.bolyartech.forge.server.register.StringEndpointRegisterImpl;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,8 @@ public class SkelServer extends ForgeServerImpl {
             mDbPool = createDbPool();
             mTemplateEngine = createVelocityTemplateEngine();
 
-            mStringEndpointRegister = new StringEndpointRegisterImpl(DEFAULT_SESSION_TIMEOUT);
+            RootRegister rootRegister = new RootRegisterImpl();
+            mStringEndpointRegister = new StringEndpointRegisterImpl(rootRegister, DEFAULT_SESSION_TIMEOUT);
 
             initModules();
         } catch (Exception e) {
@@ -50,9 +53,9 @@ public class SkelServer extends ForgeServerImpl {
 
 
     private void initModules() {
-        new MainModule(mTemplateEngine, mPathPrefix, mStringEndpointRegister);
-        new UserModule(mDbPool, mPathPrefix, mStringEndpointRegister);
-        new AdminModule(mDbPool, mPathPrefix, mStringEndpointRegister);
+        registerModule(new MainModule(mTemplateEngine, mPathPrefix, mStringEndpointRegister));
+        registerModule(new UserModule(mDbPool, mPathPrefix, mStringEndpointRegister));
+        registerModule(new AdminModule(mDbPool, mPathPrefix, mStringEndpointRegister));
     }
 
 

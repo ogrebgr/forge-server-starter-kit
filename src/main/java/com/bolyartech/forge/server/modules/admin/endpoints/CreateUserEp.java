@@ -21,7 +21,7 @@ import java.sql.Statement;
 
 public class CreateUserEp extends StringEndpoint {
     public CreateUserEp(Handler<String> handler) {
-        super(HttpMethod.POST, "/api/admin/create_user", handler);
+        super(HttpMethod.POST, "create_user", handler);
     }
 
 

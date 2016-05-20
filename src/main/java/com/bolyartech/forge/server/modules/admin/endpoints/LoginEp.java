@@ -25,7 +25,7 @@ import java.sql.SQLException;
 
 public class LoginEp extends StringEndpoint {
     public LoginEp(Handler<String> handler) {
-        super(HttpMethod.POST, "/api/admin/login", handler);
+        super(HttpMethod.POST, "login", handler);
     }
 
 
@@ -59,6 +59,7 @@ public class LoginEp extends StringEndpoint {
 
                     Session sess = request.session();
                     sess.attribute(AdminHandler.SESSION_VAR_NAME, user);
+
                     return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
                             mGson.toJson(new RokLogin(request.session().maxInactiveInterval(), si)));
                 } else {

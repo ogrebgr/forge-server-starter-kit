@@ -23,7 +23,7 @@ import java.util.List;
 public class UserListEp extends StringEndpoint {
 
     public UserListEp(Handler<String> handler) {
-        super(HttpMethod.GET, "/api/admin/users", handler);
+        super(HttpMethod.GET, "users", handler);
     }
 
 

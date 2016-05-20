@@ -20,7 +20,7 @@ public class DisableUserEp extends StringEndpoint {
     private static final int ERROR_CANNOT_DISABLE_YOURSELF = -101;
 
     public DisableUserEp(Handler<String> handler) {
-        super(HttpMethod.POST, "/api/admin/user_disable", handler);
+        super(HttpMethod.POST, "user_disable", handler);
     }
 
 

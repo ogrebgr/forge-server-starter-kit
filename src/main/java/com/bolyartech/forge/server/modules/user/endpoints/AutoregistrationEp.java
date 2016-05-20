@@ -18,8 +18,8 @@ import spark.Session;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class UserAutoregistrationEp extends StringEndpoint {
-    public UserAutoregistrationEp(Handler<String> handler) {
+public class AutoregistrationEp extends StringEndpoint {
+    public AutoregistrationEp(Handler<String> handler) {
         super(HttpMethod.POST, "autoregister", handler);
     }
 

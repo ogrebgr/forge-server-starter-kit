@@ -31,7 +31,7 @@ public class ChangeOwnPasswordEp extends StringEndpoint {
 
 
         @Override
-        protected ForgeResponse handleAdmin(Request request, Response response, Connection dbc, AdminUser user) throws SQLException {
+        protected ForgeResponse handleLoggedInAdmin(Request request, Response response, Connection dbc, AdminUser user) throws SQLException {
             String newPassword = request.queryParams("new_password");
 
             if (Strings.isNullOrEmpty(newPassword)) {

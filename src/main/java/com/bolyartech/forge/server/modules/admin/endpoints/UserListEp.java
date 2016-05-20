@@ -37,7 +37,7 @@ public class UserListEp extends StringEndpoint {
 
 
         @Override
-        protected ForgeResponse handleAdmin(Request request, Response response, Connection dbc, AdminUser user) throws SQLException {
+        protected ForgeResponse handleLoggedInAdmin(Request request, Response response, Connection dbc, AdminUser user) throws SQLException {
             List<AdminUser> users = AdminUser.list(dbc);
 
             List<AdminUserJson> usersJson = new ArrayList<>();

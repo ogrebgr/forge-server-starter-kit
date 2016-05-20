@@ -19,8 +19,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 
-public class UserRegistrationPostAutoEp extends StringEndpoint {
-    public UserRegistrationPostAutoEp(Handler<String> handler) {
+public class RegistrationPostAutoEp extends StringEndpoint {
+    public RegistrationPostAutoEp(Handler<String> handler) {
         super(HttpMethod.POST, "register_postauto", handler);
     }
 

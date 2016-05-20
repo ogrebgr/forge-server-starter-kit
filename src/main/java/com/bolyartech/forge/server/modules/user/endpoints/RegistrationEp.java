@@ -18,8 +18,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class UserRegistrationEp extends StringEndpoint {
-    public UserRegistrationEp(Handler<String> handler) {
+
+public class RegistrationEp extends StringEndpoint {
+    public RegistrationEp(Handler<String> handler) {
         super(HttpMethod.POST, "register", handler);
     }
 

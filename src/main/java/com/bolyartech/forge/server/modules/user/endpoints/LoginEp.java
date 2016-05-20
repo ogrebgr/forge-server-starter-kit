@@ -8,6 +8,8 @@ import com.bolyartech.forge.server.handlers.db.SecureDbHandler;
 import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
+import com.bolyartech.forge.server.modules.admin.AdminHandler;
+import com.bolyartech.forge.server.modules.user.UserHandler;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
 import com.bolyartech.forge.server.modules.user.data.ScreenName;
 import com.bolyartech.forge.server.modules.user.data.User;
@@ -16,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import spark.Request;
 import spark.Response;
+import spark.Session;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -55,6 +58,10 @@ public class LoginEp extends StringEndpoint {
                     }
 
                     SessionInfo si = new SessionInfo(user.getId(), screenName);
+
+                    Session sess = request.session();
+                    sess.attribute(UserHandler.SESSION_VAR_NAME, user);
+
 
                     return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
                             mGson.toJson(new RokLogin(request.session().maxInactiveInterval(), si)));

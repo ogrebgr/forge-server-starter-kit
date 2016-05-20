@@ -33,7 +33,7 @@ public class CreateUserEp extends StringEndpoint {
 
 
         @Override
-        protected ForgeResponse handleAdmin(Request request, Response response, Connection dbc, AdminUser user) throws SQLException {
+        protected ForgeResponse handleLoggedInAdmin(Request request, Response response, Connection dbc, AdminUser user) throws SQLException {
             if (user.isSuperAdmin()) {
                 String username = request.queryParams("username").trim();
                 String password = request.queryParams("password");

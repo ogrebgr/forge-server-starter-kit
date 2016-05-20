@@ -2,11 +2,8 @@ package com.bolyartech.forge.server.modules.user;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.module.AbstractForgeModule;
+import com.bolyartech.forge.server.modules.user.endpoints.*;
 import com.bolyartech.forge.server.register.StringEndpointRegister;
-import com.bolyartech.forge.server.modules.user.endpoints.UserAutoregistrationEp;
-import com.bolyartech.forge.server.modules.user.endpoints.LoginEp;
-import com.bolyartech.forge.server.modules.user.endpoints.UserRegistrationEp;
-import com.bolyartech.forge.server.modules.user.endpoints.UserRegistrationPostAutoEp;
 
 public class UserModule extends AbstractForgeModule {
     private static final String MODULE_SYSTEM_NAME = "user";
@@ -41,15 +38,18 @@ public class UserModule extends AbstractForgeModule {
         String pathPrefix = getSitePathPrefix() + getModulePathPrefix();
 
         mRegister.register(pathPrefix,
-                new UserAutoregistrationEp(new UserAutoregistrationEp.UserAutoregistrationHandler(mDbPool)));
+                new AutoregistrationEp(new AutoregistrationEp.UserAutoregistrationHandler(mDbPool)));
 
         mRegister.register(pathPrefix,
-                new UserRegistrationEp(new UserRegistrationEp.RegistrationHandler(mDbPool)));
+                new RegistrationEp(new RegistrationEp.RegistrationHandler(mDbPool)));
 
         mRegister.register(pathPrefix, new LoginEp(new LoginEp.LoginHandler(mDbPool)));
 
         mRegister.register(pathPrefix,
-                new UserRegistrationPostAutoEp(new UserRegistrationPostAutoEp.UserRegistrationPostAutoHandler(mDbPool)));
+                new RegistrationPostAutoEp(new RegistrationPostAutoEp.UserRegistrationPostAutoHandler(mDbPool)));
+
+        mRegister.register(pathPrefix,
+                new ScreenNameEp(new ScreenNameEp.ScreenNameHandler(mDbPool)));
     }
 
 

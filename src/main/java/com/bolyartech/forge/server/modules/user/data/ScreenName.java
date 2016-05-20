@@ -1,5 +1,7 @@
 package com.bolyartech.forge.server.modules.user.data;
 
+import com.bolyartech.forge.server.db.DbUtils;
+
 import java.sql.*;
 
 
@@ -21,13 +23,8 @@ public class ScreenName {
 
 
     public static ScreenName loadById(Connection dbc, long id) throws SQLException {
-        if (dbc.isClosed()) {
-            throw new IllegalArgumentException("DB connection is closed.");
-        }
-
-        if (id <= 0) {
-            throw new IllegalArgumentException("id invalid value: " + id);
-        }
+        DbUtils.ensureOperationalDbc(dbc);
+        DbUtils.ensureValidId(id);
 
         String sql = "SELECT user, screen_name FROM user_screen_names WHERE id = ?";
 
@@ -44,13 +41,8 @@ public class ScreenName {
 
 
     public static ScreenName loadByUser(Connection dbc, long userId) throws SQLException {
-        if (dbc.isClosed()) {
-            throw new IllegalArgumentException("DB connection is closed.");
-        }
-
-        if (userId <= 0) {
-            throw new IllegalArgumentException("userId invalid value: " + userId);
-        }
+        DbUtils.ensureOperationalDbc(dbc);
+        DbUtils.ensureValidId(userId);
 
         String sql = "SELECT id, screen_name FROM user_screen_names WHERE id = ?";
 
@@ -66,25 +58,36 @@ public class ScreenName {
     }
 
 
+    public static boolean change(Connection dbc, long userId, String screenName) throws SQLException {
+        DbUtils.ensureOperationalDbc(dbc);
+        DbUtils.ensureValidId(userId);
+
+        if (!isValid(screenName)) {
+            throw new IllegalArgumentException("Invalid screen name: " + screenName);
+        }
+
+
+        String sql = "UPDATE user_screen_names SET screen_name = ?, screen_name_lc = ?";
+        try(PreparedStatement st = dbc.prepareStatement(sql)) {
+            st.setString(1, screenName);
+            st.setString(2, screenName.toLowerCase());
+            return st.executeUpdate() > 0;
+        }
+    }
+
 
     public static ScreenName createNew(Connection dbc, long userId, String screenName) throws SQLException {
-        if (dbc.isClosed()) {
-            throw new IllegalArgumentException("DB connection is closed.");
+        DbUtils.ensureOperationalDbc(dbc);
+        DbUtils.ensureValidId(userId);
+
+
+        if (!isValid(screenName)) {
+            throw new IllegalArgumentException("Invalid screen name: " + screenName);
         }
 
-        if (userId <= 0) {
-            throw new IllegalArgumentException("userId invalid value: " + userId);
-        }
 
-        if (screenName == null) {
-            throw new IllegalArgumentException("screenName is null");
-        }
-
-        PreparedStatement st = null;
-        try {
-            st = dbc.prepareStatement("INSERT INTO user_screen_names (user, screen_name, screen_name_lc) VALUES (?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS);
-
+        String sql = "INSERT INTO user_screen_names (user, screen_name, screen_name_lc) VALUES (?, ?, ?)";
+        try (PreparedStatement st = dbc.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setLong(1, userId);
             st.setString(2, screenName);
             st.setString(3, screenName.toLowerCase());
@@ -96,18 +99,12 @@ public class ScreenName {
             } else {
                 throw new IllegalStateException("No generated ID for user_screen_names");
             }
-        } finally {
-            if (st != null) {
-                st.close();
-            }
         }
     }
 
 
     public static boolean exists(Connection dbc, String screenName) throws SQLException {
-        if (dbc.isClosed()) {
-            throw new IllegalArgumentException("DB connection is closed.");
-        }
+        DbUtils.ensureOperationalDbc(dbc);
 
         if (screenName == null) {
             throw new IllegalArgumentException("screenName is null");
@@ -124,6 +121,10 @@ public class ScreenName {
 
 
     public static boolean isValid(String screenName) {
+        if (screenName == null) {
+            return false;
+        }
+
         return screenName.matches("^[\\p{L}]{1}[\\p{L}\\p{N} ?]{1,33}[\\p{L}\\p{N}]{1}$");
     }
 

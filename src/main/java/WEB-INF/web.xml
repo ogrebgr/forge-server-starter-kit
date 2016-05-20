@@ -5,20 +5,6 @@
          version="2.5">
     <display-name>test</display-name>
 
-    <!--
-      <servlet>
-        <description></description>
-        <display-name>Test</display-name>
-        <servlet-name>Test</servlet-name>
-        <servlet-class>Test</servlet-class>
-      </servlet>
-
-      <servlet-mapping>
-        <servlet-name>Test</servlet-name>
-        <url-pattern>/sample</url-pattern>
-      </servlet-mapping>
-      -->
-
     <filter>
         <filter-name>SparkFilter</filter-name>
         <filter-class>spark.servlet.SparkFilter</filter-class>

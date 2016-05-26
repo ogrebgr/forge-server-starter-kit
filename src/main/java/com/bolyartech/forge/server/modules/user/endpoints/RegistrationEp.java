@@ -8,11 +8,16 @@ import com.bolyartech.forge.server.handlers.db.SecureDbHandler;
 import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
+import com.bolyartech.forge.server.modules.user.UserHandler;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
+import com.bolyartech.forge.server.modules.user.data.RokLogin;
 import com.bolyartech.forge.server.modules.user.data.ScreenName;
+import com.bolyartech.forge.server.modules.user.data.SessionInfo;
 import com.bolyartech.forge.server.modules.user.data.User;
+import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
+import spark.Session;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,8 +31,11 @@ public class RegistrationEp extends StringEndpoint {
 
 
     public static class RegistrationHandler extends SecureDbHandler {
+        private Gson mGson;
+
         public RegistrationHandler(DbPool dbPool) {
             super(dbPool);
+            mGson = new Gson();
         }
 
 
@@ -63,8 +71,16 @@ public class RegistrationEp extends StringEndpoint {
                         return new ForgeResponse(UserResponseCodes.Errors.SCREEN_NAME_EXISTS.getCode(), "Screen name exist");
                     }
 
-                    User.createNew(dbc, username, password, false, screenName);
-                    return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(), "OK");
+                    User user = User.createNew(dbc, username, password, false, screenName);
+
+                    SessionInfo si = new SessionInfo(user.getId(), screenName);
+
+                    Session sess = request.session();
+                    sess.attribute(UserHandler.SESSION_VAR_NAME, user);
+
+
+                    return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
+                            mGson.toJson(new RokLogin(request.session().maxInactiveInterval(), si)));
                 } finally {
                     Statement unlockSt = dbc.createStatement();
                     unlockSt.execute("UNLOCK TABLES");

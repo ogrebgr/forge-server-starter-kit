@@ -159,11 +159,12 @@ public class User {
     }
 
 
-    public static void createNew(Connection dbc, String username, String password, boolean isDisabled, String screenName) throws SQLException {
+    public static User createNew(Connection dbc, String username, String password, boolean isDisabled, String screenName) throws SQLException {
         try {
             dbc.setAutoCommit(false);
             User user = createNew(dbc, username, password, isDisabled);
             ScreenName.createNew(dbc, user.getId(), screenName);
+            return user;
         } catch (Exception e) {
             sLogger.error("DB error {}", e);
             dbc.rollback();

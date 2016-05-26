@@ -37,13 +37,13 @@ public class AutoregistrationEp extends StringEndpoint {
         public ForgeResponse handleWithDb(Request request, Response response, Connection dbc) throws SQLException {
             Session sess = request.session();
 
-            User user = User.generateAnonymousUser(dbc);
+            User.AnonymousUserHelper auser = User.generateAnonymousUser(dbc);
 
-            SessionInfo si = new SessionInfo(user.getId(), "");
+            SessionInfo si = new SessionInfo(auser.mUser.getId(), "");
 
             return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
-                    mGson.toJson(new RokResponseAutoregistration(user.getUsername(),
-                    user.getEncryptedPassword(),
+                    mGson.toJson(new RokResponseAutoregistration(auser.mUser.getUsername(),
+                    auser.mClearPassword,
                     sess.maxInactiveInterval(),
                     si
             )));

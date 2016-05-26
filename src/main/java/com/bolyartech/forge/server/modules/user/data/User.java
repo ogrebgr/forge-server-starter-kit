@@ -62,7 +62,7 @@ public class User {
     }
 
 
-    public static User generateAnonymousUser(Connection dbc) throws SQLException {
+    public static AnonymousUserHelper generateAnonymousUser(Connection dbc) throws SQLException {
         if (dbc.isClosed()) {
             throw new IllegalArgumentException("DB connection is closed.");
         }
@@ -76,12 +76,13 @@ public class User {
             username = UUID.randomUUID().toString();
         } while (usernameExists(dbc, username));
 
-        User user = createNew(dbc, username, UUID.randomUUID().toString(), false);
+        String password = UUID.randomUUID().toString();
+        User user = createNew(dbc, username, password, false);
 
         Statement unlockSt = dbc.createStatement();
         unlockSt.execute("UNLOCK TABLES");
 
-        return user;
+        return new AnonymousUserHelper(user, password);
     }
 
 
@@ -217,5 +218,17 @@ public class User {
 
     public static boolean isValidUsername(String username) {
         return username.matches("^[a-zA-Z]{1}[a-zA-Z0-9 _.?]{1,48}[a-zA-Z0-9]{1}$");
+    }
+
+
+    public static class AnonymousUserHelper {
+        public final User mUser;
+        public final String mClearPassword;
+
+
+        public AnonymousUserHelper(User user, String clearPassword) {
+            mUser = user;
+            mClearPassword = clearPassword;
+        }
     }
 }

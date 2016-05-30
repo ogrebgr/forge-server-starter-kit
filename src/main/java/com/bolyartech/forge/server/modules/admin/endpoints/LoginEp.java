@@ -9,10 +9,9 @@ import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
-import com.bolyartech.forge.server.modules.admin.data.RokLogin;
-import com.bolyartech.forge.server.modules.user.data.ScreenName;
-import com.bolyartech.forge.server.modules.user.data.SessionInfo;
+import com.bolyartech.forge.server.modules.admin.data.RokLoginAdmin;
 import com.bolyartech.forge.server.modules.admin.AdminHandler;
+import com.bolyartech.forge.server.modules.admin.data.SessionInfoAdmin;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
 import com.google.gson.Gson;
 import spark.Request;
@@ -50,7 +49,8 @@ public class LoginEp extends StringEndpoint {
                     sess.attribute(AdminHandler.SESSION_VAR_NAME, user);
 
                     return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
-                            mGson.toJson(new RokLogin(request.session().maxInactiveInterval(), user.isSuperAdmin())));
+                            mGson.toJson(new RokLoginAdmin(request.session().maxInactiveInterval(),
+                                    new SessionInfoAdmin(user.getId(), user.isSuperAdmin()))));
                 } else {
                     return new ForgeResponse(UserResponseCodes.Errors.INVALID_LOGIN.getCode(), "Invalid login");
                 }

@@ -9,10 +9,10 @@ import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
+import com.bolyartech.forge.server.modules.admin.data.RokLogin;
 import com.bolyartech.forge.server.modules.user.data.ScreenName;
 import com.bolyartech.forge.server.modules.user.data.SessionInfo;
 import com.bolyartech.forge.server.modules.admin.AdminHandler;
-import com.bolyartech.forge.server.modules.user.data.RokLogin;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
 import com.google.gson.Gson;
 import spark.Request;
@@ -46,22 +46,11 @@ public class LoginEp extends StringEndpoint {
             if (Params.areAllPresent(username, password)) {
                 AdminUser user = AdminUser.checkLogin(dbc, username, password);
                 if (user != null) {
-                    ScreenName sn = ScreenName.loadByUser(dbc, user.getId());
-
-                    String screenName;
-                    if (sn != null) {
-                        screenName = sn.getScreenName();
-                    } else {
-                        screenName = ScreenName.createDefault(user.getId());
-                    }
-
-                    SessionInfo si = new SessionInfo(user.getId(), screenName);
-
                     Session sess = request.session();
                     sess.attribute(AdminHandler.SESSION_VAR_NAME, user);
 
                     return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
-                            mGson.toJson(new RokLogin(request.session().maxInactiveInterval(), si)));
+                            mGson.toJson(new RokLogin(request.session().maxInactiveInterval(), user.isSuperAdmin())));
                 } else {
                     return new ForgeResponse(UserResponseCodes.Errors.INVALID_LOGIN.getCode(), "Invalid login");
                 }

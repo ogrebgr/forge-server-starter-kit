@@ -6,9 +6,9 @@ import com.bolyartech.forge.server.StringEndpoint;
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
+import com.bolyartech.forge.server.modules.admin.AdminResponseCodes;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
 import com.bolyartech.forge.server.modules.admin.AdminHandler;
-import com.bolyartech.forge.server.modules.user.UserResponseCodes;
 import com.google.common.base.Strings;
 import spark.Request;
 import spark.Response;
@@ -38,8 +38,8 @@ public class ChangeOwnPasswordEp extends StringEndpoint {
                 return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
             }
 
-            if (!AdminUser.isValidPasswordLenght(newPassword)) {
-                return new ForgeResponse(UserResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
+            if (!AdminUser.isValidPasswordLength(newPassword)) {
+                return new ForgeResponse(AdminResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
             }
 
             AdminUser.changePassword(dbc, user.getId(), newPassword);

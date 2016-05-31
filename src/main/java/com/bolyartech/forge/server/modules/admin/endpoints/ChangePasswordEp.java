@@ -8,8 +8,8 @@ import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
 import com.bolyartech.forge.server.modules.admin.AdminHandler;
+import com.bolyartech.forge.server.modules.admin.AdminResponseCodes;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
-import com.bolyartech.forge.server.modules.user.UserResponseCodes;
 import spark.Request;
 import spark.Response;
 
@@ -39,8 +39,8 @@ public class ChangePasswordEp extends StringEndpoint {
                 String newPassword = request.queryParams("new_password");
 
                 if (Params.areAllPresent(userIdRaw, newPassword)) {
-                    if (!AdminUser.isValidPasswordLenght(newPassword)) {
-                        return new ForgeResponse(UserResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
+                    if (!AdminUser.isValidPasswordLength(newPassword)) {
+                        return new ForgeResponse(AdminResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
                     }
 
                     try {
@@ -55,7 +55,7 @@ public class ChangePasswordEp extends StringEndpoint {
                     return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
                 }
             } else {
-                return new ForgeResponse(UserResponseCodes.Errors.NO_ENOUGH_PRIVILEGES.getCode(), "Missing parameters");
+                return new ForgeResponse(AdminResponseCodes.Errors.NO_ENOUGH_PRIVILEGES.getCode(), "Missing parameters");
             }
         }
     }

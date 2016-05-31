@@ -4,7 +4,6 @@ import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.handlers.db.SecureDbHandler;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
-import com.bolyartech.forge.server.modules.user.UserResponseCodes;
 import spark.Request;
 import spark.Response;
 import spark.Session;
@@ -32,7 +31,7 @@ abstract public class AdminHandler extends SecureDbHandler {
         if (user != null) {
             return handleLoggedInAdmin(request, response, dbc, user);
         } else {
-            return new ForgeResponse(UserResponseCodes.Errors.NOT_LOGGED_IN.getCode(), "Invalid login");
+            return new ForgeResponse(AdminResponseCodes.Errors.NOT_LOGGED_IN.getCode(), "Invalid login");
         }
     }
 }

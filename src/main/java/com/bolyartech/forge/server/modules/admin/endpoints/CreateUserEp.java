@@ -7,11 +7,11 @@ import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
+import com.bolyartech.forge.server.modules.admin.AdminResponseCodes;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
 import com.bolyartech.forge.server.modules.user.data.ScreenName;
 import com.bolyartech.forge.server.modules.user.data.User;
 import com.bolyartech.forge.server.modules.admin.AdminHandler;
-import com.bolyartech.forge.server.modules.user.UserResponseCodes;
 import spark.Request;
 import spark.Response;
 
@@ -38,19 +38,19 @@ public class CreateUserEp extends StringEndpoint {
                 String username = request.queryParams("username").trim();
                 String password = request.queryParams("password");
                 String name = request.queryParams("name".trim());
-                String superAdminRaw = request.queryParams("superadmin".trim());
+                String superAdminRaw = request.queryParams("super_admin".trim());
 
                 if (Params.areAllPresent(username, password, name)) {
                     if (!User.isValidUsername(username)) {
-                        return new ForgeResponse(UserResponseCodes.Errors.INVALID_USERNAME.getCode(), "Invalid username");
+                        return new ForgeResponse(AdminResponseCodes.Errors.INVALID_USERNAME.getCode(), "Invalid username");
                     }
 
-                    if (!ScreenName.isValid(name)) {
-                        return new ForgeResponse(UserResponseCodes.Errors.INVALID_SCREEN_NAME.getCode(), "Invalid screen name");
+                    if (!AdminUser.isValidName(name)) {
+                        return new ForgeResponse(AdminResponseCodes.Errors.INVALID_NAME.getCode(), "Invalid screen name");
                     }
 
-                    if (!AdminUser.isValidPasswordLenght(password)) {
-                        return new ForgeResponse(UserResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
+                    if (!AdminUser.isValidPasswordLength(password)) {
+                        return new ForgeResponse(AdminResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
                     }
 
                     boolean superAdmin;
@@ -66,7 +66,7 @@ public class CreateUserEp extends StringEndpoint {
                         lockSt.execute("LOCK TABLES admin_users WRITE");
 
                         if (AdminUser.usernameExists(dbc, username)) {
-                            return new ForgeResponse(UserResponseCodes.Errors.USERNAME_EXISTS.getCode(), "username taken");
+                            return new ForgeResponse(AdminResponseCodes.Errors.USERNAME_EXISTS.getCode(), "username taken");
                         }
 
                         AdminUser.createNew(dbc, username, password, false, superAdmin, name);
@@ -80,7 +80,7 @@ public class CreateUserEp extends StringEndpoint {
                     return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
                 }
             } else {
-                return new ForgeResponse(UserResponseCodes.Errors.NO_ENOUGH_PRIVILEGES.getCode(), "Missing parameters");
+                return new ForgeResponse(AdminResponseCodes.Errors.NO_ENOUGH_PRIVILEGES.getCode(), "Missing parameters");
             }
         }
     }

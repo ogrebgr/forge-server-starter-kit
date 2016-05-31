@@ -151,14 +151,15 @@ public class AdminUser {
     }
 
 
-    public static boolean disable(Connection dbc, long userId) throws SQLException {
+    public static boolean disable(Connection dbc, long userId, boolean disable) throws SQLException {
         if (userId <= 0) {
             throw new IllegalStateException("Invalid userId: " + userId);
         }
 
-        String sql = "UPDATE admin_users SET is_disabled = 1 WHERE id = ?";
+        String sql = "UPDATE admin_users SET is_disabled = ? WHERE id = ?";
         try (PreparedStatement st = dbc.prepareStatement(sql)) {
-            st.setLong(1, userId);
+            st.setInt(1, disable ? 1 : 0);
+            st.setLong(2, userId);
             return st.executeUpdate() > 0;
         } catch (SQLException e) {
             sLogger.error("SQL error: ", e);
@@ -172,7 +173,7 @@ public class AdminUser {
             throw new IllegalArgumentException("password is null");
         }
 
-        if (!isValidPasswordLenght(newPassword)) {
+        if (!isValidPasswordLength(newPassword)) {
             throw new IllegalArgumentException("Password is too short");
         }
 
@@ -225,11 +226,20 @@ public class AdminUser {
     }
 
 
-    public static boolean isValidPasswordLenght(String password) {
+    public static boolean isValidPasswordLength(String password) {
         if (password == null) {
             throw new IllegalArgumentException("password is null");
         }
 
         return password.length() >= MIN_PASSWORD_LENGTH;
+    }
+
+
+    public static boolean isValidName(String name) {
+        if (name == null) {
+            return false;
+        }
+
+        return name.matches("^[\\p{L}]{1}[\\p{L}\\p{N} ?]{1,33}[\\p{L}\\p{N}]{1}$");
     }
 }

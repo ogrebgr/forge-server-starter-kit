@@ -2,6 +2,7 @@ package com.bolyartech.forge.server.modules.user;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.module.AbstractForgeModule;
+import com.bolyartech.forge.server.modules.admin.endpoints.UserListEp;
 import com.bolyartech.forge.server.modules.user.endpoints.*;
 import com.bolyartech.forge.server.register.StringEndpointRegister;
 

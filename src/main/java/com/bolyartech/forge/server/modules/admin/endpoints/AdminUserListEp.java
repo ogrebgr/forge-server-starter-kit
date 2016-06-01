@@ -7,12 +7,9 @@ import com.bolyartech.forge.server.StringEndpoint;
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
-import com.bolyartech.forge.server.modules.admin.AdminHandler;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
 import com.bolyartech.forge.server.modules.admin.data.AdminUserJson;
-import com.bolyartech.forge.server.modules.user.data.User;
-import com.bolyartech.forge.server.modules.user.data.UserJson;
-import com.google.common.base.Strings;
+import com.bolyartech.forge.server.modules.admin.AdminHandler;
 import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
@@ -23,11 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UserListEp extends StringEndpoint {
-    private static final int USERS_PAGE_SIZE = 10;
+public class AdminUserListEp extends StringEndpoint {
 
-    public UserListEp(Handler<String> handler) {
-        super(HttpMethod.GET, "users", handler);
+    public AdminUserListEp(Handler<String> handler) {
+        super(HttpMethod.GET, "admin_users", handler);
     }
 
 
@@ -46,22 +42,16 @@ public class UserListEp extends StringEndpoint {
                                                     Connection dbc,
                                                     AdminUser user) throws SQLException {
 
-            String idGreaterThanRaw = request.queryParams("id").trim();
-            long id = 0;
-            if (!Strings.isNullOrEmpty(idGreaterThanRaw)) {
-                try {
-                    id = Long.parseLong(idGreaterThanRaw);
-                } catch (NumberFormatException e) {
-                    return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE.getCode(), "Invalid id: " + id);
-                }
+            List<AdminUser> users = AdminUser.list(dbc);
 
+            List<AdminUserJson> usersJson = new ArrayList<>();
+
+            for (AdminUser u : users) {
+                usersJson.add(new AdminUserJson(u));
             }
 
-            List<UserJson> users = UserJson.list(dbc, id, USERS_PAGE_SIZE);
-
-
             return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
-                    mGson.toJson(users));
+                    mGson.toJson(usersJson));
         }
     }
 }

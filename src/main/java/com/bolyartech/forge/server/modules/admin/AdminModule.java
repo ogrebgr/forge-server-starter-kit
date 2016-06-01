@@ -2,7 +2,6 @@ package com.bolyartech.forge.server.modules.admin;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.module.AbstractForgeModule;
-import com.bolyartech.forge.server.modules.main.RootEp;
 import com.bolyartech.forge.server.register.StringEndpointRegister;
 import com.bolyartech.forge.server.modules.admin.endpoints.*;
 
@@ -41,12 +40,13 @@ public class AdminModule extends AbstractForgeModule {
         String pathPrefix = getSitePathPrefix() + getModulePathPrefix();
 
         mRegister.register(pathPrefix, new LoginEp(new LoginEp.AdminLoginHandler(mDbPool)));
-        mRegister.register(pathPrefix, new UserListEp(new UserListEp.UserListHandler(mDbPool)));
+        mRegister.register(pathPrefix, new AdminUserListEp(new AdminUserListEp.UserListHandler(mDbPool)));
         mRegister.register(pathPrefix, new CreateUserEp(new CreateUserEp.CreateUserHandler(mDbPool)));
         mRegister.register(pathPrefix, new DisableUserEp(new DisableUserEp.DisableUserHandler(mDbPool)));
         mRegister.register(pathPrefix, new ChangeOwnPasswordEp(new ChangeOwnPasswordEp.ChangeOwnPasswordHandler(mDbPool)));
         mRegister.register(pathPrefix, new ChangePasswordEp(new ChangePasswordEp.ChangeOwnPasswordHandler(mDbPool)));
         mRegister.register(pathPrefix, new LogoutEp(new LogoutEp.LogoutHandler(mDbPool)));
+        mRegister.register(pathPrefix, new UserListEp(new UserListEp.UserListHandler(mDbPool)));
     }
 
 

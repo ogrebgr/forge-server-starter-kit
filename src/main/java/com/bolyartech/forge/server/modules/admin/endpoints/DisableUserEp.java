@@ -34,8 +34,8 @@ public class DisableUserEp extends StringEndpoint {
         @Override
         protected ForgeResponse handleLoggedInAdmin(Request request, Response response, Connection dbc, AdminUser user) throws SQLException {
             if (user.isSuperAdmin()) {
-                String userIdRaw = request.queryParams("user").trim();
-                String disableRaw = request.queryParams("disable").trim();
+                String userIdRaw = request.queryParams("user");
+                String disableRaw = request.queryParams("disable");
 
                 if (Params.areAllPresent(userIdRaw, disableRaw)) {
                     try {

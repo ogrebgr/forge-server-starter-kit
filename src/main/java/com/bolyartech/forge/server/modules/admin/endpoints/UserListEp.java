@@ -46,22 +46,24 @@ public class UserListEp extends StringEndpoint {
                                                     Connection dbc,
                                                     AdminUser user) throws SQLException {
 
-            String idGreaterThanRaw = request.queryParams("id").trim();
-            long id = 0;
-            if (!Strings.isNullOrEmpty(idGreaterThanRaw)) {
-                try {
-                    id = Long.parseLong(idGreaterThanRaw);
-                } catch (NumberFormatException e) {
-                    return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE.getCode(), "Invalid id: " + id);
+            String idGreaterThanRaw = request.queryParams("id");
+            if (Strings.isNullOrEmpty(idGreaterThanRaw)) {
+                long id = 0;
+                if (!Strings.isNullOrEmpty(idGreaterThanRaw)) {
+                    try {
+                        id = Long.parseLong(idGreaterThanRaw);
+                    } catch (NumberFormatException e) {
+                        return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE.getCode(), "Invalid id: " + id);
+                    }
+
                 }
 
+                List<UserJson> users = UserJson.list(dbc, id, USERS_PAGE_SIZE);
+
+                return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(), mGson.toJson(users));
+            } else {
+                return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
             }
-
-            List<UserJson> users = UserJson.list(dbc, id, USERS_PAGE_SIZE);
-
-
-            return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
-                    mGson.toJson(users));
         }
     }
 }

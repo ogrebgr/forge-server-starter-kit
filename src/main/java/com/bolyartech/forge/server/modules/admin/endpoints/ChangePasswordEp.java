@@ -35,7 +35,7 @@ public class ChangePasswordEp extends StringEndpoint {
                                                     AdminUser user) throws SQLException {
 
             if (user.isSuperAdmin()) {
-                String userIdRaw = request.queryParams("user").trim();
+                String userIdRaw = request.queryParams("user");
                 String newPassword = request.queryParams("new_password");
 
                 if (Params.areAllPresent(userIdRaw, newPassword)) {

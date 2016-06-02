@@ -41,7 +41,7 @@ public class FindUserEp extends StringEndpoint {
                                                     Connection dbc,
                                                     AdminUser user) throws SQLException {
 
-            String pattern = request.queryParams("pattern").trim();
+            String pattern = request.queryParams("pattern");
 
             if (!Strings.isNullOrEmpty(pattern)) {
                 List<UserJson> rez = User.findByPattern(dbc, pattern);

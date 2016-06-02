@@ -47,6 +47,7 @@ public class AdminModule extends AbstractForgeModule {
         mRegister.register(pathPrefix, new ChangePasswordEp(new ChangePasswordEp.ChangeOwnPasswordHandler(mDbPool)));
         mRegister.register(pathPrefix, new LogoutEp(new LogoutEp.LogoutHandler(mDbPool)));
         mRegister.register(pathPrefix, new UserListEp(new UserListEp.UserListHandler(mDbPool)));
+        mRegister.register(pathPrefix, new FindUserEp(new FindUserEp.FindUserHandler(mDbPool)));
     }
 
 

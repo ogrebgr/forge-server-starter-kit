@@ -137,10 +137,8 @@ public class User {
 
 
     private static User createNew(Connection dbc, String username, String password, boolean isDisabled) throws SQLException {
-        PreparedStatement st = null;
-        try {
-            st = dbc.prepareStatement("INSERT INTO users (username, `password`, is_disabled) VALUES (?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS);
+        String sql = "INSERT INTO users (username, `password`, is_disabled) VALUES (?, ?, ?)";
+        try (PreparedStatement st = dbc.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
             st.setString(1, username);
             String encryptedPassword = encryptPassword(password);
             st.setString(2, encryptedPassword);
@@ -152,10 +150,6 @@ public class User {
                 return new User(res.getLong(1), username, encryptedPassword, isDisabled);
             } else {
                 throw new IllegalStateException("No generated ID for user");
-            }
-        } finally {
-            if (st != null) {
-                st.close();
             }
         }
     }
@@ -175,6 +169,7 @@ public class User {
             dbc.setAutoCommit(true);
         }
     }
+
 
     public static User checkLogin(Connection dbc, String username, String password) throws SQLException {
         if (dbc.isClosed()) {
@@ -233,5 +228,28 @@ public class User {
             mUser = user;
             mClearPassword = clearPassword;
         }
+    }
+
+
+    public static List<UserJson> findByPattern(Connection dbc, String pattern) throws SQLException {
+        String sql = "SELECT users.id, usn.screen_name FROM users " +
+                "LEFT OUTER JOIN user_screen_names usn ON users.id = usn.user " +
+                "WHERE username LIKE ? OR usn.screen_name LIKE ?";
+
+        List<UserJson> ret = new ArrayList<>();
+
+        try (PreparedStatement st = dbc.prepareStatement(sql)) {
+            String sqlPattern = pattern + "%";
+            st.setString(1, sqlPattern);
+            st.setString(2, sqlPattern);
+
+            ResultSet res = st.executeQuery();
+            while (res.next()) {
+                User user = User.loadById(dbc, res.getLong(1));
+                ret.add(new UserJson(user, res.getString(2)));
+            }
+        }
+
+        return ret;
     }
 }

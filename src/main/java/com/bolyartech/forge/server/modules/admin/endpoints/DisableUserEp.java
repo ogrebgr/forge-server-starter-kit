@@ -7,9 +7,10 @@ import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
+import com.bolyartech.forge.server.modules.admin.AdminHandler;
 import com.bolyartech.forge.server.modules.admin.AdminResponseCodes;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
-import com.bolyartech.forge.server.modules.admin.AdminHandler;
+import com.bolyartech.forge.server.modules.user.data.User;
 import spark.Request;
 import spark.Response;
 
@@ -33,33 +34,29 @@ public class DisableUserEp extends StringEndpoint {
 
         @Override
         protected ForgeResponse handleLoggedInAdmin(Request request, Response response, Connection dbc, AdminUser user) throws SQLException {
-            if (user.isSuperAdmin()) {
-                String userIdRaw = request.queryParams("user");
-                String disableRaw = request.queryParams("disable");
+            String userIdRaw = request.queryParams("user");
+            String disableRaw = request.queryParams("disable");
 
-                if (Params.areAllPresent(userIdRaw, disableRaw)) {
-                    try {
-                        boolean disable = disableRaw.equals("1");
+            if (Params.areAllPresent(userIdRaw, disableRaw)) {
+                try {
+                    boolean disable = disableRaw.equals("1");
 
-                        long userId = Long.parseLong(userIdRaw);
-                        if (userId == user.getId()) {
-                            return new ForgeResponse(ERROR_CANNOT_DISABLE_YOURSELF, "ERROR_CANNOT_DISABLE_YOURSELF");
-                        }
-
-                        if (AdminUser.disable(dbc, userId, disable)) {
-                            return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
-                                    "{disabled: " + (disable ? "true" : "false") + "}");
-                        } else {
-                            return new ForgeResponse(ERROR_USER_NOT_FOUND, "ERROR_USER_NOT_FOUND");
-                        }
-                    } catch (NumberFormatException e) {
-                        return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE.getCode(), "Invalid id");
+                    long userId = Long.parseLong(userIdRaw);
+                    if (userId == user.getId()) {
+                        return new ForgeResponse(ERROR_CANNOT_DISABLE_YOURSELF, "ERROR_CANNOT_DISABLE_YOURSELF");
                     }
-                } else {
-                    return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
+
+                    if (User.disable(dbc, userId, disable)) {
+                        return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
+                                "{disabled: " + (disable ? "true" : "false") + "}");
+                    } else {
+                        return new ForgeResponse(ERROR_USER_NOT_FOUND, "ERROR_USER_NOT_FOUND");
+                    }
+                } catch (NumberFormatException e) {
+                    return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE.getCode(), "Invalid id");
                 }
             } else {
-                return new ForgeResponse(AdminResponseCodes.Errors.NO_ENOUGH_PRIVILEGES.getCode(), "Missing parameters");
+                return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
             }
         }
     }

@@ -252,4 +252,22 @@ public class User {
 
         return ret;
     }
+
+
+    public static boolean disable(Connection dbc, long userId, boolean disable) throws SQLException {
+        if (userId <= 0) {
+            throw new IllegalStateException("Invalid userId: " + userId);
+        }
+
+        String sql = "UPDATE users SET is_disabled = ? WHERE id = ?";
+        try (PreparedStatement st = dbc.prepareStatement(sql)) {
+            st.setInt(1, disable ? 1 : 0);
+            st.setLong(2, userId);
+            return st.executeUpdate() > 0;
+        } catch (SQLException e) {
+            sLogger.error("SQL error: ", e);
+            throw e;
+        }
+    }
+
 }

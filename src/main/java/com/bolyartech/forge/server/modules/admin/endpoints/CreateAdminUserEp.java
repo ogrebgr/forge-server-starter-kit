@@ -18,9 +18,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class CreateUserEp extends StringEndpoint {
-    public CreateUserEp(Handler<String> handler) {
-        super(HttpMethod.POST, "create_user", handler);
+public class CreateAdminUserEp extends StringEndpoint {
+    public CreateAdminUserEp(Handler<String> handler) {
+        super(HttpMethod.POST, "create_admin_user", handler);
     }
 
 

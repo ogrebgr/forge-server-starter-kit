@@ -10,6 +10,7 @@ import com.bolyartech.forge.server.misc.Params;
 import com.bolyartech.forge.server.modules.admin.AdminHandler;
 import com.bolyartech.forge.server.modules.admin.AdminResponseCodes;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
+import com.bolyartech.forge.server.modules.user.data.User;
 import spark.Request;
 import spark.Response;
 
@@ -34,28 +35,24 @@ public class ChangePasswordEp extends StringEndpoint {
                                                     Connection dbc,
                                                     AdminUser user) throws SQLException {
 
-            if (user.isSuperAdmin()) {
-                String userIdRaw = request.queryParams("user");
-                String newPassword = request.queryParams("new_password");
+            String userIdRaw = request.queryParams("user");
+            String newPassword = request.queryParams("new_password");
 
-                if (Params.areAllPresent(userIdRaw, newPassword)) {
-                    if (!AdminUser.isValidPasswordLength(newPassword)) {
-                        return new ForgeResponse(AdminResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
-                    }
-
-                    try {
-                        long userId = Long.parseLong(userIdRaw);
-                        AdminUser.changePassword(dbc, userId, newPassword);
-                    } catch (NumberFormatException e) {
-                        return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE.getCode(), "Invalid id");
-                    }
-
-                    return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(), "Password changed");
-                } else {
-                    return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
+            if (Params.areAllPresent(userIdRaw, newPassword)) {
+                if (!AdminUser.isValidPasswordLength(newPassword)) {
+                    return new ForgeResponse(AdminResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
                 }
+
+                try {
+                    long userId = Long.parseLong(userIdRaw);
+                    User.changePassword(dbc, userId, newPassword);
+                } catch (NumberFormatException e) {
+                    return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE.getCode(), "Invalid id");
+                }
+
+                return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(), "Password changed");
             } else {
-                return new ForgeResponse(AdminResponseCodes.Errors.NO_ENOUGH_PRIVILEGES.getCode(), "Missing parameters");
+                return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
             }
         }
     }

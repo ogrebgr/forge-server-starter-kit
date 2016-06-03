@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class User {
+    private static final int MIN_PASSWORD_LENGTH = 7;
+
     private static final org.slf4j.Logger sLogger = LoggerFactory.getLogger("User");
 
     private final long mId;
@@ -262,6 +264,38 @@ public class User {
         String sql = "UPDATE users SET is_disabled = ? WHERE id = ?";
         try (PreparedStatement st = dbc.prepareStatement(sql)) {
             st.setInt(1, disable ? 1 : 0);
+            st.setLong(2, userId);
+            return st.executeUpdate() > 0;
+        } catch (SQLException e) {
+            sLogger.error("SQL error: ", e);
+            throw e;
+        }
+    }
+
+
+    public static boolean isValidPasswordLength(String password) {
+        if (password == null) {
+            throw new IllegalArgumentException("password is null");
+        }
+
+        return password.length() >= MIN_PASSWORD_LENGTH;
+    }
+
+
+    public static boolean changePassword(Connection dbc, long userId, String newPassword) throws SQLException {
+        if (newPassword == null) {
+            throw new IllegalArgumentException("password is null");
+        }
+
+        if (!isValidPasswordLength(newPassword)) {
+            throw new IllegalArgumentException("Password is too short");
+        }
+
+        String encryptedPassword = encryptPassword(newPassword);
+
+        String sql = "UPDATE users SET password = ? WHERE id = ?";
+        try (PreparedStatement st = dbc.prepareStatement(sql)) {
+            st.setString(1, encryptedPassword);
             st.setLong(2, userId);
             return st.executeUpdate() > 0;
         } catch (SQLException e) {

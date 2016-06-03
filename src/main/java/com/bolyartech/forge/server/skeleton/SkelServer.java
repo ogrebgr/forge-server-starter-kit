@@ -21,8 +21,6 @@ import static spark.Spark.stop;
 public class SkelServer extends ForgeServerImpl {
     private static final String mPathPrefix = "/";
 
-    public static final int DEFAULT_SESSION_TIMEOUT = 1440; // seconds
-
     private DbPool mDbPool;
 
     private final org.slf4j.Logger mLogger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -41,7 +39,7 @@ public class SkelServer extends ForgeServerImpl {
             mTemplateEngine = createVelocityTemplateEngine();
 
             RootRegister rootRegister = new RootRegisterImpl();
-            mStringEndpointRegister = new StringEndpointRegisterImpl(rootRegister, DEFAULT_SESSION_TIMEOUT);
+            mStringEndpointRegister = new StringEndpointRegisterImpl(rootRegister, getServerConfiguration().getSessionTimeout());
 
             initModules();
         } catch (Exception e) {

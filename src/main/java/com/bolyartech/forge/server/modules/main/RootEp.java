@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class RootEp extends StringEndpoint {
     public RootEp(RootHandler handler) {
-        super(HttpMethod.GET, "/", handler);
+        super(HttpMethod.GET, "", handler);
     }
 
 

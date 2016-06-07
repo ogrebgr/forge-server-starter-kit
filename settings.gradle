@@ -1,4 +1,4 @@
-rootProject.name = 'forge-server-skeleton'
+rootProject.name = 'swoon-server'
 
 include ':forge-server-spark'
 project(':forge-server-spark').projectDir=new File("$settingsDir/../forge-server-spark")

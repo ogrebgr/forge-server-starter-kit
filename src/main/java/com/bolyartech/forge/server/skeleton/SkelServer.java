@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import spark.template.velocity.VelocityTemplateEngine;
 
 import static spark.Spark.awaitInitialization;
+import static spark.Spark.staticFileLocation;
 import static spark.Spark.stop;
 
 
@@ -34,6 +35,7 @@ public class SkelServer extends ForgeServerImpl {
     public void init() {
         super.init();
 
+        staticFileLocation("/public_html");
         try {
             mDbPool = createDbPool();
             mTemplateEngine = createVelocityTemplateEngine();

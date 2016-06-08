@@ -1,4 +1,4 @@
-package com.bolyartech.forge.server.modules.swoon.data;
+package com.bolyartech.forge.server.modules.swoon.data.interaction;
 
 public interface Interaction {
     long getId();
@@ -10,4 +10,6 @@ public interface Interaction {
     boolean isPostponable();
 
     boolean isModal();
+
+
 }

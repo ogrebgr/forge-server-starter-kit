@@ -35,14 +35,15 @@ public class User {
 
         String sql = "SELECT username, password, is_disabled FROM users WHERE id = ?";
 
-        PreparedStatement psLoad = dbc.prepareStatement(sql);
-        psLoad.setLong(1, id);
-        ResultSet rs = psLoad.executeQuery();
-
-        if (rs.next()) {
-            return new User(id, rs.getString(1), rs.getString(2), rs.getInt(3) == 1);
-        } else {
-            return null;
+        try (PreparedStatement psLoad = dbc.prepareStatement(sql)) {
+            psLoad.setLong(1, id);
+            try (ResultSet rs = psLoad.executeQuery()) {
+                if (rs.next()) {
+                    return new User(id, rs.getString(1), rs.getString(2), rs.getInt(3) == 1);
+                } else {
+                    return null;
+                }
+            }
         }
     }
 

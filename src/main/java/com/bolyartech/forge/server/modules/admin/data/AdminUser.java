@@ -39,14 +39,15 @@ public class AdminUser {
 
         String sql = "SELECT username, password, is_disabled, is_super_admin, name FROM admin_users WHERE id = ?";
 
-        PreparedStatement psLoad = dbc.prepareStatement(sql);
-        psLoad.setLong(1, id);
-        ResultSet rs = psLoad.executeQuery();
-
-        if (rs.next()) {
-            return new AdminUser(id, rs.getString(1), rs.getString(2), rs.getInt(3) == 1, rs.getInt(4) == 1, rs.getString(5));
-        } else {
-            return null;
+        try (PreparedStatement psLoad = dbc.prepareStatement(sql)) {
+            psLoad.setLong(1, id);
+            try (ResultSet rs = psLoad.executeQuery()) {
+                if (rs.next()) {
+                    return new AdminUser(id, rs.getString(1), rs.getString(2), rs.getInt(3) == 1, rs.getInt(4) == 1, rs.getString(5));
+                } else {
+                    return null;
+                }
+            }
         }
     }
 
@@ -139,7 +140,7 @@ public class AdminUser {
         List<AdminUser> ret = new ArrayList<>();
         try (PreparedStatement st = dbc.prepareStatement(sql)) {
             ResultSet rs = st.executeQuery();
-            while(rs.next()) {
+            while (rs.next()) {
                 AdminUser tmp = AdminUser.loadById(dbc, rs.getLong(1));
                 if (tmp != null) {
                     ret.add(tmp);

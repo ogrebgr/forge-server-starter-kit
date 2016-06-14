@@ -76,7 +76,7 @@ public class AdminUser {
         }
 
 
-        boolean exist = false;
+        boolean exist;
         try (PreparedStatement st = dbc.prepareStatement("SELECT id FROM admin_users WHERE username = ?")) {
             st.setString(1, username);
 

@@ -16,8 +16,8 @@ import spark.Response;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class AdminUserListEp extends StringEndpoint {
@@ -44,11 +44,7 @@ public class AdminUserListEp extends StringEndpoint {
 
             List<AdminUser> users = AdminUser.list(dbc);
 
-            List<AdminUserJson> usersJson = new ArrayList<>();
-
-            for (AdminUser u : users) {
-                usersJson.add(new AdminUserJson(u));
-            }
+            List<AdminUserJson> usersJson = users.stream().map(AdminUserJson::new).collect(Collectors.toList());
 
             return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
                     mGson.toJson(usersJson));

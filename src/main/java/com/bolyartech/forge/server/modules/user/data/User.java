@@ -123,15 +123,12 @@ public class User {
         }
 
 
-        boolean exist = false;
+        boolean exist;
         try (PreparedStatement st = dbc.prepareStatement("SELECT id FROM users WHERE username = ?")) {
             st.setString(1, username);
 
             ResultSet res = st.executeQuery();
             exist = res.next();
-        } catch (Exception e) {
-            int i = 1;
-            i++;
         }
 
         return exist;
@@ -140,7 +137,7 @@ public class User {
 
     private static User createNew(Connection dbc, String username, String password, boolean isDisabled) throws SQLException {
         String sql = "INSERT INTO users (username, `password`, is_disabled) VALUES (?, ?, ?)";
-        try (PreparedStatement st = dbc.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
+        try (PreparedStatement st = dbc.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             st.setString(1, username);
             String encryptedPassword = encryptPassword(password);
             st.setString(2, encryptedPassword);

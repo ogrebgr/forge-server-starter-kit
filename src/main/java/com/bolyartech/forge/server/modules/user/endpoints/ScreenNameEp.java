@@ -58,8 +58,6 @@ public class ScreenNameEp extends StringEndpoint {
 
                 ScreenName.change(dbc, user.getId(), screenName);
                 return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(), "OK");
-            } catch (Exception e) {
-                throw e;
             } finally {
                 Statement unlockSt = dbc.createStatement();
                 unlockSt.execute("UNLOCK TABLES");

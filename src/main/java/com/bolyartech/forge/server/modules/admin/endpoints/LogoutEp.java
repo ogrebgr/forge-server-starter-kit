@@ -8,7 +8,6 @@ import com.bolyartech.forge.server.handlers.db.SecureDbHandler;
 import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.modules.admin.AdminHandler;
-import com.bolyartech.forge.server.modules.user.UserHandler;
 import spark.Request;
 import spark.Response;
 import spark.Session;

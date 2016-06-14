@@ -9,8 +9,6 @@ import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.modules.admin.AdminHandler;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
-import com.bolyartech.forge.server.modules.admin.data.AdminUserJson;
-import com.bolyartech.forge.server.modules.user.data.User;
 import com.bolyartech.forge.server.modules.user.data.UserJson;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
@@ -19,7 +17,6 @@ import spark.Response;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 

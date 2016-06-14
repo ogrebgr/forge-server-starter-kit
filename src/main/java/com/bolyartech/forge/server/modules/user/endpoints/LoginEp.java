@@ -8,7 +8,6 @@ import com.bolyartech.forge.server.handlers.db.SecureDbHandler;
 import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
-import com.bolyartech.forge.server.modules.admin.AdminHandler;
 import com.bolyartech.forge.server.modules.user.UserHandler;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
 import com.bolyartech.forge.server.modules.user.data.ScreenName;

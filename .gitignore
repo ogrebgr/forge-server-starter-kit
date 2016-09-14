@@ -11,3 +11,4 @@ logs
 /src/main/resources/logback.xml
 /src/main/resources/server.conf
 /src/main/resources/keystore
+conf/

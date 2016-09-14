@@ -26,7 +26,7 @@ public class FindUserEp extends StringEndpoint {
 
 
     public static class FindUserHandler extends AdminHandler {
-        private Gson mGson;
+        private final Gson mGson;
 
 
         public FindUserHandler(DbPool dbPool) {

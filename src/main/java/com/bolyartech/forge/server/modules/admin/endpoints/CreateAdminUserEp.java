@@ -53,6 +53,7 @@ public class CreateAdminUserEp extends StringEndpoint {
                     }
 
                     boolean superAdmin;
+                    //noinspection SimplifiableIfStatement
                     if (superAdminRaw != null) {
                         superAdmin = superAdminRaw.equals("1");
                     } else {

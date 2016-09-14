@@ -8,10 +8,10 @@ import java.sql.*;
 public class ScreenName {
     private static final String ANONYMOUS_USER_PREFIX = "user";
 
-    private long mId;
-    private long mUserId;
-    private String mScreenName;
-    private String mScreenNameLc;
+    private final long mId;
+    private final long mUserId;
+    private final String mScreenName;
+    private final String mScreenNameLc;
 
 
     public ScreenName(long id, long userId, String screenName) {
@@ -58,6 +58,7 @@ public class ScreenName {
     }
 
 
+    @SuppressWarnings("UnusedReturnValue")
     public static boolean change(Connection dbc, long userId, String screenName) throws SQLException {
         DbUtils.ensureOperationalDbc(dbc);
         DbUtils.ensureValidId(userId);
@@ -76,6 +77,7 @@ public class ScreenName {
     }
 
 
+    @SuppressWarnings("UnusedReturnValue")
     public static ScreenName createNew(Connection dbc, long userId, String screenName) throws SQLException {
         DbUtils.ensureOperationalDbc(dbc);
         DbUtils.ensureValidId(userId);
@@ -120,12 +122,13 @@ public class ScreenName {
     }
 
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isValid(String screenName) {
         if (screenName == null) {
             return false;
         }
 
-        return screenName.matches("^[\\p{L}]{1}[\\p{L}\\p{N} ?]{1,33}[\\p{L}\\p{N}]{1}$");
+        return screenName.matches("^[\\p{L}].[\\p{L}\\p{N} ?]{1,33}[\\p{L}\\p{N}].$");
     }
 
 

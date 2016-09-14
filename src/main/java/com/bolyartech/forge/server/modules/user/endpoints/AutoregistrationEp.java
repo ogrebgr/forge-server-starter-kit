@@ -25,7 +25,7 @@ public class AutoregistrationEp extends StringEndpoint {
 
 
     public static class UserAutoregistrationHandler extends SecureDbHandler {
-        private Gson mGson;
+        private final Gson mGson;
 
         public UserAutoregistrationHandler(DbPool dbPool) {
             super(dbPool);

@@ -18,7 +18,6 @@ import java.io.File;
 
 import static spark.Spark.awaitInitialization;
 import static spark.Spark.staticFileLocation;
-import static spark.Spark.stop;
 
 
 public class SkelServer extends ForgeServerImpl {
@@ -32,8 +31,8 @@ public class SkelServer extends ForgeServerImpl {
 
 
     @Override
-    public void init() {
-        super.init();
+    public void start() {
+        super.start();
 
         staticFileLocation("/public_html");
         try {
@@ -76,6 +75,6 @@ public class SkelServer extends ForgeServerImpl {
 
     public static void main(String[] args) {
         SkelServer serv = new SkelServer();
-        serv.init();
+        serv.start();
     }
 }

@@ -28,7 +28,7 @@ public class AdminUserListEp extends StringEndpoint {
 
 
     public static class UserListHandler extends AdminHandler {
-        private Gson mGson;
+        private final Gson mGson;
 
         public UserListHandler(DbPool dbPool) {
             super(dbPool);

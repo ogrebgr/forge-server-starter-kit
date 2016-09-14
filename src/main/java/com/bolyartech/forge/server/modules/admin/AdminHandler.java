@@ -20,6 +20,7 @@ abstract public class AdminHandler extends SecureDbHandler {
     }
 
 
+    @SuppressWarnings("UnusedParameters")
     abstract protected ForgeResponse handleLoggedInAdmin(Request request, Response response, Connection dbc, AdminUser user) throws SQLException;
 
 

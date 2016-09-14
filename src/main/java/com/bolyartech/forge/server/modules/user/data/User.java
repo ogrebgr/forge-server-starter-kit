@@ -214,8 +214,9 @@ public class User {
     }
 
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isValidUsername(String username) {
-        return username.matches("^[a-zA-Z]{1}[a-zA-Z0-9 _.?]{1,48}[a-zA-Z0-9]{1}$");
+        return username.matches("^[a-zA-Z].[a-zA-Z0-9 _.?]{1,49}$");
     }
 
 
@@ -280,6 +281,7 @@ public class User {
     }
 
 
+    @SuppressWarnings("UnusedReturnValue")
     public static boolean changePassword(Connection dbc, long userId, String newPassword) throws SQLException {
         if (newPassword == null) {
             throw new IllegalArgumentException("password is null");

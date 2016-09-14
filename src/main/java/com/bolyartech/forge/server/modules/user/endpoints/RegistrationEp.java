@@ -31,7 +31,7 @@ public class RegistrationEp extends StringEndpoint {
 
 
     public static class RegistrationHandler extends SecureDbHandler {
-        private Gson mGson;
+        private final Gson mGson;
 
         public RegistrationHandler(DbPool dbPool) {
             super(dbPool);

@@ -19,6 +19,7 @@ abstract public class UserHandler extends SecureDbHandler {
     }
 
 
+    @SuppressWarnings("UnusedParameters")
     abstract protected ForgeResponse handleLoggedIn(Request request, Response response, Connection dbc, User user) throws SQLException;
 
 

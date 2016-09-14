@@ -30,7 +30,7 @@ public class LoginEp extends StringEndpoint {
 
 
     public static class LoginHandler extends SecureDbHandler {
-        private Gson mGson;
+        private final Gson mGson;
 
 
         public LoginHandler(DbPool dbPool) {

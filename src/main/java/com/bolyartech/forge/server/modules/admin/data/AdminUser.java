@@ -92,6 +92,7 @@ public class AdminUser {
     }
 
 
+    @SuppressWarnings("UnusedReturnValue")
     public static AdminUser createNew(Connection dbc, String username, String password, boolean isDisabled, boolean isSuperAdmin, String name) throws SQLException {
         String sql = "INSERT INTO admin_users (username, `password`, is_disabled, is_super_admin, name) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement st = dbc.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -169,6 +170,7 @@ public class AdminUser {
     }
 
 
+    @SuppressWarnings("UnusedReturnValue")
     public static boolean changePassword(Connection dbc, long userId, String newPassword) throws SQLException {
         if (newPassword == null) {
             throw new IllegalArgumentException("password is null");
@@ -227,6 +229,7 @@ public class AdminUser {
     }
 
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isValidPasswordLength(String password) {
         if (password == null) {
             throw new IllegalArgumentException("password is null");
@@ -237,10 +240,11 @@ public class AdminUser {
 
 
     public static boolean isValidName(String name) {
+        //noinspection SimplifiableIfStatement
         if (name == null) {
             return false;
         }
 
-        return name.matches("^[\\p{L}]{1}[\\p{L}\\p{N} ?]{1,33}[\\p{L}\\p{N}]{1}$");
+        return name.matches("^[a-zA-Z][a-zA-Z0-9 _.?]{1,49}[a-zA-Z0-9]$");
     }
 }

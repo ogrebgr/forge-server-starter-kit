@@ -14,14 +14,14 @@ import com.bolyartech.forge.server.register.StringEndpointRegisterImpl;
 import org.slf4j.LoggerFactory;
 import spark.template.velocity.VelocityTemplateEngine;
 
+import java.io.File;
+
 import static spark.Spark.awaitInitialization;
 import static spark.Spark.staticFileLocation;
 import static spark.Spark.stop;
 
 
 public class SkelServer extends ForgeServerImpl {
-    private static final String mPathPrefix = "/";
-
     private DbPool mDbPool;
 
     private final org.slf4j.Logger mLogger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -53,9 +53,9 @@ public class SkelServer extends ForgeServerImpl {
 
 
     private void initModules() {
-        registerModule(new MainModule(mTemplateEngine, mPathPrefix, mStringEndpointRegister));
-        registerModule(new UserModule(mDbPool, mPathPrefix, mStringEndpointRegister));
-        registerModule(new AdminModule(mDbPool, mPathPrefix, mStringEndpointRegister));
+        registerModule(new MainModule(mTemplateEngine, File.separator, mStringEndpointRegister));
+        registerModule(new UserModule(mDbPool, File.separator, mStringEndpointRegister));
+        registerModule(new AdminModule(mDbPool, File.separator, mStringEndpointRegister));
     }
 
 

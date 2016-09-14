@@ -59,7 +59,7 @@ public class SkelServer extends ForgeServerImpl {
 
 
     public DbPool createDbPool() {
-        DbConfiguration conf = ServerTools.loadDbConf("db.conf");
+        DbConfiguration conf = ServerTools.loadDbConf(getConfigDirectory(), "db.conf");
         if (conf != null) {
             return ServerTools.createComboPooledDataSource(conf);
         } else {

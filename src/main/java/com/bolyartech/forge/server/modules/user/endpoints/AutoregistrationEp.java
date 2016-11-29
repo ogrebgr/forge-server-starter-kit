@@ -7,6 +7,7 @@ import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.handlers.db.SecureDbHandler;
 import com.bolyartech.forge.server.misc.BasicResponseCodes;
 import com.bolyartech.forge.server.misc.ForgeResponse;
+import com.bolyartech.forge.server.modules.user.UserHandler;
 import com.bolyartech.forge.server.modules.user.data.RokResponseAutoregistration;
 import com.bolyartech.forge.server.modules.user.data.User;
 import com.bolyartech.forge.server.modules.user.data.SessionInfo;
@@ -35,11 +36,14 @@ public class AutoregistrationEp extends StringEndpoint {
 
         @Override
         public ForgeResponse handleWithDb(Request request, Response response, Connection dbc) throws SQLException {
-            Session sess = request.session();
+
 
             User.AnonymousUserHelper auser = User.generateAnonymousUser(dbc);
 
             SessionInfo si = new SessionInfo(auser.mUser.getId(), null);
+
+            Session sess = request.session();
+            sess.attribute(UserHandler.SESSION_VAR_NAME, auser.mUser);
 
             return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
                     mGson.toJson(new RokResponseAutoregistration(auser.mUser.getUsername(),

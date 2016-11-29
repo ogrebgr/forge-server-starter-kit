@@ -56,7 +56,8 @@ public class ScreenNameEp extends StringEndpoint {
                     return new ForgeResponse(UserResponseCodes.Errors.SCREEN_NAME_EXISTS.getCode(), "Screen name exist");
                 }
 
-                ScreenName.change(dbc, user.getId(), screenName);
+
+                ScreenName.setForUser(dbc, user.getId(), screenName);
                 return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(), "OK");
             } finally {
                 Statement unlockSt = dbc.createStatement();

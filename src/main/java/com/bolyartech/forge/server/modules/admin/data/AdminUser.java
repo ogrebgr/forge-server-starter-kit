@@ -245,6 +245,6 @@ public class AdminUser {
             return false;
         }
 
-        return name.matches("^[a-zA-Z][a-zA-Z0-9 _.?]{1,49}[a-zA-Z0-9]$");
+        return name.matches("^[\\p{L}][\\p{L}\\p{N} ]{1,48}[\\p{L}\\p{N}]$");
     }
 }

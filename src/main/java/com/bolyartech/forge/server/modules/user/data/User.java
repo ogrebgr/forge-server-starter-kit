@@ -103,7 +103,7 @@ public class User {
             st.setLong(3, getId());
             st.execute();
 
-            ScreenName.createNew(dbc, getId(), screenName);
+            ScreenName.setForUser(dbc, getId(), screenName);
         } catch (Exception e) {
             sLogger.error("DB error {}", e);
             dbc.rollback();
@@ -159,7 +159,7 @@ public class User {
         try {
             dbc.setAutoCommit(false);
             User user = createNew(dbc, username, password, isDisabled);
-            ScreenName.createNew(dbc, user.getId(), screenName);
+            ScreenName.setForUser(dbc, user.getId(), screenName);
             return user;
         } catch (Exception e) {
             sLogger.error("DB error {}", e);
@@ -216,7 +216,7 @@ public class User {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isValidUsername(String username) {
-        return username.matches("^[a-zA-Z].[a-zA-Z0-9 _.?]{1,49}$");
+        return username.matches("^[\\p{L}][\\p{L}\\p{N} _]{1,48}[\\p{L}\\p{N}]$");
     }
 
 

@@ -58,8 +58,33 @@ public class ScreenName {
     }
 
 
+    public static boolean existsForUser(Connection dbc, long userId) throws SQLException {
+        ScreenName sn = loadByUser(dbc, userId);
+        return sn != null;
+    }
+
+
+    /**
+     *
+     * @param dbc
+     * @param userId
+     * @param screenName
+     * @return true if newly created
+     * @throws SQLException
+     */
+    public static boolean setForUser(Connection dbc, long userId, String screenName) throws SQLException {
+        if (existsForUser(dbc, userId)) {
+            change(dbc, userId, screenName);
+            return false;
+        } else {
+            createNew(dbc, userId, screenName);
+            return true;
+        }
+    }
+
+
     @SuppressWarnings("UnusedReturnValue")
-    public static boolean change(Connection dbc, long userId, String screenName) throws SQLException {
+    private static boolean change(Connection dbc, long userId, String screenName) throws SQLException {
         DbUtils.ensureOperationalDbc(dbc);
         DbUtils.ensureValidId(userId);
 
@@ -78,7 +103,7 @@ public class ScreenName {
 
 
     @SuppressWarnings("UnusedReturnValue")
-    public static ScreenName createNew(Connection dbc, long userId, String screenName) throws SQLException {
+    private static ScreenName createNew(Connection dbc, long userId, String screenName) throws SQLException {
         DbUtils.ensureOperationalDbc(dbc);
         DbUtils.ensureValidId(userId);
 
@@ -128,7 +153,7 @@ public class ScreenName {
             return false;
         }
 
-        return screenName.matches("^[\\p{L}].[\\p{L}\\p{N} ?]{1,33}[\\p{L}\\p{N}].$");
+        return screenName.matches("^[\\p{L}][\\p{L}\\p{N} ]{1,33}[\\p{L}\\p{N}]$");
     }
 
 

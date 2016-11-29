@@ -49,18 +49,16 @@ public class LoginEp extends StringEndpoint {
                 if (user != null) {
                     ScreenName sn = ScreenName.loadByUser(dbc, user.getId());
 
-                    String screenName;
+                    SessionInfo si;
                     if (sn != null) {
-                        screenName = sn.getScreenName();
+                        si = new SessionInfo(user.getId(), sn.getScreenName(), null);
                     } else {
-                        screenName = ScreenName.createDefault(user.getId());
+                        si = new SessionInfo(user.getId(), null, ScreenName.createDefault(user.getId()));
                     }
 
-                    SessionInfo si = new SessionInfo(user.getId(), screenName);
 
                     Session sess = request.session();
                     sess.attribute(UserHandler.SESSION_VAR_NAME, user);
-
 
                     return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
                             mGson.toJson(new RokLogin(request.session().maxInactiveInterval(), si)));

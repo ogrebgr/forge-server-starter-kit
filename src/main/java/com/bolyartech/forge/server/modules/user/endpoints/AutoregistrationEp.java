@@ -39,7 +39,7 @@ public class AutoregistrationEp extends StringEndpoint {
 
             User.AnonymousUserHelper auser = User.generateAnonymousUser(dbc);
 
-            SessionInfo si = new SessionInfo(auser.mUser.getId(), null, "user" + auser.mUser.getId());
+            SessionInfo si = new SessionInfo(auser.mUser.getId(), null);
 
             return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
                     mGson.toJson(new RokResponseAutoregistration(auser.mUser.getUsername(),

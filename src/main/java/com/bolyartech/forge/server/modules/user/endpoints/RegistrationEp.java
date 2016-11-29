@@ -73,7 +73,7 @@ public class RegistrationEp extends StringEndpoint {
 
                     User user = User.createNew(dbc, username, password, false, screenName);
 
-                    SessionInfo si = new SessionInfo(user.getId(), screenName, null);
+                    SessionInfo si = new SessionInfo(user.getId(), screenName);
 
                     Session sess = request.session();
                     sess.attribute(UserHandler.SESSION_VAR_NAME, user);

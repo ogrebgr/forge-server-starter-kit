@@ -51,9 +51,9 @@ public class LoginEp extends StringEndpoint {
 
                     SessionInfo si;
                     if (sn != null) {
-                        si = new SessionInfo(user.getId(), sn.getScreenName(), null);
+                        si = new SessionInfo(user.getId(), sn.getScreenName());
                     } else {
-                        si = new SessionInfo(user.getId(), null, ScreenName.createDefault(user.getId()));
+                        si = new SessionInfo(user.getId(), null);
                     }
 
 

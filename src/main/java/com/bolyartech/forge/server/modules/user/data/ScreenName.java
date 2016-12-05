@@ -44,7 +44,7 @@ public class ScreenName {
         DbUtils.ensureOperationalDbc(dbc);
         DbUtils.ensureValidId(userId);
 
-        String sql = "SELECT id, screen_name FROM user_screen_names WHERE id = ?";
+        String sql = "SELECT id, screen_name FROM user_screen_names WHERE user = ?";
 
         PreparedStatement psLoad = dbc.prepareStatement(sql);
         psLoad.setLong(1, userId);

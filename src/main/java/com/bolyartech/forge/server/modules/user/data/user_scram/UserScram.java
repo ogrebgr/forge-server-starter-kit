@@ -23,4 +23,5 @@ public class UserScram {
     public Scram getScram() {
         return mScram;
     }
+
 }

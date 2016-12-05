@@ -64,65 +64,83 @@ public class ScramDbhImpl implements ScramDbh {
 
 
     @Override
-    public Scram createNew(Connection dbc, long user, String username, String salt, String serverKey, String storedKey,
-                           int iterations) throws SQLException {
-
-        Scram ret = new Scram(user, username, salt, serverKey, storedKey, iterations);
-
-        String sql = "INSERT INTO user_scram (user, username, salt, server_key, stored_key, iterations) " +
-                "VALUES (?,?,?,?,?,?)";
-
-        try (PreparedStatement psInsert = dbc.prepareStatement(sql)) {
-            psInsert.setLong(1, user);
-            psInsert.setString(2, username);
-            psInsert.setString(3, salt);
-            psInsert.setString(4, serverKey);
-            psInsert.setString(5, storedKey);
-            psInsert.setInt(6, iterations);
-            psInsert.executeUpdate();
+    public boolean usernameExists(Connection dbc, String username) throws SQLException {
+        if (Strings.isNullOrEmpty(username)) {
+            throw new IllegalStateException("username empty");
         }
 
-        return ret;
+        String sql = "SELECT user FROM user_scram WHERE username_lc = ?";
+        try (PreparedStatement psLoad = dbc.prepareStatement(sql)) {
+            psLoad.setString(1, username.toLowerCase());
+
+            try (ResultSet rs = psLoad.executeQuery()) {
+                return rs.next();
+            }
+        }
     }
 
 
     @Override
-    public Scram change(Connection dbc, Scram old, String salt, String serverKey, String storedKey,
-                        int iterations) throws SQLException {
+    public Scram createNew(Connection dbc, long user, String username, String salt, String serverKey, String storedKey,
+                           int iterations) throws SQLException {
 
-        Scram ret = new Scram(old.getUser(), old.getUsername(), salt, serverKey,
+        try {
+            String sqlLock = "LOCK TABLES user_scram WRITE";
+            Statement stLock = dbc.createStatement();
+            stLock.execute(sqlLock);
+
+            if (!usernameExists(dbc, username)) {
+                Scram ret = new Scram(user, username, salt, serverKey, storedKey, iterations);
+
+                String sql = "INSERT INTO user_scram " +
+                        "(user, username, salt, server_key, stored_key, iterations, username_lc) " +
+                        "VALUES (?,?,?,?,?,?,?)";
+
+                try (PreparedStatement psInsert = dbc.prepareStatement(sql)) {
+                    psInsert.setLong(1, user);
+                    psInsert.setString(2, username);
+                    psInsert.setString(3, salt);
+                    psInsert.setString(4, serverKey);
+                    psInsert.setString(5, storedKey);
+                    psInsert.setInt(6, iterations);
+                    psInsert.setString(7, username.toLowerCase());
+                    psInsert.executeUpdate();
+                }
+
+                return ret;
+            } else {
+                return null;
+            }
+        } finally {
+            String sqlLock = "UNLOCK TABLES";
+            Statement stLock = dbc.createStatement();
+            stLock.execute(sqlLock);
+        }
+    }
+
+
+    @Override
+    public Scram replace(Connection dbc, Scram old, String username, String salt, String serverKey, String storedKey, int iterations) throws SQLException {
+
+        Scram ret = new Scram(old.getUser(), username, salt, serverKey,
                 storedKey, iterations);
 
         String sql = "UPDATE user_scram SET " +
+                "username = ?, " +
                 "salt = ?," +
                 "server_key = ?," +
                 "stored_key = ?," +
                 "iterations = ? " +
                 "WHERE user = user";
         try (PreparedStatement psUpdate = dbc.prepareStatement(sql)) {
-            psUpdate.setString(1, salt);
-            psUpdate.setString(2, serverKey);
-            psUpdate.setString(3, storedKey);
-            psUpdate.setInt(4, iterations);
+            psUpdate.setString(1, username);
+            psUpdate.setString(2, salt);
+            psUpdate.setString(3, serverKey);
+            psUpdate.setString(4, storedKey);
+            psUpdate.setInt(5, iterations);
             psUpdate.executeUpdate();
         }
 
         return ret;
-    }
-
-
-    @Override
-    public boolean delete(Connection dbc, Scram scram) throws SQLException {
-        if (scram == null) {
-            throw new NullPointerException("scram is null");
-        }
-
-        String sql = "DELETE FROM user_scram WHERE user = ?";
-        try (PreparedStatement psUpdate = dbc.prepareStatement(sql)) {
-            psUpdate.setLong(1, scram.getUser());
-            int deleted = psUpdate.executeUpdate();
-            return deleted > 0;
-        }
-
     }
 }

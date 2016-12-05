@@ -13,8 +13,17 @@ public class DbTools {
         }
     }
 
+
     public static void deleteAllScrams(Connection dbc) throws SQLException {
         String sql = "DELETE FROM user_scram";
+        try (PreparedStatement psDelete = dbc.prepareStatement(sql)) {
+            psDelete.executeUpdate();
+        }
+    }
+
+
+    public static void deleteAllScreenNames(Connection dbc) throws SQLException {
+        String sql = "DELETE FROM user_screen_names";
         try (PreparedStatement psDelete = dbc.prepareStatement(sql)) {
             psDelete.executeUpdate();
         }

@@ -36,6 +36,10 @@ public final class Scram {
             throw new IllegalArgumentException("iterations <= 0");
         }
 
+        if (!isValidUsername(username)) {
+            throw new IllegalArgumentException("Invalid username");
+        }
+
         mUser = user;
         mUsername = username;
         mSalt = salt;
@@ -93,4 +97,10 @@ public final class Scram {
     public int hashCode() {
         return Objects.hash(mUser, mUsername, mSalt, mServerKey, mStoredKey, mIterations);
     }
+
+
+    public static boolean isValidUsername(String username) {
+        return username.matches("^[\\p{L}][\\p{L}\\p{N} _]{1,48}[\\p{L}\\p{N}]$");
+    }
+
 }

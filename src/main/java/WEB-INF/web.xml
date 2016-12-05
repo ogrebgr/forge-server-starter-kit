@@ -10,7 +10,7 @@
         <filter-class>spark.servlet.SparkFilter</filter-class>
         <init-param>
             <param-name>applicationClass</param-name>
-            <param-value>com.bolyartech.forge.server.skeleton.SkelServer</param-value>
+            <param-value>com.bolyartech.forge.server.SkelServer</param-value>
         </init-param>
     </filter>
 

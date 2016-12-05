@@ -4,6 +4,7 @@ package com.bolyartech.forge.server.modules.user.data.user;
 import com.bolyartech.forge.server.config.DbConfiguration;
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.misc.ServerTools;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ import java.sql.SQLException;
 import static org.junit.Assert.assertTrue;
 
 
-public class UserTest {
+public class UserTestDbhImpl {
     private DbPool mDbPool;
 
     @Before
@@ -28,6 +29,16 @@ public class UserTest {
             mDbPool = ServerTools.createComboPooledDataSource(dbConf);
         }
 
+        Connection dbc = mDbPool.getConnection();
+        DbTools.deleteAllScrams(dbc);
+        DbTools.deleteAllScreenNames(dbc);
+        DbTools.deleteAllUsers(dbc);
+        dbc.close();
+    }
+
+
+    @After
+    public void after() throws SQLException {
         Connection dbc = mDbPool.getConnection();
         DbTools.deleteAllUsers(dbc);
         dbc.close();
@@ -87,16 +98,15 @@ public class UserTest {
         assertTrue("not changed", changed.getLoginType() == UserLoginType.FACEBOOK);
     }
 
+
     @Test
-    public void testDelete() throws SQLException {
+    public void testExists() throws SQLException {
         UserDbh userDbh = new UserDbhImpl();
 
         Connection dbc = mDbPool.getConnection();
+        assertTrue("User found when should not", !userDbh.exists(dbc, 1));
         User userNew = userDbh.createNew(dbc, true, UserLoginType.GOOGLE);
-        userDbh.delete(dbc, userNew);
-        User nonExisting = userDbh.loadById(dbc, userNew.getId());
+        assertTrue("User not found when should be", userDbh.exists(dbc, userNew.getId()));
         dbc.close();
-
-        assertTrue("Exists when it should not", nonExisting == null);
     }
 }

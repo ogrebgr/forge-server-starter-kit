@@ -1,7 +1,9 @@
-package com.bolyartech.forge.server.skeleton;
+package com.bolyartech.forge.server;
 
-import com.bolyartech.forge.server.ForgeServerImpl;
 import com.bolyartech.forge.server.config.DbConfiguration;
+import com.bolyartech.forge.server.dagger.DaggerSkelServerComponent;
+import com.bolyartech.forge.server.dagger.MainDaggerModule;
+import com.bolyartech.forge.server.dagger.SkelServerComponent;
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.misc.ServerTools;
 import com.bolyartech.forge.server.modules.admin.AdminModule;
@@ -14,6 +16,7 @@ import com.bolyartech.forge.server.register.StringEndpointRegisterImpl;
 import org.slf4j.LoggerFactory;
 import spark.template.velocity.VelocityTemplateEngine;
 
+import javax.inject.Inject;
 import java.io.File;
 
 import static spark.Spark.awaitInitialization;
@@ -25,22 +28,20 @@ public class SkelServer extends ForgeServerImpl {
 
     private final org.slf4j.Logger mLogger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-    private StringEndpointRegister mStringEndpointRegister;
-
-    private VelocityTemplateEngine mTemplateEngine;
-
+    @Inject
+    MainModule mMainModule;
 
     @Override
     public void start() {
         super.start();
 
+        SkelServerComponent injector = createInjector();
+        injector.inject(this);
+
+
         staticFileLocation("/public_html");
         try {
             mDbPool = createDbPool();
-            mTemplateEngine = createVelocityTemplateEngine();
-
-            RootRegister rootRegister = new RootRegisterImpl();
-            mStringEndpointRegister = new StringEndpointRegisterImpl(rootRegister, getServerConfiguration().getSessionTimeout());
 
             initModules();
         } catch (Exception e) {
@@ -52,9 +53,9 @@ public class SkelServer extends ForgeServerImpl {
 
 
     private void initModules() {
-        registerModule(new MainModule(mTemplateEngine, File.separator, mStringEndpointRegister));
-        registerModule(new UserModule(mDbPool, File.separator, mStringEndpointRegister));
-        registerModule(new AdminModule(mDbPool, File.separator, mStringEndpointRegister));
+        registerModule(mMainModule);
+//        registerModule(new UserModule(mDbPool, File.separator, mStringEndpointRegister));
+//        registerModule(new AdminModule(mDbPool, File.separator, mStringEndpointRegister));
     }
 
 
@@ -68,13 +69,15 @@ public class SkelServer extends ForgeServerImpl {
     }
 
 
-    private VelocityTemplateEngine createVelocityTemplateEngine() {
-        return new VelocityTemplateEngine();
+    public static void main(String[] args) {
+
+        SkelServer serv = new SkelServer();
+        serv.start();
     }
 
 
-    public static void main(String[] args) {
-        SkelServer serv = new SkelServer();
-        serv.start();
+    private SkelServerComponent createInjector() {
+        return DaggerSkelServerComponent.builder().mainDaggerModule(new MainDaggerModule("/",
+                getServerConfiguration().getSessionTimeout())).build();
     }
 }

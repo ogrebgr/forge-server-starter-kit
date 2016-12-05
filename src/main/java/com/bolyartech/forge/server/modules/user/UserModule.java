@@ -2,8 +2,12 @@ package com.bolyartech.forge.server.modules.user;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.module.AbstractForgeModule;
+import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
 import com.bolyartech.forge.server.modules.user.endpoints.*;
 import com.bolyartech.forge.server.register.StringEndpointRegister;
+
 
 public class UserModule extends AbstractForgeModule {
     private static final String MODULE_SYSTEM_NAME = "user";
@@ -12,24 +16,26 @@ public class UserModule extends AbstractForgeModule {
 
     private final DbPool mDbPool;
     private final StringEndpointRegister mRegister;
-
-    public UserModule(DbPool dbPool,
-                      String sitePathPrefix,
-                      StringEndpointRegister stringEndpointRegister) {
-
-        this(dbPool, sitePathPrefix, stringEndpointRegister, "api/user/");
-    }
+    private final UserScramDbh mUserScramDbh;
+    private final UserDbh mUserDbh;
+    private final ScramDbh mScramDbh;
 
 
     public UserModule(DbPool dbPool,
                       String sitePathPrefix,
                       StringEndpointRegister stringEndpointRegister,
-                      String modulePathPrefix
-                      ) {
-        super(sitePathPrefix, modulePathPrefix);
+                      UserScramDbh userScramDbh,
+                      UserDbh userDbh,
+                      ScramDbh scramDbh) {
+
+        super(sitePathPrefix, "api/user/");
 
         mDbPool = dbPool;
         mRegister = stringEndpointRegister;
+
+        mUserScramDbh = userScramDbh;
+        mUserDbh = userDbh;
+        mScramDbh = scramDbh;
     }
 
 
@@ -38,21 +44,24 @@ public class UserModule extends AbstractForgeModule {
         String pathPrefix = getSitePathPrefix() + getModulePathPrefix();
 
         mRegister.register(pathPrefix,
-                new AutoregistrationEp(new AutoregistrationEp.UserAutoregistrationHandler(mDbPool)));
+                new AutoregistrationEp(new AutoregistrationEp.UserAutoregistrationHandler(mDbPool,
+                        mUserScramDbh,
+                        mUserDbh,
+                        mScramDbh)));
 
-        mRegister.register(pathPrefix,
-                new RegistrationEp(new RegistrationEp.RegistrationHandler(mDbPool)));
-
-        mRegister.register(pathPrefix, new LoginEp(new LoginEp.LoginHandler(mDbPool)));
-
-        mRegister.register(pathPrefix,
-                new RegistrationPostAutoEp(new RegistrationPostAutoEp.UserRegistrationPostAutoHandler(mDbPool)));
-
-        mRegister.register(pathPrefix,
-                new ScreenNameEp(new ScreenNameEp.ScreenNameHandler(mDbPool)));
-
-        mRegister.register(pathPrefix,
-                new LogoutEp(new LogoutEp.LogoutHandler(mDbPool)));
+//        mRegister.register(pathPrefix,
+//                new RegistrationEp(new RegistrationEp.RegistrationHandler(mDbPool)));
+//
+//        mRegister.register(pathPrefix, new LoginEp(new LoginEp.LoginHandler(mDbPool)));
+//
+//        mRegister.register(pathPrefix,
+//                new RegistrationPostAutoEp(new RegistrationPostAutoEp.UserRegistrationPostAutoHandler(mDbPool)));
+//
+//        mRegister.register(pathPrefix,
+//                new ScreenNameEp(new ScreenNameEp.ScreenNameHandler(mDbPool)));
+//
+//        mRegister.register(pathPrefix,
+//                new LogoutEp(new LogoutEp.LogoutHandler(mDbPool)));
     }
 
 

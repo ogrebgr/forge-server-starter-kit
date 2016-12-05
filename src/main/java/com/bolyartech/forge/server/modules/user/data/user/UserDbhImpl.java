@@ -83,23 +83,14 @@ public class UserDbhImpl implements UserDbh {
 
 
     @Override
-    public boolean delete(Connection dbc, User user) throws SQLException {
-        if (user.getId() == 0) {
-            throw new IllegalArgumentException("User is new, id = 0");
-        }
+    public boolean exists(Connection dbc, long id) throws SQLException {
+        String sql = "SELECT id FROM users WHERE id = ?";
 
-        String sql = "DELETE FROM users WHERE id = ?";
-        try (PreparedStatement psDelete = dbc.prepareStatement(sql)) {
-            psDelete.setLong(1, user.getId());
-            int deleted = psDelete.executeUpdate();
-            if (deleted == 1) {
-                return true;
-            } else {
-                if (deleted == 0) {
-                    return false;
-                } else {
-                    throw new SQLException("Unexpected number of deleted records = " + deleted);
-                }
+        try (PreparedStatement psLoad = dbc.prepareStatement(sql)) {
+            psLoad.setLong(1, id);
+
+            try (ResultSet rs = psLoad.executeQuery()) {
+                return rs.next();
             }
         }
     }

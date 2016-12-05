@@ -9,5 +9,5 @@ public interface UserDbh {
     User createNew(Connection dbc, boolean isDisabled, UserLoginType lt) throws SQLException;
     User changeDisabled(Connection dbc, User user, boolean disabled) throws SQLException;
     User changeLoginType(Connection dbc, User user, UserLoginType lt) throws SQLException;
-    boolean delete(Connection dbc, User user) throws SQLException;
+    boolean exists(Connection dbc, long id) throws SQLException;
 }

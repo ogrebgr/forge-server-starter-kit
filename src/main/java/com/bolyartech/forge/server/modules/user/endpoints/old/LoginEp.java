@@ -1,4 +1,4 @@
-package com.bolyartech.forge.server.modules.user.endpoints;
+package com.bolyartech.forge.server.modules.user.endpoints.old;
 
 import com.bolyartech.forge.server.Handler;
 import com.bolyartech.forge.server.HttpMethod;

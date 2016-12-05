@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import static org.junit.Assert.assertTrue;
 
 
-public class ScramUserTest {
+public class ScramUserDbhImplTest {
     private DbPool mDbPool;
 
     @Before

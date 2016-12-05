@@ -7,6 +7,7 @@ import com.bolyartech.forge.server.StringEndpoint;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
+import spark.TemplateEngine;
 import spark.template.velocity.VelocityTemplateEngine;
 
 import java.util.HashMap;
@@ -20,9 +21,9 @@ public class RootEp extends StringEndpoint {
 
 
     public static class RootHandler implements Handler<String> {
-        private final VelocityTemplateEngine mTple;
+        private final TemplateEngine mTple;
 
-        public RootHandler(VelocityTemplateEngine tple) {
+        public RootHandler(TemplateEngine tple) {
             mTple = tple;
         }
 

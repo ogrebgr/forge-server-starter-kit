@@ -2,7 +2,11 @@ package com.bolyartech.forge.server.modules.main;
 
 import com.bolyartech.forge.server.module.AbstractForgeModule;
 import com.bolyartech.forge.server.register.StringEndpointRegister;
+import spark.TemplateEngine;
 import spark.template.velocity.VelocityTemplateEngine;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 
 final public class MainModule extends AbstractForgeModule {
@@ -10,12 +14,13 @@ final public class MainModule extends AbstractForgeModule {
     private static final int MODULE_VERSION_CODE = 1;
     private static final String MODULE_VERSION_NAME = "1.0.0";
 
-    private final VelocityTemplateEngine mTple;
+    private final TemplateEngine mTple;
     private final StringEndpointRegister mRegister;
 
 
-    public MainModule(VelocityTemplateEngine tple,
-                      String sitePathPrefix,
+    @Inject
+    public MainModule(TemplateEngine tple,
+                      @Named("site path prefix") String sitePathPrefix,
                       StringEndpointRegister register) {
 
         super(sitePathPrefix, "");

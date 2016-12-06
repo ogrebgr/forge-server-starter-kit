@@ -62,14 +62,14 @@ public class AutoregistrationEp extends StringEndpoint {
             UserScram us;
 
             while(true) {
-                username = UUID.randomUUID().toString();
+                username = UUID.randomUUID().toString().replace("-", "");
 
                 try {
                     ScramUtils.NewPasswordStringData data = ScramUtils.byteArrayToStringData(
                             ScramUtils.newPassword(password, salt, 4096, "HmacSHA512", "SHA-512")
                     );
 
-                    us = mUserScramDbh.generateUser(dbc, mUserDbh, mScramDbh, username, data);
+                    us = mUserScramDbh.createNew(dbc, mUserDbh, mScramDbh, username, data);
                     if (us != null) {
                         break;
                     }

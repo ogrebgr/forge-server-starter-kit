@@ -9,18 +9,15 @@ import dagger.Provides;
 import spark.TemplateEngine;
 import spark.template.velocity.VelocityTemplateEngine;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 
 @Module
 public class MainDaggerModule {
-    private final String mSitePathPrefix;
     private final int mSessionTimeoutSeconds;
 
 
-    public MainDaggerModule(String sitePathPrefix, int sessionTimeoutSeconds) {
-        mSitePathPrefix = sitePathPrefix;
+    public MainDaggerModule(int sessionTimeoutSeconds) {
         mSessionTimeoutSeconds = sessionTimeoutSeconds;
     }
 
@@ -31,12 +28,6 @@ public class MainDaggerModule {
         return new VelocityTemplateEngine();
     }
 
-
-    @Provides
-    @Named("site path prefix")
-    String provideSitePathPrefix() {
-        return mSitePathPrefix;
-    }
 
 
     @Provides

@@ -9,6 +9,7 @@ import com.bolyartech.forge.server.modules.user.data.scram.ScramDbhImpl;
 import com.bolyartech.forge.server.modules.user.data.user_scram.UserScram;
 import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
 import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbhImpl;
+import com.bolyartech.scram_sasl.common.ScramUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,8 +35,8 @@ public class ScramUserDbhImplTest {
         }
 
         Connection dbc = mDbPool.getConnection();
-        DbTools.deleteAllUsers(dbc);
         DbTools.deleteAllScrams(dbc);
+        DbTools.deleteAllUsers(dbc);
         dbc.close();
     }
 

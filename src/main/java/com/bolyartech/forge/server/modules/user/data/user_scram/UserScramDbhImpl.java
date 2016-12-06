@@ -38,14 +38,11 @@ public class UserScramDbhImpl implements UserScramDbh {
                                int iterations) throws SQLException {
 
         try {
-            String sqlLock = "LOCK TABLES users, user_scram WRITE";
+            String sqlLock = "LOCK TABLES users WRITE, user_scram WRITE";
             Statement stLock = dbc.createStatement();
             stLock.execute(sqlLock);
 
-            User user = userDbh.createNew(dbc, false, UserLoginType.SCRAM);
-            Scram scram = scramDbh.createNew(dbc, user.getId(), username, salt, serverKey, storedKey, iterations);
-
-            if (scram != null) {
+            if (!scramDbh.usernameExists(dbc, username)) {
                 return createNewRaw(dbc, userDbh, scramDbh, username, salt, serverKey, storedKey, iterations);
             } else {
                 return null;
@@ -59,28 +56,17 @@ public class UserScramDbhImpl implements UserScramDbh {
 
 
     @Override
-    public UserScram generateUser(Connection dbc,
+    public UserScram createNew(Connection dbc,
                                   UserDbh userDbh,
                                   ScramDbh scramDbh,
                                   String username,
                                   ScramUtils.NewPasswordStringData data) throws SQLException {
 
-        try {
-            String sqlLock = "LOCK TABLES users, user_scram WRITE";
-            Statement stLock = dbc.createStatement();
-            stLock.execute(sqlLock);
-
-            if (!scramDbh.usernameExists(dbc, username)) {
-                return createNewRaw(dbc, userDbh, scramDbh, username, data.salt, data.serverKey, data.storedKey,
-                        data.iterations);
-            } else {
-                return null;
-            }
-        } finally {
-            String sqlLock = "UNLOCK TABLES";
-            Statement stLock = dbc.createStatement();
-            stLock.execute(sqlLock);
-        }
+        return createNew(dbc, userDbh, scramDbh, username,
+                data.salt,
+                data.serverKey,
+                data.storedKey,
+                data.iterations);
     }
 
 

@@ -8,6 +8,8 @@ import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
 import com.bolyartech.forge.server.modules.user.endpoints.*;
 import com.bolyartech.forge.server.register.StringEndpointRegister;
 
+import javax.inject.Inject;
+
 
 public class UserModule extends AbstractForgeModule {
     private static final String MODULE_SYSTEM_NAME = "user";
@@ -21,14 +23,14 @@ public class UserModule extends AbstractForgeModule {
     private final ScramDbh mScramDbh;
 
 
+    @Inject
     public UserModule(DbPool dbPool,
-                      String sitePathPrefix,
                       StringEndpointRegister stringEndpointRegister,
                       UserScramDbh userScramDbh,
                       UserDbh userDbh,
                       ScramDbh scramDbh) {
 
-        super(sitePathPrefix, "api/user/");
+        super("/api/user/");
 
         mDbPool = dbPool;
         mRegister = stringEndpointRegister;
@@ -41,7 +43,7 @@ public class UserModule extends AbstractForgeModule {
 
     @Override
     public void registerEndpoints() {
-        String pathPrefix = getSitePathPrefix() + getModulePathPrefix();
+        String pathPrefix = getModulePathPrefix();
 
         mRegister.register(pathPrefix,
                 new AutoregistrationEp(new AutoregistrationEp.UserAutoregistrationHandler(mDbPool,

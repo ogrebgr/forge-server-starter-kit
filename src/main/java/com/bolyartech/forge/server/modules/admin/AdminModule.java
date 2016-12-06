@@ -15,19 +15,17 @@ public class AdminModule extends AbstractForgeModule {
     private final StringEndpointRegister mRegister;
 
     public AdminModule(DbPool dbPool,
-                       String sitePathPrefix,
                        StringEndpointRegister stringEndpointRegister) {
 
-        this(dbPool, sitePathPrefix, stringEndpointRegister, "api/admin/");
+        this(dbPool, stringEndpointRegister, "/api/admin/");
     }
 
 
     public AdminModule(DbPool dbPool,
-                       String sitePathPrefix,
                        StringEndpointRegister stringEndpointRegister,
                        String modulePathPrefix) {
 
-        super(sitePathPrefix, modulePathPrefix);
+        super(modulePathPrefix);
 
 
         mDbPool = dbPool;
@@ -37,7 +35,7 @@ public class AdminModule extends AbstractForgeModule {
 
     @Override
     public void registerEndpoints() {
-        String pathPrefix = getSitePathPrefix() + getModulePathPrefix();
+        String pathPrefix = getModulePathPrefix();
 
         mRegister.register(pathPrefix, new LoginEp(new LoginEp.AdminLoginHandler(mDbPool)));
         mRegister.register(pathPrefix, new AdminUserListEp(new AdminUserListEp.UserListHandler(mDbPool)));

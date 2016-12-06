@@ -6,7 +6,7 @@ import dagger.Component;
 import javax.inject.Singleton;
 
 
-@Component(modules = {MainDaggerModule.class, UserDaggerModule.class})
+@Component(modules = {MainDaggerModule.class, DbDaggerModule.class, UserDaggerModule.class})
 @Singleton
 public interface SkelServerComponent {
     void inject(SkelServer srv);

@@ -20,21 +20,19 @@ final public class MainModule extends AbstractForgeModule {
 
     @Inject
     public MainModule(TemplateEngine tple,
-                      @Named("site path prefix") String sitePathPrefix,
                       StringEndpointRegister register) {
 
-        super(sitePathPrefix, "");
+        super("/");
         mTple = tple;
         mRegister = register;
     }
 
 
     public MainModule(VelocityTemplateEngine tple,
-                      String sitePathPrefix,
                       StringEndpointRegister register,
                       String modulePathPrefix) {
 
-        super(sitePathPrefix, modulePathPrefix);
+        super(modulePathPrefix);
         mTple = tple;
         mRegister = register;
     }
@@ -42,7 +40,7 @@ final public class MainModule extends AbstractForgeModule {
 
     @Override
     public void registerEndpoints() {
-        String pathPrefix = getSitePathPrefix() + getModulePathPrefix();
+        String pathPrefix = getModulePathPrefix();
 
         mRegister.register(pathPrefix, new RootEp(new RootEp.RootHandler(mTple)));
     }

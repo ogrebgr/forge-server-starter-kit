@@ -18,7 +18,7 @@ public interface UserScramDbh {
                         String storedKey,
                         int iterations) throws SQLException;
 
-    UserScram generateUser(Connection dbc,
+    UserScram createNew(Connection dbc,
                            UserDbh userDbh,
                            ScramDbh scramDbh,
                            String username,

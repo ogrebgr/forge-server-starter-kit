@@ -1,48 +1,44 @@
 package com.bolyartech.forge.server.modules.main;
 
-import com.bolyartech.forge.server.module.AbstractForgeModule;
-import com.bolyartech.forge.server.register.StringEndpointRegister;
-import spark.TemplateEngine;
-import spark.template.velocity.VelocityTemplateEngine;
+import com.bolyartech.forge.server.HttpMethod;
+import com.bolyartech.forge.server.handler.StaticFileHandler;
+import com.bolyartech.forge.server.misc.MimeTypeResolver;
+import com.bolyartech.forge.server.misc.MimeTypeResolverImpl;
+import com.bolyartech.forge.server.misc.TemplateEngineFactory;
+import com.bolyartech.forge.server.module.HttpModule;
+import com.bolyartech.forge.server.route.Route;
+import com.bolyartech.forge.server.route.RouteImpl;
+import com.bolyartech.forge.server.tple.velocity.VelocityTemplateEngineFactory;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.List;
 
 
-final public class MainModule extends AbstractForgeModule {
+public final class MainModule implements HttpModule {
     private static final String MODULE_SYSTEM_NAME = "main";
     private static final int MODULE_VERSION_CODE = 1;
     private static final String MODULE_VERSION_NAME = "1.0.0";
 
-    private final TemplateEngine mTple;
-    private final StringEndpointRegister mRegister;
+    private final TemplateEngineFactory mTpleFactory;
 
 
-    @Inject
-    public MainModule(TemplateEngine tple,
-                      StringEndpointRegister register) {
-
-        super("/");
-        mTple = tple;
-        mRegister = register;
+    public MainModule() {
+        mTpleFactory = new VelocityTemplateEngineFactory("templates/modules/main/");
     }
 
 
-    public MainModule(VelocityTemplateEngine tple,
-                      StringEndpointRegister register,
-                      String modulePathPrefix) {
+    public List<Route> createRoutes() {
+        List<Route> ret = new ArrayList<>();
 
-        super(modulePathPrefix);
-        mTple = tple;
-        mRegister = register;
-    }
+        NotFoundResponse notFoundResponse = new NotFoundResponse();
+        MimeTypeResolver mimeTypeResolver = new MimeTypeResolverImpl();
 
+        ret.add(new RouteImpl(HttpMethod.GET, "/presni", new RootWp(mTpleFactory, true)));
+        ret.add(new RouteImpl(HttpMethod.POST, "/presni", new RootWp(mTpleFactory, true)));
+        ret.add(new RouteImpl(HttpMethod.GET, "/css", new StaticFileHandler("/static", notFoundResponse, mimeTypeResolver, true)));
+        ret.add(new RouteImpl(HttpMethod.GET, "/upload", new FileUploadHandler(true)));
 
-    @Override
-    public void registerEndpoints() {
-        String pathPrefix = getModulePathPrefix();
-
-        mRegister.register(pathPrefix, new RootEp(new RootEp.RootHandler(mTple)));
+        return ret;
     }
 
 

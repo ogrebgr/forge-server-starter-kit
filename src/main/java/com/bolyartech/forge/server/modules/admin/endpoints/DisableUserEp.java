@@ -1,62 +1,60 @@
 package com.bolyartech.forge.server.modules.admin.endpoints;
 
-import com.bolyartech.forge.server.Handler;
-import com.bolyartech.forge.server.HttpMethod;
-import com.bolyartech.forge.server.StringEndpoint;
 import com.bolyartech.forge.server.db.DbPool;
-import com.bolyartech.forge.server.misc.BasicResponseCodes;
-import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
-import com.bolyartech.forge.server.modules.admin.AdminHandler;
+import com.bolyartech.forge.server.modules.admin.AdminDbEndpoint;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
-import com.bolyartech.forge.server.modules.user.data.User;
-import spark.Request;
-import spark.Response;
+import com.bolyartech.forge.server.modules.user.data.UserDbh;
+import com.bolyartech.forge.server.response.ResponseException;
+import com.bolyartech.forge.server.response.forge.BasicResponseCodes;
+import com.bolyartech.forge.server.response.forge.ForgeResponse;
+import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
+import com.bolyartech.forge.server.route.RequestContext;
+import com.bolyartech.forge.server.session.Session;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class DisableUserEp extends StringEndpoint {
-    private static final int ERROR_USER_NOT_FOUND = -100;
-    private static final int ERROR_CANNOT_DISABLE_YOURSELF = -101;
 
-    public DisableUserEp(Handler<String> handler) {
-        super(HttpMethod.POST, "user_disable", handler);
+public class DisableUserEp extends AdminDbEndpoint {
+    static final int ERROR_USER_NOT_FOUND = -100;
+
+    static final String PARAM_USER = "user";
+    static final String PARAM_DISABLE = "disable";
+
+    private final UserDbh mUserDbh;
+
+
+    public DisableUserEp(DbPool dbPool, UserDbh userDbh) {
+        super(dbPool);
+        mUserDbh = userDbh;
     }
 
 
-    public static class DisableUserHandler extends AdminHandler {
-        public DisableUserHandler(DbPool dbPool) {
-            super(dbPool);
-        }
+    @Override
+    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc, AdminUser user)
+            throws ResponseException, SQLException {
 
+        String userIdRaw = ctx.getFromPost(PARAM_USER);
+        String disableRaw = ctx.getFromPost(PARAM_DISABLE);
 
-        @Override
-        protected ForgeResponse handleLoggedInAdmin(Request request, Response response, Connection dbc, AdminUser user) throws SQLException {
-            String userIdRaw = request.queryParams("user");
-            String disableRaw = request.queryParams("disable");
+        if (Params.areAllPresent(userIdRaw, disableRaw)) {
+            try {
+                boolean disable = disableRaw.equals("1");
 
-            if (Params.areAllPresent(userIdRaw, disableRaw)) {
-                try {
-                    boolean disable = disableRaw.equals("1");
+                long userId = Long.parseLong(userIdRaw);
 
-                    long userId = Long.parseLong(userIdRaw);
-                    if (userId == user.getId()) {
-                        return new ForgeResponse(ERROR_CANNOT_DISABLE_YOURSELF, "ERROR_CANNOT_DISABLE_YOURSELF");
-                    }
-
-                    if (User.disable(dbc, userId, disable)) {
-                        return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
-                                "{disabled: " + (disable ? "true" : "false") + "}");
-                    } else {
-                        return new ForgeResponse(ERROR_USER_NOT_FOUND, "ERROR_USER_NOT_FOUND");
-                    }
-                } catch (NumberFormatException e) {
-                    return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE.getCode(), "Invalid id");
+                if (mUserDbh.changeDisabled(dbc, userId, disable)) {
+                    return new ForgeResponse(BasicResponseCodes.Oks.OK,
+                            "{disabled: " + (disable ? "true" : "false") + "}");
+                } else {
+                    return new ForgeResponse(ERROR_USER_NOT_FOUND, "ERROR_USER_NOT_FOUND");
                 }
-            } else {
-                return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
+            } catch (NumberFormatException e) {
+                return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE, "Invalid id");
             }
+        } else {
+            return MissingParametersResponse.getInstance();
         }
     }
 }

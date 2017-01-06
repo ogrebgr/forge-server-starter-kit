@@ -1,6 +1,9 @@
-rootProject.name = 'forge-server-skeleton'
+rootProject.name = 'skeleton2'
 
-include ':forge-server'
-project(':forge-server').projectDir=new File("$settingsDir/../forge-server")
 
+include ':forge-server-http'
+project(':forge-server-http').projectDir=new File("$settingsDir/../forge-server-http")
+
+include ':forge-server-tple-velocity'
+project(':forge-server-tple-velocity').projectDir=new File("$settingsDir/../forge-server-tple-velocity")
 

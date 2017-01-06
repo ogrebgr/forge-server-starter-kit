@@ -1,55 +1,50 @@
 package com.bolyartech.forge.server.modules.admin.endpoints;
 
-import com.bolyartech.forge.server.Handler;
-import com.bolyartech.forge.server.HttpMethod;
-import com.bolyartech.forge.server.StringEndpoint;
 import com.bolyartech.forge.server.db.DbPool;
-import com.bolyartech.forge.server.misc.BasicResponseCodes;
-import com.bolyartech.forge.server.misc.ForgeResponse;
-import com.bolyartech.forge.server.modules.admin.AdminHandler;
+import com.bolyartech.forge.server.modules.admin.AdminDbEndpoint;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
-import com.bolyartech.forge.server.modules.user.data.User;
-import com.bolyartech.forge.server.modules.user.data.UserJson;
+import com.bolyartech.forge.server.modules.admin.data.UserExportedView;
+import com.bolyartech.forge.server.modules.admin.data.UserExportedViewDbh;
+import com.bolyartech.forge.server.response.ResponseException;
+import com.bolyartech.forge.server.response.forge.BasicResponseCodes;
+import com.bolyartech.forge.server.response.forge.ForgeResponse;
+import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
+import com.bolyartech.forge.server.route.RequestContext;
+import com.bolyartech.forge.server.session.Session;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
-import spark.Request;
-import spark.Response;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class FindUserEp extends StringEndpoint {
-    public FindUserEp(Handler<String> handler) {
-        super(HttpMethod.POST, "user_find", handler);
+
+public class FindUserEp extends AdminDbEndpoint {
+    static final String PARAM_PATTERN = "pattern";
+
+    private final Gson mGson;
+
+    private final UserExportedViewDbh mUserExportedViewDbh;
+
+
+    public FindUserEp(DbPool dbPool, UserExportedViewDbh userExportedViewDbh) {
+        super(dbPool);
+        mUserExportedViewDbh = userExportedViewDbh;
+        mGson = new Gson();
     }
 
 
-    public static class FindUserHandler extends AdminHandler {
-        private final Gson mGson;
+    @Override
+    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc, AdminUser user)
+            throws ResponseException, SQLException {
 
+        String pattern = ctx.getFromPost(PARAM_PATTERN);
 
-        public FindUserHandler(DbPool dbPool) {
-            super(dbPool);
-            mGson = new Gson();
-        }
-
-
-        @Override
-        protected ForgeResponse handleLoggedInAdmin(Request request,
-                                                    Response response,
-                                                    Connection dbc,
-                                                    AdminUser user) throws SQLException {
-
-            String pattern = request.queryParams("pattern");
-
-            if (!Strings.isNullOrEmpty(pattern)) {
-                List<UserJson> rez = User.findByPattern(dbc, pattern);
-                return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
-                        mGson.toJson(rez));
-            } else {
-                return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
-            }
+        if (!Strings.isNullOrEmpty(pattern)) {
+            List<UserExportedView> rez = mUserExportedViewDbh.findByPattern(dbc, pattern);
+            return new ForgeResponse(BasicResponseCodes.Oks.OK, mGson.toJson(rez));
+        } else {
+            return MissingParametersResponse.getInstance();
         }
     }
 }

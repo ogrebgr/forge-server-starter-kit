@@ -1,7 +1,5 @@
 package com.bolyartech.forge.server.modules.user.data.screen_name;
 
-import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
-
 import java.sql.*;
 
 
@@ -12,6 +10,11 @@ public class ScreenNameDbhImpl implements ScreenNameDbh {
             String sqlLock = "LOCK TABLES user_screen_names WRITE, users READ";
             Statement stLock = dbc.createStatement();
             stLock.execute(sqlLock);
+
+            ScreenName existing = loadByUser(dbc, user);
+            if (existing != null) {
+                throw new IllegalStateException("User already have screen name: " + existing.getScreenName());
+            }
 
             if (!exists(dbc, screenName)) {
                 ScreenName ret = new ScreenName(user, screenName);
@@ -66,8 +69,6 @@ public class ScreenNameDbhImpl implements ScreenNameDbh {
             stLock.execute(sqlLock);
 
             if (!exists(dbc, newName)) {
-                ret = new ScreenName(old.getUser(), newName);
-
                 String sql = "UPDATE user_screen_names " +
                         "SET screen_name = ?, screen_name_lc = ? " +
                         "WHERE user = ?";
@@ -75,7 +76,13 @@ public class ScreenNameDbhImpl implements ScreenNameDbh {
                     psUpdate.setString(1, newName);
                     psUpdate.setString(2, newName.toLowerCase());
                     psUpdate.setLong(3, old.getUser());
-                    psUpdate.executeUpdate();
+                    int updated = psUpdate.executeUpdate();
+
+                    if (updated == 1) {
+                        ret = new ScreenName(old.getUser(), newName);
+                    } else {
+                        throw new IllegalStateException("Invalid count of updated rows: " + updated);
+                    }
                 }
             }
         } finally {

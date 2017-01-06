@@ -1,66 +1,62 @@
 package com.bolyartech.forge.server.modules.admin.endpoints;
 
-
-import com.bolyartech.forge.server.Handler;
-import com.bolyartech.forge.server.HttpMethod;
-import com.bolyartech.forge.server.StringEndpoint;
 import com.bolyartech.forge.server.db.DbPool;
-import com.bolyartech.forge.server.misc.BasicResponseCodes;
-import com.bolyartech.forge.server.misc.ForgeResponse;
-import com.bolyartech.forge.server.modules.admin.AdminHandler;
+import com.bolyartech.forge.server.modules.admin.AdminDbEndpoint;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
-import com.bolyartech.forge.server.modules.user.data.UserJson;
+import com.bolyartech.forge.server.modules.admin.data.UserExportedView;
+import com.bolyartech.forge.server.modules.admin.data.UserExportedViewDbh;
+import com.bolyartech.forge.server.response.ResponseException;
+import com.bolyartech.forge.server.response.forge.BasicResponseCodes;
+import com.bolyartech.forge.server.response.forge.ForgeResponse;
+import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
+import com.bolyartech.forge.server.route.RequestContext;
+import com.bolyartech.forge.server.session.Session;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
-import spark.Request;
-import spark.Response;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 
-public class UserListEp extends StringEndpoint {
+public class UserListEp extends AdminDbEndpoint {
     private static final int USERS_PAGE_SIZE = 10;
 
-    public UserListEp(Handler<String> handler) {
-        super(HttpMethod.GET, "users", handler);
+    private final UserExportedViewDbh mUserExportedViewDbh;
+
+    private final Gson mGson;
+
+
+    public UserListEp(DbPool dbPool, UserExportedViewDbh userExportedViewDbh) {
+        super(dbPool);
+        mUserExportedViewDbh = userExportedViewDbh;
+        mGson = new Gson();
     }
 
 
-    public static class UserListHandler extends AdminHandler {
-        private final Gson mGson;
+    @Override
+    public ForgeResponse handle(RequestContext ctx,
+                                Session session,
+                                Connection dbc,
+                                AdminUser user) throws ResponseException, SQLException {
 
-        public UserListHandler(DbPool dbPool) {
-            super(dbPool);
-            mGson = new Gson();
-        }
-
-
-        @Override
-        protected ForgeResponse handleLoggedInAdmin(Request request,
-                                                    Response response,
-                                                    Connection dbc,
-                                                    AdminUser user) throws SQLException {
-
-            String idGreaterThanRaw = request.queryParams("id");
-            if (Strings.isNullOrEmpty(idGreaterThanRaw)) {
-                long id = 0;
-                if (!Strings.isNullOrEmpty(idGreaterThanRaw)) {
-                    try {
-                        id = Long.parseLong(idGreaterThanRaw);
-                    } catch (NumberFormatException e) {
-                        return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE.getCode(), "Invalid id: " + id);
-                    }
-
+        String idGreaterThanRaw = ctx.getFromPost("id");
+        if (Strings.isNullOrEmpty(idGreaterThanRaw)) {
+            long id = 0;
+            if (!Strings.isNullOrEmpty(idGreaterThanRaw)) {
+                try {
+                    id = Long.parseLong(idGreaterThanRaw);
+                } catch (NumberFormatException e) {
+                    return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE, "Invalid id: " + id);
                 }
 
-                List<UserJson> users = UserJson.list(dbc, id, USERS_PAGE_SIZE);
-
-                return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(), mGson.toJson(users));
-            } else {
-                return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
             }
+
+            List<UserExportedView> users = mUserExportedViewDbh.list(dbc, id, USERS_PAGE_SIZE);
+
+            return new ForgeResponse(BasicResponseCodes.Oks.OK, mGson.toJson(users));
+        } else {
+            return MissingParametersResponse.getInstance();
         }
     }
 }

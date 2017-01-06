@@ -1,71 +1,86 @@
 package com.bolyartech.forge.server.modules.user;
 
 import com.bolyartech.forge.server.db.DbPool;
-import com.bolyartech.forge.server.module.AbstractForgeModule;
+import com.bolyartech.forge.server.module.HttpModule;
+import com.bolyartech.forge.server.modules.user.data.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
-import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbh;
 import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
 import com.bolyartech.forge.server.modules.user.endpoints.*;
-import com.bolyartech.forge.server.register.StringEndpointRegister;
+import com.bolyartech.forge.server.route.PostRoute;
+import com.bolyartech.forge.server.route.Route;
 
-import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class UserModule extends AbstractForgeModule {
+public final class UserModule implements HttpModule {
+    private static final String DEFAULT_PATH_PREFIX = "/api/user/";
+
     private static final String MODULE_SYSTEM_NAME = "user";
     private static final int MODULE_VERSION_CODE = 1;
     private static final String MODULE_VERSION_NAME = "1.0.0";
 
+    private final String mPathPrefix;
     private final DbPool mDbPool;
-    private final StringEndpointRegister mRegister;
     private final UserScramDbh mUserScramDbh;
     private final UserDbh mUserDbh;
     private final ScramDbh mScramDbh;
+    private final ScreenNameDbh mScreenNameDbh;
 
 
-    @Inject
-    public UserModule(DbPool dbPool,
-                      StringEndpointRegister stringEndpointRegister,
+    public UserModule(String pathPrefix,
+                      DbPool dbPool,
                       UserScramDbh userScramDbh,
                       UserDbh userDbh,
-                      ScramDbh scramDbh) {
+                      ScramDbh scramDbh,
+                      ScreenNameDbh screenNameDbh) {
 
-        super("/api/user/");
-
+        mPathPrefix = pathPrefix;
         mDbPool = dbPool;
-        mRegister = stringEndpointRegister;
-
         mUserScramDbh = userScramDbh;
         mUserDbh = userDbh;
         mScramDbh = scramDbh;
+        mScreenNameDbh = screenNameDbh;
+    }
+
+
+    public UserModule(
+            DbPool dbPool,
+            UserScramDbh userScramDbh,
+            UserDbh userDbh,
+            ScramDbh scramDbh,
+            ScreenNameDbh screenNameDbh) {
+
+        mPathPrefix = DEFAULT_PATH_PREFIX;
+        mDbPool = dbPool;
+        mUserScramDbh = userScramDbh;
+        mUserDbh = userDbh;
+        mScramDbh = scramDbh;
+        mScreenNameDbh = screenNameDbh;
     }
 
 
     @Override
-    public void registerEndpoints() {
-        String pathPrefix = getModulePathPrefix();
+    public List<Route> createRoutes() {
+        List<Route> ret = new ArrayList<>();
 
-        mRegister.register(pathPrefix,
-                new AutoregistrationEp(new AutoregistrationEp.UserAutoregistrationHandler(mDbPool,
-                        mUserScramDbh,
-                        mUserDbh,
-                        mScramDbh)));
+        ret.add(new PostRoute(mPathPrefix + "autoregister",
+                new AutoregistrationEp(mDbPool, mUserDbh, mScramDbh, mUserScramDbh)));
+        ret.add(new PostRoute(mPathPrefix + "login",
+                new LoginEp(mDbPool, mUserDbh, mScramDbh, mScreenNameDbh)));
+        ret.add(new PostRoute(mPathPrefix + "register",
+                new RegistrationEp(mDbPool, mUserDbh, mScramDbh, mUserScramDbh, mScreenNameDbh)));
+        ret.add(new PostRoute(mPathPrefix + "register_postauto",
+                new RegistrationPostAutoEp(mDbPool, mUserDbh, mScramDbh, mUserScramDbh, mScreenNameDbh)));
+        ret.add(new PostRoute(mPathPrefix + "screen_name",
+                new ScreenNameEp(mDbPool, mScreenNameDbh)));
+        ret.add(new PostRoute(mPathPrefix + "logout",
+                new LogoutEp()));
 
-//        mRegister.register(pathPrefix,
-//                new RegistrationEp(new RegistrationEp.RegistrationHandler(mDbPool)));
-//
-//        mRegister.register(pathPrefix, new LoginEp(new LoginEp.LoginHandler(mDbPool)));
-//
-//        mRegister.register(pathPrefix,
-//                new RegistrationPostAutoEp(new RegistrationPostAutoEp.UserRegistrationPostAutoHandler(mDbPool)));
-//
-//        mRegister.register(pathPrefix,
-//                new ScreenNameEp(new ScreenNameEp.ScreenNameHandler(mDbPool)));
-//
-//        mRegister.register(pathPrefix,
-//                new LogoutEp(new LogoutEp.LogoutHandler(mDbPool)));
+
+        return ret;
     }
-
 
 
     @Override

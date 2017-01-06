@@ -2,6 +2,7 @@ package com.bolyartech.forge.server.modules.admin.data;
 
 import com.google.gson.annotations.SerializedName;
 
+
 public class SessionInfoAdmin {
     @SerializedName("user_id")
     public final long user_id;

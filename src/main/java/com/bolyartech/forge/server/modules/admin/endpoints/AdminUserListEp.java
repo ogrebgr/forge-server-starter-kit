@@ -1,53 +1,54 @@
 package com.bolyartech.forge.server.modules.admin.endpoints;
 
-
-import com.bolyartech.forge.server.Handler;
-import com.bolyartech.forge.server.HttpMethod;
-import com.bolyartech.forge.server.StringEndpoint;
 import com.bolyartech.forge.server.db.DbPool;
-import com.bolyartech.forge.server.misc.BasicResponseCodes;
-import com.bolyartech.forge.server.misc.ForgeResponse;
-import com.bolyartech.forge.server.modules.admin.data.AdminUser;
-import com.bolyartech.forge.server.modules.admin.data.AdminUserJson;
-import com.bolyartech.forge.server.modules.admin.AdminHandler;
+import com.bolyartech.forge.server.modules.admin.AdminDbEndpoint;
+import com.bolyartech.forge.server.modules.admin.data.*;
+import com.bolyartech.forge.server.response.ResponseException;
+import com.bolyartech.forge.server.response.forge.BasicResponseCodes;
+import com.bolyartech.forge.server.response.forge.ForgeResponse;
+import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
+import com.bolyartech.forge.server.route.RequestContext;
+import com.bolyartech.forge.server.session.Session;
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
-import spark.Request;
-import spark.Response;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
-public class AdminUserListEp extends StringEndpoint {
+public class AdminUserListEp extends AdminDbEndpoint {
+    private static final int USERS_PAGE_SIZE = 10;
 
-    public AdminUserListEp(Handler<String> handler) {
-        super(HttpMethod.GET, "admin_users", handler);
+    private final AdminUserExportedViewDbh mAdminUserExportedViewDbh;
+
+    private final Gson mGson;
+
+
+    public AdminUserListEp(DbPool dbPool, AdminUserExportedViewDbh adminUserExportedViewDbh) {
+        super(dbPool);
+        mAdminUserExportedViewDbh = adminUserExportedViewDbh;
+        mGson = new Gson();
     }
 
 
-    public static class UserListHandler extends AdminHandler {
-        private final Gson mGson;
+    @Override
+    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc, AdminUser user)
+            throws ResponseException, SQLException {
 
-        public UserListHandler(DbPool dbPool) {
-            super(dbPool);
-            mGson = new Gson();
+        String idGreaterThanRaw = ctx.getFromPost("id");
+        long id = 0;
+        if (!Strings.isNullOrEmpty(idGreaterThanRaw)) {
+            try {
+                id = Long.parseLong(idGreaterThanRaw);
+            } catch (NumberFormatException e) {
+                return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE, "Invalid id: " + id);
+            }
+
         }
 
+        List<AdminUserExportedView> users = mAdminUserExportedViewDbh.list(dbc, id, USERS_PAGE_SIZE);
 
-        @Override
-        protected ForgeResponse handleLoggedInAdmin(Request request,
-                                                    Response response,
-                                                    Connection dbc,
-                                                    AdminUser user) throws SQLException {
-
-            List<AdminUser> users = AdminUser.list(dbc);
-
-            List<AdminUserJson> usersJson = users.stream().map(AdminUserJson::new).collect(Collectors.toList());
-
-            return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(),
-                    mGson.toJson(usersJson));
-        }
+        return new ForgeResponse(BasicResponseCodes.Oks.OK, mGson.toJson(users));
     }
 }

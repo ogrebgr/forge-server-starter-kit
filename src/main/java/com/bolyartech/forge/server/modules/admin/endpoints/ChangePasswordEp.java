@@ -1,59 +1,68 @@
 package com.bolyartech.forge.server.modules.admin.endpoints;
 
-import com.bolyartech.forge.server.Handler;
-import com.bolyartech.forge.server.HttpMethod;
-import com.bolyartech.forge.server.StringEndpoint;
 import com.bolyartech.forge.server.db.DbPool;
-import com.bolyartech.forge.server.misc.BasicResponseCodes;
-import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
-import com.bolyartech.forge.server.modules.admin.AdminHandler;
-import com.bolyartech.forge.server.modules.admin.AdminResponseCodes;
+import com.bolyartech.forge.server.modules.admin.AdminDbEndpoint;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
-import com.bolyartech.forge.server.modules.user.data.User;
-import spark.Request;
-import spark.Response;
+import com.bolyartech.forge.server.modules.user.UserResponseCodes;
+import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
+import com.bolyartech.forge.server.modules.user.data.scram.UserScramUtils;
+import com.bolyartech.forge.server.response.ResponseException;
+import com.bolyartech.forge.server.response.forge.BasicResponseCodes;
+import com.bolyartech.forge.server.response.forge.ForgeResponse;
+import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
+import com.bolyartech.forge.server.response.forge.OkResponse;
+import com.bolyartech.forge.server.route.RequestContext;
+import com.bolyartech.forge.server.session.Session;
+import com.bolyartech.scram_sasl.common.ScramUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class ChangePasswordEp extends StringEndpoint {
 
-    public ChangePasswordEp(Handler<String> handler) {
-        super(HttpMethod.POST, "change_password", handler);
+public class ChangePasswordEp extends AdminDbEndpoint {
+    static final int ERROR_USER_NOT_FOUND = -100;
+
+    static final String PARAM_USER = "user";
+    static final String PARAM_PASSWORD = "new_password";
+
+    private final ScramDbh mScramDbh;
+
+
+    public ChangePasswordEp(DbPool dbPool, ScramDbh scramDbh) {
+        super(dbPool);
+        mScramDbh = scramDbh;
     }
 
-    public static class ChangeOwnPasswordHandler extends AdminHandler {
-        public ChangeOwnPasswordHandler(DbPool dbPool) {
-            super(dbPool);
-        }
 
+    @Override
+    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc, AdminUser user)
+            throws ResponseException, SQLException {
 
-        @Override
-        protected ForgeResponse handleLoggedInAdmin(Request request,
-                                                    Response response,
-                                                    Connection dbc,
-                                                    AdminUser user) throws SQLException {
+        String userIdRaw = ctx.getFromPost(PARAM_USER);
+        String newPassword = ctx.getFromPost(PARAM_PASSWORD);
 
-            String userIdRaw = request.queryParams("user");
-            String newPassword = request.queryParams("new_password");
-
-            if (Params.areAllPresent(userIdRaw, newPassword)) {
-                if (!AdminUser.isValidPasswordLength(newPassword)) {
-                    return new ForgeResponse(AdminResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
-                }
-
-                try {
-                    long userId = Long.parseLong(userIdRaw);
-                    User.changePassword(dbc, userId, newPassword);
-                } catch (NumberFormatException e) {
-                    return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE.getCode(), "Invalid id");
-                }
-
-                return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(), "Password changed");
-            } else {
-                return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
+        if (Params.areAllPresent(userIdRaw, newPassword)) {
+            if (!AdminUser.isValidPasswordLength(newPassword)) {
+                return new ForgeResponse(UserResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
             }
+
+            try {
+                long userId = Long.parseLong(userIdRaw);
+
+                ScramUtils.NewPasswordStringData data = UserScramUtils.createPasswordData(newPassword);
+
+                if (mScramDbh.changePassword(dbc, userId, data)) {
+
+                    return OkResponse.getInstance();
+                } else {
+                    return new ForgeResponse(ERROR_USER_NOT_FOUND);
+                }
+            } catch (NumberFormatException e) {
+                return new ForgeResponse(BasicResponseCodes.Errors.INVALID_PARAMETER_VALUE.getCode(), "Invalid id");
+            }
+        } else {
+            return MissingParametersResponse.getInstance();
         }
     }
 }

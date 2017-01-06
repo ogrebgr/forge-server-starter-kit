@@ -1,87 +1,97 @@
 package com.bolyartech.forge.server.modules.admin.endpoints;
 
-import com.bolyartech.forge.server.Handler;
-import com.bolyartech.forge.server.HttpMethod;
-import com.bolyartech.forge.server.StringEndpoint;
 import com.bolyartech.forge.server.db.DbPool;
-import com.bolyartech.forge.server.misc.BasicResponseCodes;
-import com.bolyartech.forge.server.misc.ForgeResponse;
 import com.bolyartech.forge.server.misc.Params;
-import com.bolyartech.forge.server.modules.admin.AdminHandler;
-import com.bolyartech.forge.server.modules.admin.AdminResponseCodes;
+import com.bolyartech.forge.server.modules.admin.AdminDbEndpoint;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
+import com.bolyartech.forge.server.modules.admin.data.AdminUserDbh;
+import com.bolyartech.forge.server.modules.admin.data.AdminUserScram;
+import com.bolyartech.forge.server.modules.admin.data.AdminUserScramDbh;
+import com.bolyartech.forge.server.modules.user.UserResponseCodes;
 import com.bolyartech.forge.server.modules.user.data.User;
-import spark.Request;
-import spark.Response;
+import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
+import com.bolyartech.forge.server.modules.user.data.scram.UserScramUtils;
+import com.bolyartech.forge.server.response.ResponseException;
+import com.bolyartech.forge.server.response.forge.ForgeResponse;
+import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
+import com.bolyartech.forge.server.response.forge.OkResponse;
+import com.bolyartech.forge.server.route.RequestContext;
+import com.bolyartech.forge.server.session.Session;
+import com.bolyartech.scram_sasl.common.ScramUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-public class CreateAdminUserEp extends StringEndpoint {
-    public CreateAdminUserEp(Handler<String> handler) {
-        super(HttpMethod.POST, "create_admin_user", handler);
+
+public class CreateAdminUserEp extends AdminDbEndpoint {
+    static final int INVALID_NAME = -100;
+
+    static final String PARAM_USERNAME = "username";
+    static final String PARAM_PASSWORD = "password";
+    static final String PARAM_NAME = "name";
+    static final String PARAM_SUPER_ADMIN = "super_admin";
+
+
+    private final AdminUserDbh mAdminUserDbh;
+    private final ScramDbh mAdminScramDbh;
+    private final AdminUserScramDbh mAdminUserScramDbh;
+
+
+    public CreateAdminUserEp(DbPool dbPool, AdminUserDbh adminUserDbh, ScramDbh adminScramDbh,
+                             AdminUserScramDbh adminUserScramDbh) {
+        super(dbPool);
+        mAdminUserDbh = adminUserDbh;
+        mAdminScramDbh = adminScramDbh;
+        mAdminUserScramDbh = adminUserScramDbh;
     }
 
 
-    public static class CreateUserHandler extends AdminHandler {
-
-        public CreateUserHandler(DbPool dbPool) {
-            super(dbPool);
-        }
+    @Override
+    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc, AdminUser user)
+            throws ResponseException, SQLException {
 
 
-        @Override
-        protected ForgeResponse handleLoggedInAdmin(Request request, Response response, Connection dbc, AdminUser user) throws SQLException {
-            if (user.isSuperAdmin()) {
-                String username = request.queryParams("username");
-                String password = request.queryParams("password");
-                String name = request.queryParams("name");
-                String superAdminRaw = request.queryParams("super_admin");
+        if (user.isSuperAdmin()) {
+            String username = ctx.getFromPost(PARAM_USERNAME);
+            String password = ctx.getFromPost(PARAM_PASSWORD);
+            String name = ctx.getFromPost(PARAM_NAME);
+            String superAdminRaw = ctx.getFromPost(PARAM_SUPER_ADMIN);
 
-                if (Params.areAllPresent(username, password, name)) {
-                    if (!User.isValidUsername(username)) {
-                        return new ForgeResponse(AdminResponseCodes.Errors.INVALID_USERNAME.getCode(), "Invalid username");
-                    }
+            if (Params.areAllPresent(username, password, name)) {
+                if (!User.isValidUsername(username)) {
+                    return new ForgeResponse(UserResponseCodes.Errors.INVALID_USERNAME.getCode(), "Invalid username");
+                }
 
-                    if (!AdminUser.isValidName(name)) {
-                        return new ForgeResponse(AdminResponseCodes.Errors.INVALID_NAME.getCode(), "Invalid screen name");
-                    }
+                if (!AdminUser.isValidName(name)) {
+                    return new ForgeResponse(INVALID_NAME, "Invalid name");
+                }
 
-                    if (!AdminUser.isValidPasswordLength(password)) {
-                        return new ForgeResponse(AdminResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
-                    }
+                if (!AdminUser.isValidPasswordLength(password)) {
+                    return new ForgeResponse(UserResponseCodes.Errors.PASSWORD_TOO_SHORT.getCode(), "Invalid screen name");
+                }
 
-                    boolean superAdmin;
-                    //noinspection SimplifiableIfStatement
-                    if (superAdminRaw != null) {
-                        superAdmin = superAdminRaw.equals("1");
-                    } else {
-                        superAdmin = false;
-                    }
-
-
-                    try {
-                        Statement lockSt = dbc.createStatement();
-                        lockSt.execute("LOCK TABLES admin_users WRITE");
-
-                        if (AdminUser.usernameExists(dbc, username)) {
-                            return new ForgeResponse(AdminResponseCodes.Errors.USERNAME_EXISTS.getCode(), "username taken");
-                        }
-
-                        AdminUser.createNew(dbc, username, password, false, superAdmin, name);
-
-                        return new ForgeResponse(BasicResponseCodes.Oks.OK.getCode(), "OK");
-                    } finally {
-                        Statement unlockSt = dbc.createStatement();
-                        unlockSt.execute("UNLOCK TABLES");
-                    }
+                boolean superAdmin;
+                if (superAdminRaw != null) {
+                    superAdmin = superAdminRaw.equals("1");
                 } else {
-                    return new ForgeResponse(BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode(), "Missing parameters");
+                    superAdmin = false;
+                }
+
+                ScramUtils.NewPasswordStringData data = UserScramUtils.createPasswordData(password);
+
+                AdminUserScram scram = mAdminUserScramDbh.createNew(dbc, mAdminUserDbh, mAdminScramDbh,
+                        superAdmin, name, username, data);
+
+                if (scram != null) {
+                    return new OkResponse();
+                } else {
+                    return new ForgeResponse(UserResponseCodes.Errors.USERNAME_EXISTS, "Invalid Login");
                 }
             } else {
-                return new ForgeResponse(AdminResponseCodes.Errors.NO_ENOUGH_PRIVILEGES.getCode(), "Missing parameters");
+                return MissingParametersResponse.getInstance();
             }
+        } else {
+            return new ForgeResponse(UserResponseCodes.Errors.NO_ENOUGH_PRIVILEGES, "Missing parameters");
         }
     }
 }

@@ -5,10 +5,10 @@
 .DS_Store
 /build
 /captures
-logs
 .idea
 *.iml
 /src/main/resources/logback.xml
 /src/main/resources/server.conf
 /src/main/resources/keystore
+logs/*
 conf/

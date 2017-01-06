@@ -1,10 +1,13 @@
 package com.bolyartech.forge.server.modules.user;
 
+import com.bolyartech.forge.server.response.forge.ForgeResponseCode;
+
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class UserResponseCodes {
-    public enum Errors {
+    public enum Errors implements ForgeResponseCode {
         /**
          * Registration related codes
          */
@@ -18,11 +21,10 @@ public class UserResponseCodes {
         /**
          * Login related codes
          */
-        MALFORMED_LOGIN(-12), // when username or password or both are missing from the POST
-        INVALID_LOGIN(-13), // user + password does not match valid account
-        NOT_LOGGED_IN(-14), // not logged in
+        INVALID_LOGIN(-12), // user + password does not match valid account
+        NOT_LOGGED_IN(-13), // not logged in
 
-        NO_ENOUGH_PRIVILEGES(-15),
+        NO_ENOUGH_PRIVILEGES(-14),
 
         INVALID_SCREEN_NAME(-50),
         SCREEN_NAME_EXISTS(-51),
@@ -50,11 +52,6 @@ public class UserResponseCodes {
         }
 
 
-        public int getCode() {
-            return mCode;
-        }
-
-
         public static Errors fromInt(int code) {
             Errors ret = mTypesByValue.get(code);
             if (ret != null) {
@@ -62,6 +59,12 @@ public class UserResponseCodes {
             } else {
                 return null;
             }
+        }
+
+
+        @Override
+        public int getCode() {
+            return mCode;
         }
     }
 }

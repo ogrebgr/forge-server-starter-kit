@@ -2,6 +2,7 @@ package com.bolyartech.forge.server.modules.user.data;
 
 import com.google.gson.annotations.SerializedName;
 
+
 public class RokResponseAutoregistration {
     public final String username;
     public final String password;

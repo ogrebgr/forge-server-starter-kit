@@ -37,7 +37,7 @@ public final class Scram {
         }
 
         if (!isValidUsername(username)) {
-            throw new IllegalArgumentException("Invalid username");
+            throw new IllegalArgumentException("Invalid username: " + username);
         }
 
         mUser = user;
@@ -46,6 +46,11 @@ public final class Scram {
         mServerKey = serverKey;
         mStoredKey = storedKey;
         mIterations = iterations;
+    }
+
+
+    public static boolean isValidUsername(String username) {
+        return username.matches("^[\\p{L}][\\p{L}\\p{N} _]{1,48}[\\p{L}\\p{N}]$");
     }
 
 
@@ -81,7 +86,7 @@ public final class Scram {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof  Scram) {
+        if (obj != null && obj instanceof Scram) {
             Scram other = (Scram) obj;
 
             return mUser == other.getUser() && mUsername.equals(other.getUsername()) &&
@@ -96,11 +101,6 @@ public final class Scram {
     @Override
     public int hashCode() {
         return Objects.hash(mUser, mUsername, mSalt, mServerKey, mStoredKey, mIterations);
-    }
-
-
-    public static boolean isValidUsername(String username) {
-        return username.matches("^[\\p{L}][\\p{L}\\p{N} _]{1,48}[\\p{L}\\p{N}]$");
     }
 
 }

@@ -13,16 +13,24 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 
-abstract public class AdminDbEndpoint extends ForgeDbSecureEndpoint implements AdminDbEndpointInterface {
+abstract public class AdminDbEndpoint extends ForgeDbSecureEndpoint {
 
     public AdminDbEndpoint(DbPool dbPool) {
         super(dbPool);
     }
 
 
+    abstract public ForgeResponse handle(RequestContext ctx,
+                                         Session session,
+                                         Connection dbc,
+                                         AdminUser user) throws ResponseException, SQLException;
+
+
     @Override
-    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc)
+    public ForgeResponse handleForgeSecure(RequestContext ctx, Connection dbc)
             throws ResponseException, SQLException {
+
+        Session session = ctx.getSession();
         AdminUser user = session.getVar(SessionVars.VAR_USER);
         if (user != null) {
             return handle(ctx, session, dbc, user);

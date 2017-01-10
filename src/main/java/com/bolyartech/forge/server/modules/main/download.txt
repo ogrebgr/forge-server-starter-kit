@@ -1,0 +1,9 @@
+        if (ctx.isMethod(HttpMethod.POST)) {
+            try {
+                Part txt = ctx.getPart("txt");
+                Part file = ctx.getPart("attachment");
+                DownloadUtils.saveDownloadedFile(file.getInputStream(), "/home/ogre/test.gif");
+            } catch (IOException | ServletException e) {
+                e.printStackTrace();
+            }
+        }

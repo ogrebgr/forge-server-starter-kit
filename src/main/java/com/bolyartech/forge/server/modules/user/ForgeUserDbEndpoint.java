@@ -12,7 +12,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 
-abstract public class ForgeUserDbEndpoint extends ForgeDbSecureEndpoint implements ForgeUserDbEndpointInterface {
+abstract public class ForgeUserDbEndpoint extends ForgeDbSecureEndpoint {
 
 
     public ForgeUserDbEndpoint(DbPool dbPool) {
@@ -20,9 +20,17 @@ abstract public class ForgeUserDbEndpoint extends ForgeDbSecureEndpoint implemen
     }
 
 
+    abstract public ForgeResponse handle(RequestContext ctx,
+                                         Session session,
+                                         Connection dbc,
+                                         User user) throws ResponseException, SQLException;
+
+
     @Override
-    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc)
+    public ForgeResponse handleForgeSecure(RequestContext ctx, Connection dbc)
             throws ResponseException, SQLException {
+
+        Session session = ctx.getSession();
         User user = session.getVar(SessionVars.VAR_USER);
         if (user != null) {
             return handle(ctx, session, dbc, user);

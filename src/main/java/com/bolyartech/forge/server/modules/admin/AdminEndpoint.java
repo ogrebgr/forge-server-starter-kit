@@ -11,7 +11,9 @@ import com.bolyartech.forge.server.session.Session;
 
 abstract public class AdminEndpoint extends ForgeSecureEndpoint implements AdminEndpointInterface {
     @Override
-    public ForgeResponse handleSecure(RequestContext ctx, Session session) throws ResponseException {
+    public ForgeResponse handleForgeSecure(RequestContext ctx) throws ResponseException {
+
+        Session session = ctx.getSession();
         AdminUser user = session.getVar(SessionVars.VAR_USER);
         if (user != null) {
             return handle(ctx, session, user);

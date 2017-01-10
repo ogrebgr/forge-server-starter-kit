@@ -57,7 +57,7 @@ public class RegistrationEp extends ForgeDbSecureEndpoint {
 
 
     @Override
-    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc) throws ResponseException,
+    public ForgeResponse handleForgeSecure(RequestContext ctx, Connection dbc) throws ResponseException,
             SQLException {
 
         String username = ctx.getFromPost(PARAM_USERNAME);
@@ -91,6 +91,7 @@ public class RegistrationEp extends ForgeDbSecureEndpoint {
         if (rez.isOk) {
             SessionInfo si = new SessionInfo(rez.mUserScram.getUser().getId(), null);
 
+            Session session = ctx.getSession();
             session.setVar(SessionVars.VAR_USER, rez.mUserScram.getUser());
 
             return new OkResponse(

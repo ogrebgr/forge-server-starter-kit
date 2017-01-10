@@ -11,7 +11,9 @@ import com.bolyartech.forge.server.session.Session;
 
 public class LogoutEp extends ForgeEndpoint {
     @Override
-    public ForgeResponse handleForge(RequestContext ctx, Session session) throws ResponseException {
+    public ForgeResponse handleForge(RequestContext ctx) throws ResponseException {
+
+        Session session = ctx.getSession();
         session.setVar(SessionVars.VAR_USER, null);
         return new OkResponse();
     }

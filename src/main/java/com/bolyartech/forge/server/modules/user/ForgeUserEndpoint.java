@@ -8,9 +8,15 @@ import com.bolyartech.forge.server.route.RequestContext;
 import com.bolyartech.forge.server.session.Session;
 
 
-abstract public class ForgeUserEndpoint extends ForgeSecureEndpoint implements ForgeUserEndpointInterface {
+abstract public class ForgeUserEndpoint extends ForgeSecureEndpoint {
+    abstract public ForgeResponse handle(RequestContext ctx,
+                                         Session session,
+                                         User user) throws ResponseException;
+
+
     @Override
-    public ForgeResponse handleSecure(RequestContext ctx, Session session) throws ResponseException {
+    public ForgeResponse handleForgeSecure(RequestContext ctx) throws ResponseException {
+        Session session = ctx.getSession();
         User user = session.getVar(SessionVars.VAR_USER);
         if (user != null) {
             return handle(ctx, session, user);

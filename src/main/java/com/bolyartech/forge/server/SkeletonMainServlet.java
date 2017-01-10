@@ -56,10 +56,10 @@ public class SkeletonMainServlet extends MainServlet {
 
 
     private DbPool createDbPool() {
-        DbConfigurationLoader dbConfigurationLoader = new DbConfigurationLoaderImpl();
+        DbConfigurationLoader dbConfigurationLoader = new FileDbConfigurationLoader();
         try {
-            DbConfiguration dbConfiguration = dbConfigurationLoader.load(this.getClass().getClassLoader());
-            return DbUtils.createComboPooledDataSource(dbConfiguration);
+            DbConfiguration dbConfiguration = dbConfigurationLoader.load();
+            return DbUtils.createC3P0DbPool(dbConfiguration);
         } catch (ForgeConfigurationException e) {
             mLogger.error("Cannot initialize SkeletonMainServlet", e);
             throw new RuntimeException(e);

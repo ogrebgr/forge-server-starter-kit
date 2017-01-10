@@ -35,8 +35,8 @@ public final class MainModule implements HttpModule {
 
         ret.add(new RouteImpl(HttpMethod.GET, "/presni", new RootWp(mTpleFactory, true)));
         ret.add(new RouteImpl(HttpMethod.POST, "/presni", new RootWp(mTpleFactory, true)));
-        ret.add(new RouteImpl(HttpMethod.GET, "/css", new StaticFileHandler("/static", notFoundResponse, mimeTypeResolver, true)));
-        ret.add(new RouteImpl(HttpMethod.GET, "/upload", new FileUploadHandler(true)));
+        ret.add(new RouteImpl(HttpMethod.GET, "/css", new StaticFileHandler("/static/css", notFoundResponse,
+                mimeTypeResolver, true)));
 
         return ret;
     }

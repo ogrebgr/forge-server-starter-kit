@@ -48,13 +48,14 @@ public class LoginEp extends ForgeDbEndpoint {
 
 
     @Override
-    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc)
+    public ForgeResponse handleForge(RequestContext ctx, Connection dbc)
             throws ResponseException, SQLException {
 
         String stepStr = ctx.getFromPost(PARAM_STEP);
         String data = ctx.getFromPost(PARAM_DATA);
         if (Params.areAllPresent(stepStr, data)) {
             try {
+                Session session = ctx.getSession();
                 int step = Integer.parseInt(stepStr);
                 if (step == 1) {
                     return handleStep1(dbc, session, data);

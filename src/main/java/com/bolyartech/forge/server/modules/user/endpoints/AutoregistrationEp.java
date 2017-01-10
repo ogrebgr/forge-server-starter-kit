@@ -44,7 +44,7 @@ public class AutoregistrationEp extends ForgeDbEndpoint {
 
 
     @Override
-    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc) throws ResponseException,
+    public ForgeResponse handleForge(RequestContext ctx, Connection dbc) throws ResponseException,
             SQLException {
 
         SecureRandom random = new SecureRandom();
@@ -78,6 +78,7 @@ public class AutoregistrationEp extends ForgeDbEndpoint {
 
         SessionInfo si = new SessionInfo(us.getUser().getId(), null);
 
+        Session session = ctx.getSession();
         session.setVar(SessionVars.VAR_USER, us.getUser());
 
         return new OkResponse(

@@ -36,24 +36,25 @@ public class RegistrationEpTest {
 
         RequestContext rc = mock(RequestContext.class);
         Session session = new TestSession();
+        when(rc.getSession()).thenReturn(session);
         Connection dbc = mock(Connection.class);
 
         when(rc.getFromPost(RegistrationEp.PARAM_USERNAME)).thenReturn(null);
         when(rc.getFromPost(RegistrationEp.PARAM_PASSWORD)).thenReturn("some_password");
         when(rc.getFromPost(RegistrationEp.PARAM_SCREEN_NAME)).thenReturn("some screen name");
-        ForgeResponse resp = ep.handle(rc, session, dbc);
+        ForgeResponse resp = ep.handleForgeSecure(rc, dbc);
         assertTrue("Unexpected code", resp.getResultCode() == BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode());
 
         when(rc.getFromPost(RegistrationEp.PARAM_USERNAME)).thenReturn("username");
         when(rc.getFromPost(RegistrationEp.PARAM_PASSWORD)).thenReturn(null);
         when(rc.getFromPost(RegistrationEp.PARAM_SCREEN_NAME)).thenReturn("some screen name");
-        resp = ep.handle(rc, session, dbc);
+        resp = ep.handleForgeSecure(rc, dbc);
         assertTrue("Unexpected code", resp.getResultCode() == BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode());
 
         when(rc.getFromPost(RegistrationEp.PARAM_USERNAME)).thenReturn("username");
         when(rc.getFromPost(RegistrationEp.PARAM_PASSWORD)).thenReturn("some_password");
         when(rc.getFromPost(RegistrationEp.PARAM_SCREEN_NAME)).thenReturn(null);
-        resp = ep.handle(rc, session, dbc);
+        resp = ep.handleForgeSecure(rc, dbc);
         assertTrue("Unexpected code", resp.getResultCode() == BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode());
     }
 
@@ -69,19 +70,20 @@ public class RegistrationEpTest {
         when(rc.getFromPost(RegistrationEp.PARAM_USERNAME)).thenReturn("12username");
         when(rc.getFromPost(RegistrationEp.PARAM_PASSWORD)).thenReturn("some_password");
         when(rc.getFromPost(RegistrationEp.PARAM_SCREEN_NAME)).thenReturn("some screen name");
-        ForgeResponse resp = ep.handle(rc, session, dbc);
+        when(rc.getSession()).thenReturn(session);
+        ForgeResponse resp = ep.handleForgeSecure(rc, dbc);
         assertTrue("Unexpected code", resp.getResultCode() == UserResponseCodes.Errors.INVALID_USERNAME.getCode());
 
         when(rc.getFromPost(RegistrationEp.PARAM_USERNAME)).thenReturn("username");
         when(rc.getFromPost(RegistrationEp.PARAM_PASSWORD)).thenReturn("somwod");
         when(rc.getFromPost(RegistrationEp.PARAM_SCREEN_NAME)).thenReturn("some screen name");
-        resp = ep.handle(rc, session, dbc);
+        resp = ep.handleForgeSecure(rc, dbc);
         assertTrue("Unexpected code", resp.getResultCode() == UserResponseCodes.Errors.INVALID_PASSWORD.getCode());
 
         when(rc.getFromPost(RegistrationEp.PARAM_USERNAME)).thenReturn("username");
         when(rc.getFromPost(RegistrationEp.PARAM_PASSWORD)).thenReturn("some_password");
         when(rc.getFromPost(RegistrationEp.PARAM_SCREEN_NAME)).thenReturn("so");
-        resp = ep.handle(rc, session, dbc);
+        resp = ep.handleForgeSecure(rc, dbc);
         assertTrue("Unexpected code", resp.getResultCode() == UserResponseCodes.Errors.INVALID_SCREEN_NAME.getCode());
     }
 
@@ -108,7 +110,8 @@ public class RegistrationEpTest {
         UserScramDbh.NewNamedResult newNamedResult = new UserScramDbh.NewNamedResult(false, null, true);
         when(userScramDbh.createNewNamed(any(), any(), any(), any(), any(), any(), any())).thenReturn(newNamedResult);
 
-        ForgeResponse resp = ep.handle(rc, session, dbc);
+        when(rc.getSession()).thenReturn(session);
+        ForgeResponse resp = ep.handleForgeSecure(rc, dbc);
         assertTrue("Unexpected code", resp.getResultCode() == UserResponseCodes.Errors.USERNAME_EXISTS.getCode());
     }
 
@@ -136,7 +139,8 @@ public class RegistrationEpTest {
         UserScramDbh.NewNamedResult newNamedResult = new UserScramDbh.NewNamedResult(false, null, false);
         when(userScramDbh.createNewNamed(any(), any(), any(), any(), any(), any(), any())).thenReturn(newNamedResult);
 
-        ForgeResponse resp = ep.handle(rc, session, dbc);
+        when(rc.getSession()).thenReturn(session);
+        ForgeResponse resp = ep.handleForgeSecure(rc, dbc);
         assertTrue("Unexpected code", resp.getResultCode() == UserResponseCodes.Errors.SCREEN_NAME_EXISTS.getCode());
     }
 
@@ -167,7 +171,8 @@ public class RegistrationEpTest {
         UserScramDbh.NewNamedResult newNamedResult = new UserScramDbh.NewNamedResult(true, us, false);
         when(userScramDbh.createNewNamed(any(), any(), any(), any(), any(), any(), any())).thenReturn(newNamedResult);
 
-        ForgeResponse resp = ep.handle(rc, session, dbc);
+        when(rc.getSession()).thenReturn(session);
+        ForgeResponse resp = ep.handleForgeSecure(rc, dbc);
         assertTrue("Unexpected response", resp instanceof OkResponse);
 
         User user = session.getVar(SessionVars.VAR_USER);

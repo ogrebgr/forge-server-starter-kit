@@ -22,13 +22,14 @@ public class AdminUserDbhImplTest {
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource("conf/db.conf").getFile());
 
-            DbConfigurationLoader loader = new DbConfigurationLoaderImpl();
-            DbConfiguration dbConf = loader.load(this.getClass().getClassLoader());
+            DbConfigurationLoader loader = new FileDbConfigurationLoader();
+            DbConfiguration dbConf = loader.load();
 
-            mDbPool = DbUtils.createComboPooledDataSource(dbConf);
+            mDbPool = DbUtils.createC3P0DbPool(dbConf);
         }
 
         Connection dbc = mDbPool.getConnection();
+        DbTools.deleteAllAdminScrams(dbc);
         DbTools.deleteAllAdminUsers(dbc);
 
         dbc.close();
@@ -59,7 +60,7 @@ public class AdminUserDbhImplTest {
 
         AdminUser loadedUser = impl.loadById(dbc, newUser.getId());
 
-        assertTrue("Not same user", loadedUser.equals(changed));
+        assertTrue("Not same user", loadedUser.getName().equals("trytkata"));
     }
 
 
@@ -74,7 +75,7 @@ public class AdminUserDbhImplTest {
 
         AdminUser loadedUser = impl.loadById(dbc, newUser.getId());
 
-        assertTrue("Not same user", loadedUser.equals(changed));
+        assertTrue("Not same user", loadedUser.isDisabled());
     }
 
 

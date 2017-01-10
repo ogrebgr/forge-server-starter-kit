@@ -25,10 +25,10 @@ public class ScreenNameDbhImplTest {
         if (mDbPool == null) {
             ClassLoader classLoader = getClass().getClassLoader();
 
-            DbConfigurationLoader loader = new DbConfigurationLoaderImpl();
-            DbConfiguration dbConf = loader.load(this.getClass().getClassLoader());
+            DbConfigurationLoader loader = new FileDbConfigurationLoader();
+            DbConfiguration dbConf = loader.load();
 
-            mDbPool = DbUtils.createComboPooledDataSource(dbConf);
+            mDbPool = DbUtils.createC3P0DbPool(dbConf);
         }
 
         Connection dbc = mDbPool.getConnection();

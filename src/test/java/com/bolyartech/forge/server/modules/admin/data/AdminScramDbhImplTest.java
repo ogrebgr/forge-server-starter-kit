@@ -29,13 +29,14 @@ public class AdminScramDbhImplTest {
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource("conf/db.conf").getFile());
 
-            DbConfigurationLoader loader = new DbConfigurationLoaderImpl();
-            DbConfiguration dbConf = loader.load(this.getClass().getClassLoader());
+            DbConfigurationLoader loader = new FileDbConfigurationLoader();
+            DbConfiguration dbConf = loader.load();
 
-            mDbPool = DbUtils.createComboPooledDataSource(dbConf);
+            mDbPool = DbUtils.createC3P0DbPool(dbConf);
         }
 
         Connection dbc = mDbPool.getConnection();
+        DbTools.deleteAllScreenNames(dbc);
         DbTools.deleteAllScrams(dbc);
         DbTools.deleteAllUsers(dbc);
 

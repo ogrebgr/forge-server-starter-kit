@@ -53,7 +53,8 @@ public class UserAutoregistrationEpTest {
         Session session = mock(Session.class);
         Connection dbc = mock(Connection.class);
 
-        ForgeResponse forgeResp = ep.handle(req, session, dbc);
+        when(req.getSession()).thenReturn(session);
+        ForgeResponse forgeResp = ep.handleForge(req, dbc);
         assertTrue("Not OK", forgeResp.getResultCode() == BasicResponseCodes.Oks.OK.getCode());
 
         Gson gson = new Gson();

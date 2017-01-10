@@ -3,8 +3,6 @@ package com.bolyartech.forge.server.modules.admin.data;
 import com.bolyartech.forge.server.config.ForgeConfigurationException;
 import com.bolyartech.forge.server.db.*;
 import com.bolyartech.forge.server.modules.DbTools;
-import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
-import com.bolyartech.forge.server.modules.user.data.scram.ScramDbhImpl;
 import com.bolyartech.scram_sasl.common.ScramUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +24,10 @@ public class AdminUserScramDbhImplTest {
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource("conf/db.conf").getFile());
 
-            DbConfigurationLoader loader = new DbConfigurationLoaderImpl();
-            DbConfiguration dbConf = loader.load(this.getClass().getClassLoader());
+            DbConfigurationLoader loader = new FileDbConfigurationLoader();
+            DbConfiguration dbConf = loader.load();
 
-            mDbPool = DbUtils.createComboPooledDataSource(dbConf);
+            mDbPool = DbUtils.createC3P0DbPool(dbConf);
         }
 
         Connection dbc = mDbPool.getConnection();

@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 public class LogoutEpTest {
@@ -20,10 +21,14 @@ public class LogoutEpTest {
 
         RequestContext rc = mock(RequestContext.class);
         Session session = new TestSession();
+        when(rc.getSession()).thenReturn(session);
 
         session.setVar(SessionVars.VAR_USER, new User(11, false, UserLoginType.FACEBOOK));
-        ep.handleForge(rc, session);
+        ep.handleForge(rc);
 
         assertTrue("user session var not cleared", session.getVar(SessionVars.VAR_USER) == null);
     }
+
+
+
 }

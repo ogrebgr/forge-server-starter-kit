@@ -3,7 +3,7 @@ package com.bolyartech.forge.server.modules.admin.data;
 import com.bolyartech.forge.server.modules.user.data.scram.Scram;
 
 
-public class AdminUserScram {
+public final class AdminUserScram {
     private final AdminUser mUser;
     private final Scram mScram;
 

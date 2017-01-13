@@ -1,6 +1,7 @@
-package com.bolyartech.forge.server.modules.user.data;
+package com.bolyartech.forge.server.modules.user.data.user;
 
 import com.bolyartech.forge.server.db.DbUtils;
+import com.bolyartech.forge.server.modules.user.data.UserLoginType;
 import com.bolyartech.forge.server.modules.user.data.user_scram.UserScram;
 
 import java.sql.*;
@@ -42,7 +43,7 @@ public class UserDbhImpl implements UserDbh {
             ResultSet rs = psInsert.getGeneratedKeys();
             rs.next();
 
-            return new User(rs.getInt(1), isDisabled, lt);
+            return new User(rs.getLong(1), isDisabled, lt);
         }
     }
 

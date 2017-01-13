@@ -1,10 +1,10 @@
 package com.bolyartech.forge.server.modules.user.data.user_scram;
 
-import com.bolyartech.forge.server.modules.user.data.User;
+import com.bolyartech.forge.server.modules.user.data.user.User;
 import com.bolyartech.forge.server.modules.user.data.scram.Scram;
 
 
-public class UserScram {
+public final class UserScram {
     private final User mUser;
     private final Scram mScram;
 

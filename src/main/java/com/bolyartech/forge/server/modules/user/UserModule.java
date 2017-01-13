@@ -2,11 +2,15 @@ package com.bolyartech.forge.server.modules.user;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.module.HttpModule;
-import com.bolyartech.forge.server.modules.user.data.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbh;
+import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtIdDbh;
 import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
 import com.bolyartech.forge.server.modules.user.endpoints.*;
+import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapper;
+import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapperImpl;
+import com.bolyartech.forge.server.route.GetRoute;
 import com.bolyartech.forge.server.route.PostRoute;
 import com.bolyartech.forge.server.route.Route;
 
@@ -27,6 +31,8 @@ public final class UserModule implements HttpModule {
     private final UserDbh mUserDbh;
     private final ScramDbh mScramDbh;
     private final ScreenNameDbh mScreenNameDbh;
+    private final UserExtIdDbh mUserExtIdDbh;
+    private final FacebookWrapper mFacebookWrapper;
 
 
     public UserModule(String pathPrefix,
@@ -34,7 +40,9 @@ public final class UserModule implements HttpModule {
                       UserScramDbh userScramDbh,
                       UserDbh userDbh,
                       ScramDbh scramDbh,
-                      ScreenNameDbh screenNameDbh) {
+                      ScreenNameDbh screenNameDbh,
+                      UserExtIdDbh userExtIdDbh,
+                      FacebookWrapper facebookWrapper) {
 
         mPathPrefix = pathPrefix;
         mDbPool = dbPool;
@@ -42,6 +50,8 @@ public final class UserModule implements HttpModule {
         mUserDbh = userDbh;
         mScramDbh = scramDbh;
         mScreenNameDbh = screenNameDbh;
+        mUserExtIdDbh = userExtIdDbh;
+        mFacebookWrapper = facebookWrapper;
     }
 
 
@@ -50,7 +60,9 @@ public final class UserModule implements HttpModule {
             UserScramDbh userScramDbh,
             UserDbh userDbh,
             ScramDbh scramDbh,
-            ScreenNameDbh screenNameDbh) {
+            ScreenNameDbh screenNameDbh,
+            UserExtIdDbh userExtIdDbh,
+            FacebookWrapper facebookWrapper) {
 
         mPathPrefix = DEFAULT_PATH_PREFIX;
         mDbPool = dbPool;
@@ -58,6 +70,8 @@ public final class UserModule implements HttpModule {
         mUserDbh = userDbh;
         mScramDbh = scramDbh;
         mScreenNameDbh = screenNameDbh;
+        mUserExtIdDbh = userExtIdDbh;
+        mFacebookWrapper = facebookWrapper;
     }
 
 
@@ -69,6 +83,8 @@ public final class UserModule implements HttpModule {
                 new AutoregistrationEp(mDbPool, mUserDbh, mScramDbh, mUserScramDbh)));
         ret.add(new PostRoute(mPathPrefix + "login",
                 new LoginEp(mDbPool, mUserDbh, mScramDbh, mScreenNameDbh)));
+        ret.add(new PostRoute(mPathPrefix + "login_facebook",
+                new LoginFacebookEp(mDbPool, mUserDbh, mUserExtIdDbh, mScreenNameDbh, mFacebookWrapper)));
         ret.add(new PostRoute(mPathPrefix + "register",
                 new RegistrationEp(mDbPool, mUserDbh, mScramDbh, mUserScramDbh, mScreenNameDbh)));
         ret.add(new PostRoute(mPathPrefix + "register_postauto",

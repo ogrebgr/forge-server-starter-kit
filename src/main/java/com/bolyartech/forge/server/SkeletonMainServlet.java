@@ -7,10 +7,13 @@ import com.bolyartech.forge.server.modules.admin.AdminModule;
 import com.bolyartech.forge.server.modules.admin.data.*;
 import com.bolyartech.forge.server.modules.main.MainModule;
 import com.bolyartech.forge.server.modules.user.UserModule;
-import com.bolyartech.forge.server.modules.user.data.UserDbhImpl;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbhImpl;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbhImpl;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbhImpl;
+import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtIdDbhImpl;
 import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbhImpl;
+import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapper;
+import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapperImpl;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
@@ -40,7 +43,9 @@ public class SkeletonMainServlet extends MainServlet {
                 new UserScramDbhImpl(),
                 new UserDbhImpl(),
                 new ScramDbhImpl(),
-                new ScreenNameDbhImpl()));
+                new ScreenNameDbhImpl(),
+                new UserExtIdDbhImpl(),
+                new FacebookWrapperImpl()));
         ret.add(new AdminModule(mDbPool,
                 new AdminUserDbhImpl(),
                 new ScramDbhImpl(),

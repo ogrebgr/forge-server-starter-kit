@@ -2,8 +2,8 @@ package com.bolyartech.forge.server.modules.user.endpoints;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
-import com.bolyartech.forge.server.modules.user.data.User;
-import com.bolyartech.forge.server.modules.user.data.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.user.User;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.UserLoginType;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenName;
@@ -46,19 +46,19 @@ public class RegistrationPostAutoEpTest {
 
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_USERNAME)).thenReturn(null);
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_PASSWORD)).thenReturn("some_password");
-        ForgeResponse resp = ep.handle(rc, session, dbc, user);
+        ForgeResponse resp = ep.handle(rc, dbc, user);
         assertTrue("Unexpected code", resp.getResultCode() == BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode());
 
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_USERNAME)).thenReturn("username");
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_PASSWORD)).thenReturn(null);
-        resp = ep.handle(rc, session, dbc, user);
+        resp = ep.handle(rc, dbc, user);
         assertTrue("Unexpected code", resp.getResultCode() == BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode());
 
         when(screenNameDbh.loadByUser(any(), anyLong())).thenReturn(null);
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_USERNAME)).thenReturn("username");
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_PASSWORD)).thenReturn("some_password");
         when(rc.getFromPost(RegistrationEp.PARAM_SCREEN_NAME)).thenReturn(null);
-        resp = ep.handle(rc, session, dbc, user);
+        resp = ep.handle(rc, dbc, user);
         assertTrue("Unexpected code", resp.getResultCode() == BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode());
     }
 
@@ -82,19 +82,19 @@ public class RegistrationPostAutoEpTest {
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_USERNAME)).thenReturn("username");
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_PASSWORD)).thenReturn("some_password");
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_SCREEN_NAME)).thenReturn("1as");
-        ForgeResponse resp = ep.handle(rc, session, dbc, user);
+        ForgeResponse resp = ep.handle(rc, dbc, user);
         assertTrue("Unexpected code", resp.getResultCode() == UserResponseCodes.Errors.INVALID_SCREEN_NAME.getCode());
 
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_USERNAME)).thenReturn("12username");
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_PASSWORD)).thenReturn("some_password");
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_SCREEN_NAME)).thenReturn("some screen name");
-        resp = ep.handle(rc, session, dbc, user);
+        resp = ep.handle(rc, dbc, user);
         assertTrue("Unexpected code", resp.getResultCode() == UserResponseCodes.Errors.INVALID_USERNAME.getCode());
 
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_USERNAME)).thenReturn("username");
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_PASSWORD)).thenReturn("somwod");
         when(rc.getFromPost(RegistrationEp.PARAM_SCREEN_NAME)).thenReturn("some screen name");
-        resp = ep.handle(rc, session, dbc, user);
+        resp = ep.handle(rc, dbc, user);
         assertTrue("Unexpected code", resp.getResultCode() == UserResponseCodes.Errors.INVALID_PASSWORD.getCode());
     }
 
@@ -120,7 +120,7 @@ public class RegistrationPostAutoEpTest {
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_SCREEN_NAME)).thenReturn("some screen name");
 
         when(userScramDbh.replaceExisting(any(), any(), any(), anyLong(), any(), any(), any())).thenReturn(true);
-        ForgeResponse resp = ep.handle(rc, session, dbc, user);
+        ForgeResponse resp = ep.handle(rc, dbc, user);
 
         assertTrue("Unexpected response", resp instanceof OkResponse);
     }
@@ -147,7 +147,7 @@ public class RegistrationPostAutoEpTest {
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_SCREEN_NAME)).thenReturn("some screen name");
 
         when(userScramDbh.replaceExisting(any(), any(), any(), anyLong(), any(), any(), any())).thenReturn(false);
-        ForgeResponse resp = ep.handle(rc, session, dbc, user);
+        ForgeResponse resp = ep.handle(rc, dbc, user);
 
         assertTrue("Unexpected code", resp.getResultCode() == UserResponseCodes.Errors.SCREEN_NAME_EXISTS.getCode());
     }
@@ -173,7 +173,7 @@ public class RegistrationPostAutoEpTest {
         when(rc.getFromPost(RegistrationPostAutoEp.PARAM_NEW_PASSWORD)).thenReturn("some_password");
 
         when(userScramDbh.replaceExisting(any(), any(), any(), anyLong(), any(), any(), any())).thenReturn(true);
-        ForgeResponse resp = ep.handle(rc, session, dbc, user);
+        ForgeResponse resp = ep.handle(rc, dbc, user);
 
         assertTrue("Unexpected response", resp instanceof OkResponse);
     }

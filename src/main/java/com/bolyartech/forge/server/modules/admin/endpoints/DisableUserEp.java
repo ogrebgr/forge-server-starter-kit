@@ -4,7 +4,7 @@ import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.misc.Params;
 import com.bolyartech.forge.server.modules.admin.AdminDbEndpoint;
 import com.bolyartech.forge.server.modules.admin.data.AdminUser;
-import com.bolyartech.forge.server.modules.user.data.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.response.ResponseException;
 import com.bolyartech.forge.server.response.forge.BasicResponseCodes;
 import com.bolyartech.forge.server.response.forge.ForgeResponse;
@@ -32,7 +32,7 @@ public class DisableUserEp extends AdminDbEndpoint {
 
 
     @Override
-    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc, AdminUser user)
+    public ForgeResponse handle(RequestContext ctx, Connection dbc, AdminUser user)
             throws ResponseException, SQLException {
 
         String userIdRaw = ctx.getFromPost(PARAM_USER);

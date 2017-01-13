@@ -5,7 +5,7 @@ import com.google.common.base.Strings;
 import java.util.Objects;
 
 
-public class ScreenName {
+public final class ScreenName {
     private final long mUser;
     private final String mScreenName;
 

@@ -19,6 +19,7 @@ dependencies {
     compile 'org.mindrot:jbcrypt:0.3m'
     compile 'com.bolyartech.scram_sasl:scram_sasl:2.0.0'
     compile 'mysql:mysql-connector-java:5.1.37'
+    compile group: 'com.restfb', name: 'restfb', version: '1.35.0'
 
     testCompile 'ch.qos.logback:logback-classic:0.9.26'
     testCompile group: 'org.json', name: 'json', version: '20160810'

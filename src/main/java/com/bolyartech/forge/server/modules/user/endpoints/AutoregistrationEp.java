@@ -2,10 +2,11 @@ package com.bolyartech.forge.server.modules.user.endpoints;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.handler.ForgeDbEndpoint;
+import com.bolyartech.forge.server.modules.user.LoginType;
 import com.bolyartech.forge.server.modules.user.SessionVars;
 import com.bolyartech.forge.server.modules.user.data.RokResponseAutoregistration;
 import com.bolyartech.forge.server.modules.user.data.SessionInfo;
-import com.bolyartech.forge.server.modules.user.data.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.UserScramUtils;
 import com.bolyartech.forge.server.modules.user.data.user_scram.UserScram;
@@ -80,7 +81,7 @@ public class AutoregistrationEp extends ForgeDbEndpoint {
 
         Session session = ctx.getSession();
         session.setVar(SessionVars.VAR_USER, us.getUser());
-
+        session.setVar(SessionVars.VAR_LOGIN_TYPE, LoginType.NATIVE);
         return new OkResponse(
                 mGson.toJson(new RokResponseAutoregistration(username,
                         password,

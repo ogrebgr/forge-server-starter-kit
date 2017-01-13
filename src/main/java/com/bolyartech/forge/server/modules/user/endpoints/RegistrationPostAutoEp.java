@@ -4,8 +4,8 @@ import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.misc.Params;
 import com.bolyartech.forge.server.modules.user.ForgeUserDbEndpoint;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
-import com.bolyartech.forge.server.modules.user.data.User;
-import com.bolyartech.forge.server.modules.user.data.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.user.User;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.UserScramUtils;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenName;
@@ -55,7 +55,6 @@ public class RegistrationPostAutoEp extends ForgeUserDbEndpoint {
 
     @Override
     public ForgeResponse handle(RequestContext ctx,
-                                Session session,
                                 Connection dbc,
                                 User user) throws ResponseException, SQLException {
 

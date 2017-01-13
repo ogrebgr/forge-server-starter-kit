@@ -8,7 +8,7 @@ import com.bolyartech.forge.server.modules.admin.data.AdminUserDbh;
 import com.bolyartech.forge.server.modules.admin.data.AdminUserScram;
 import com.bolyartech.forge.server.modules.admin.data.AdminUserScramDbh;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
-import com.bolyartech.forge.server.modules.user.data.User;
+import com.bolyartech.forge.server.modules.user.data.user.User;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.UserScramUtils;
 import com.bolyartech.forge.server.response.ResponseException;
@@ -47,7 +47,7 @@ public class CreateAdminUserEp extends AdminDbEndpoint {
 
 
     @Override
-    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc, AdminUser user)
+    public ForgeResponse handle(RequestContext ctx, Connection dbc, AdminUser user)
             throws ResponseException, SQLException {
 
 

@@ -2,7 +2,7 @@ package com.bolyartech.forge.server.modules.user.endpoints;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
-import com.bolyartech.forge.server.modules.user.data.User;
+import com.bolyartech.forge.server.modules.user.data.user.User;
 import com.bolyartech.forge.server.modules.user.data.UserLoginType;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenName;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbh;
@@ -33,25 +33,25 @@ public class ScreenNameEpTest {
         Connection dbc = mock(Connection.class);
 
         ScreenNameEp ep = new ScreenNameEp(dbPool, screenNameDbh);
-        ForgeResponse resp = ep.handle(rc, session, dbc, user);
+        ForgeResponse resp = ep.handle(rc, dbc, user);
         assertTrue("Unexpected code", resp.getResultCode() == BasicResponseCodes.Errors.MISSING_PARAMETERS.getCode());
 
         when(rc.getFromPost(ScreenNameEp.PARAM_SCREEN_NAME)).thenReturn("new screen name");
         when(screenNameDbh.loadByUser(any(), anyLong())).thenReturn(new ScreenName(11, "sn1"));
-        resp = ep.handle(rc, session, dbc, user);
+        resp = ep.handle(rc, dbc, user);
         assertTrue("Unexpected code", resp.getResultCode() == UserResponseCodes.Errors.SCREEN_NAME_CHANGE_NOT_SUPPORTED.getCode());
 
 
         when(rc.getFromPost(ScreenNameEp.PARAM_SCREEN_NAME)).thenReturn("1invalid");
         when(screenNameDbh.loadByUser(any(), anyLong())).thenReturn(null);
-        resp = ep.handle(rc, session, dbc, user);
+        resp = ep.handle(rc, dbc, user);
         assertTrue("Unexpected code", resp.getResultCode() == UserResponseCodes.Errors.INVALID_SCREEN_NAME.getCode());
 
         verify(screenNameDbh, times(0)).createNew(any(), anyLong(), any());
 
         when(rc.getFromPost(ScreenNameEp.PARAM_SCREEN_NAME)).thenReturn("screen name");
         when(screenNameDbh.loadByUser(any(), anyLong())).thenReturn(null);
-        ep.handle(rc, session, dbc, user);
+        ep.handle(rc, dbc, user);
         verify(screenNameDbh, times(1)).createNew(any(), anyLong(), any());
     }
 }

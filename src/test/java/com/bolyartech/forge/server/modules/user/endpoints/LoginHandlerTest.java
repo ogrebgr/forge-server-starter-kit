@@ -1,7 +1,7 @@
 package com.bolyartech.forge.server.modules.user.endpoints;
 
 import com.bolyartech.forge.server.db.DbPool;
-import com.bolyartech.forge.server.modules.user.data.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.Scram;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.UserScramUtils;
@@ -67,7 +67,7 @@ public class LoginHandlerTest {
         when(req.getSession()).thenReturn(session);
         LoginEp ep = new LoginEp(dbPool, userDbh, scramDbh, mock(ScreenNameDbh.class));
 
-        ForgeResponse forgeResp = ep.handleForge(req, dbc);
+        ForgeResponse forgeResp = ep.handleForgeSecure(req, dbc);
         assertTrue("Not OK", forgeResp.getResultCode() == BasicResponseCodes.Oks.OK.getCode());
 
         String clientFinal = clientScram.prepareFinalMessage(password, forgeResp.getPayload());
@@ -75,7 +75,7 @@ public class LoginHandlerTest {
         when(req.getFromPost(LoginEp.PARAM_DATA)).thenReturn(clientFinal);
 
 
-        ForgeResponse forgeResp2 = ep.handleForge(req, dbc);
+        ForgeResponse forgeResp2 = ep.handleForgeSecure(req, dbc);
         assertTrue("Not OK", forgeResp2.getResultCode() == BasicResponseCodes.Oks.OK.getCode());
 
         JSONObject jobj = new JSONObject(forgeResp2.getPayload());

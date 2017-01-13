@@ -21,7 +21,6 @@ abstract public class AdminDbEndpoint extends ForgeDbSecureEndpoint {
 
 
     abstract public ForgeResponse handle(RequestContext ctx,
-                                         Session session,
                                          Connection dbc,
                                          AdminUser user) throws ResponseException, SQLException;
 
@@ -33,7 +32,7 @@ abstract public class AdminDbEndpoint extends ForgeDbSecureEndpoint {
         Session session = ctx.getSession();
         AdminUser user = session.getVar(SessionVars.VAR_USER);
         if (user != null) {
-            return handle(ctx, session, dbc, user);
+            return handle(ctx, dbc, user);
         } else {
             return new ForgeResponse(UserResponseCodes.Errors.NOT_LOGGED_IN, "Not logged in");
         }

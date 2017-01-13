@@ -35,7 +35,7 @@ public class DisableAdminUserEp extends AdminDbEndpoint {
 
 
     @Override
-    public ForgeResponse handle(RequestContext ctx, Session session, Connection dbc, AdminUser user)
+    public ForgeResponse handle(RequestContext ctx, Connection dbc, AdminUser user)
             throws ResponseException, SQLException {
 
         if (user.isSuperAdmin()) {

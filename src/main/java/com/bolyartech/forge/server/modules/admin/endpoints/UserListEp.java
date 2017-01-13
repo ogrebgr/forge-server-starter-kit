@@ -36,7 +36,6 @@ public class UserListEp extends AdminDbEndpoint {
 
     @Override
     public ForgeResponse handle(RequestContext ctx,
-                                Session session,
                                 Connection dbc,
                                 AdminUser user) throws ResponseException, SQLException {
 

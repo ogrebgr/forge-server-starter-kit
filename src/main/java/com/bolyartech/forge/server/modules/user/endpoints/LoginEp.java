@@ -2,12 +2,14 @@ package com.bolyartech.forge.server.modules.user.endpoints;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.handler.ForgeDbEndpoint;
+import com.bolyartech.forge.server.handler.ForgeDbSecureEndpoint;
 import com.bolyartech.forge.server.misc.Params;
+import com.bolyartech.forge.server.modules.user.LoginType;
 import com.bolyartech.forge.server.modules.user.SessionVars;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
 import com.bolyartech.forge.server.modules.user.data.SessionInfo;
-import com.bolyartech.forge.server.modules.user.data.User;
-import com.bolyartech.forge.server.modules.user.data.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.user.User;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.Scram;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.UserScramUtils;
@@ -31,7 +33,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 
-public class LoginEp extends ForgeDbEndpoint {
+public class LoginEp extends ForgeDbSecureEndpoint {
     static final String PARAM_STEP = "step";
     static final String PARAM_DATA = "data";
 
@@ -52,7 +54,7 @@ public class LoginEp extends ForgeDbEndpoint {
 
 
     @Override
-    public ForgeResponse handleForge(RequestContext ctx, Connection dbc)
+    public ForgeResponse handleForgeSecure(RequestContext ctx, Connection dbc)
             throws ResponseException, SQLException {
 
         String stepStr = ctx.getFromPost(PARAM_STEP);
@@ -90,19 +92,20 @@ public class LoginEp extends ForgeDbEndpoint {
 
                         User user = mUserDbh.loadById(dbc, scramData.getUser());
                         session.setVar(SessionVars.VAR_USER, user);
+                        session.setVar(SessionVars.VAR_LOGIN_TYPE, LoginType.NATIVE);
                         return new OkResponse(mGson.toJson(new RokLogin(session.getMaxInactiveInterval(), si, finalMsg)));
                     } else {
-                        return new ForgeResponse(UserResponseCodes.Errors.INVALID_LOGIN, "Invalid Login");
+                        return new ForgeResponse(UserResponseCodes.Errors.INVALID_LOGIN, "Invalid login");
                     }
                 } catch (ScramException e) {
-                    return new ForgeResponse(UserResponseCodes.Errors.INVALID_LOGIN, "Invalid Login");
+                    return new ForgeResponse(UserResponseCodes.Errors.INVALID_LOGIN, "Invalid login");
                 }
             } else {
                 session.setVar(SessionVars.VAR_SCRAM_FUNC, null);
-                return new ForgeResponse(UserResponseCodes.Errors.INVALID_LOGIN, "Invalid Login");
+                return new ForgeResponse(UserResponseCodes.Errors.INVALID_LOGIN, "Invalid login");
             }
         } else {
-            return new ForgeResponse(UserResponseCodes.Errors.INVALID_LOGIN, "Invalid Login");
+            return new ForgeResponse(UserResponseCodes.Errors.INVALID_LOGIN, "Invalid login");
         }
     }
 

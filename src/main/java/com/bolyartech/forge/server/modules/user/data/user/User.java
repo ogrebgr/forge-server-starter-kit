@@ -1,4 +1,6 @@
-package com.bolyartech.forge.server.modules.user.data;
+package com.bolyartech.forge.server.modules.user.data.user;
+
+import com.bolyartech.forge.server.modules.user.data.UserLoginType;
 
 import java.util.Objects;
 

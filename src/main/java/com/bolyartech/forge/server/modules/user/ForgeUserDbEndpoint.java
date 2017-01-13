@@ -2,7 +2,7 @@ package com.bolyartech.forge.server.modules.user;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.handler.ForgeDbSecureEndpoint;
-import com.bolyartech.forge.server.modules.user.data.User;
+import com.bolyartech.forge.server.modules.user.data.user.User;
 import com.bolyartech.forge.server.response.ResponseException;
 import com.bolyartech.forge.server.response.forge.ForgeResponse;
 import com.bolyartech.forge.server.route.RequestContext;
@@ -21,7 +21,6 @@ abstract public class ForgeUserDbEndpoint extends ForgeDbSecureEndpoint {
 
 
     abstract public ForgeResponse handle(RequestContext ctx,
-                                         Session session,
                                          Connection dbc,
                                          User user) throws ResponseException, SQLException;
 
@@ -33,7 +32,7 @@ abstract public class ForgeUserDbEndpoint extends ForgeDbSecureEndpoint {
         Session session = ctx.getSession();
         User user = session.getVar(SessionVars.VAR_USER);
         if (user != null) {
-            return handle(ctx, session, dbc, user);
+            return handle(ctx, dbc, user);
         } else {
             return new ForgeResponse(UserResponseCodes.Errors.NOT_LOGGED_IN, "Not logged in");
         }

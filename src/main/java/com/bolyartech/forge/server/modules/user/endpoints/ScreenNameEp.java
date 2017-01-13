@@ -3,7 +3,7 @@ package com.bolyartech.forge.server.modules.user.endpoints;
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.modules.user.ForgeUserDbEndpoint;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
-import com.bolyartech.forge.server.modules.user.data.User;
+import com.bolyartech.forge.server.modules.user.data.user.User;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenName;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbh;
 import com.bolyartech.forge.server.response.ResponseException;
@@ -33,7 +33,6 @@ public class ScreenNameEp extends ForgeUserDbEndpoint {
 
     @Override
     public ForgeResponse handle(RequestContext ctx,
-                                Session session,
                                 Connection dbc, User user) throws ResponseException, SQLException {
 
         String screenName = ctx.getFromPost(PARAM_SCREEN_NAME);

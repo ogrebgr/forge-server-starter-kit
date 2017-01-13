@@ -11,7 +11,7 @@ public class UserExtIdDbhImpl implements UserExtIdDbh {
         try (PreparedStatement psInsert = dbc.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             psInsert.setLong(1, user);
             psInsert.setString(2, extId);
-            psInsert.setInt(2, type.getCode());
+            psInsert.setInt(3, type.getCode());
             psInsert.executeUpdate();
 
             ResultSet rs = psInsert.getGeneratedKeys();
@@ -27,7 +27,7 @@ public class UserExtIdDbhImpl implements UserExtIdDbh {
         String sql = "SELECT id, ext_id FROM user_ext_ids WHERE user = ? and type = ?";
         try (PreparedStatement psLoad = dbc.prepareStatement(sql)) {
             psLoad.setLong(1, user);
-            psLoad.setInt(1, type.getCode());
+            psLoad.setInt(2, type.getCode());
 
             try (ResultSet rs = psLoad.executeQuery()) {
                 if (rs.next()) {
@@ -48,7 +48,7 @@ public class UserExtIdDbhImpl implements UserExtIdDbh {
         String sql = "SELECT id, user FROM user_ext_ids WHERE ext = ? and type = ?";
         try (PreparedStatement psLoad = dbc.prepareStatement(sql)) {
             psLoad.setString(1, extId);
-            psLoad.setInt(1, type.getCode());
+            psLoad.setInt(2, type.getCode());
 
             try (ResultSet rs = psLoad.executeQuery()) {
                 if (rs.next()) {

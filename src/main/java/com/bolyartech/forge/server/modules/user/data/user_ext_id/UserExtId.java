@@ -62,10 +62,10 @@ public final class UserExtId {
 
 
         Type(int code) {
-            if (code < 0) {
+            if (code > 0) {
                 this.mCode = code;
             } else {
-                throw new IllegalArgumentException("Code must be negative");
+                throw new IllegalArgumentException("Code must be positive");
             }
         }
 

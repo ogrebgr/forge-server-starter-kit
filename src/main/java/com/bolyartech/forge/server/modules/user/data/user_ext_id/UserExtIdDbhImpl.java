@@ -45,7 +45,7 @@ public class UserExtIdDbhImpl implements UserExtIdDbh {
 
     @Override
     public UserExtId loadByExtId(Connection dbc, String extId, UserExtId.Type type) throws SQLException {
-        String sql = "SELECT id, user FROM user_ext_ids WHERE ext = ? and type = ?";
+        String sql = "SELECT id, user FROM user_ext_ids WHERE ext_id = ? and type = ?";
         try (PreparedStatement psLoad = dbc.prepareStatement(sql)) {
             psLoad.setString(1, extId);
             psLoad.setInt(2, type.getCode());

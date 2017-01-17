@@ -14,6 +14,7 @@ import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtIdDbhImp
 import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbhImpl;
 import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapper;
 import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapperImpl;
+import com.bolyartech.forge.server.modules.user.google.GoogleSignInWrapperImpl;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
@@ -45,7 +46,8 @@ public class SkeletonMainServlet extends MainServlet {
                 new ScramDbhImpl(),
                 new ScreenNameDbhImpl(),
                 new UserExtIdDbhImpl(),
-                new FacebookWrapperImpl()));
+                new FacebookWrapperImpl(),
+                new GoogleSignInWrapperImpl()));
         ret.add(new AdminModule(mDbPool,
                 new AdminUserDbhImpl(),
                 new ScramDbhImpl(),

@@ -14,7 +14,7 @@ import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtId;
 import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtIdDbh;
 import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapper;
-import com.bolyartech.forge.server.modules.user.facebook.SimpleFacebookUser;
+import com.bolyartech.forge.server.modules.user.facebook.ExternalUser;
 import com.bolyartech.forge.server.response.ResponseException;
 import com.bolyartech.forge.server.response.forge.ForgeResponse;
 import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
@@ -56,8 +56,7 @@ public class LoginFacebookEp extends ForgeDbSecureEndpoint {
         String token = ctx.getFromPost(PARAM_TOKEN);
 
         if (Params.areAllPresent(token)) {
-            // we have anonymous or other login
-            SimpleFacebookUser fbUser = mFacebookWrapper.checkToken(token);
+            ExternalUser fbUser = mFacebookWrapper.checkToken(token);
             if (fbUser != null) {
                 Session session = ctx.getSession();
                 User user = session.getVar(SessionVars.VAR_USER);
@@ -82,10 +81,10 @@ public class LoginFacebookEp extends ForgeDbSecureEndpoint {
     }
 
 
-    private ForgeResponse processNotLogged(RequestContext ctx, Connection dbc, SimpleFacebookUser fbUser)
+    private ForgeResponse processNotLogged(RequestContext ctx, Connection dbc, ExternalUser fbUser)
             throws SQLException {
 
-        UserExtId extIdByFbId = mUserExtIdDbh.loadByExtId(dbc, fbUser.getFacebookId(), UserExtId.Type.FACEBOOK);
+        UserExtId extIdByFbId = mUserExtIdDbh.loadByExtId(dbc, fbUser.getExternalId(), UserExtId.Type.FACEBOOK);
         if (extIdByFbId != null) {
             User user = mUserDbh.loadById(dbc, extIdByFbId.getUser());
             return completeLogin(ctx, dbc, user);
@@ -96,9 +95,9 @@ public class LoginFacebookEp extends ForgeDbSecureEndpoint {
 
 
     private ForgeResponse processLoggedReturningFbUser(RequestContext ctx, UserExtId userExtId, Connection dbc,
-                                                       User user, SimpleFacebookUser fbUser) throws SQLException {
+                                                       User user, ExternalUser fbUser) throws SQLException {
 
-        UserExtId extIdByFbId = mUserExtIdDbh.loadByExtId(dbc, fbUser.getFacebookId(), UserExtId.Type.FACEBOOK);
+        UserExtId extIdByFbId = mUserExtIdDbh.loadByExtId(dbc, fbUser.getExternalId(), UserExtId.Type.FACEBOOK);
         if (extIdByFbId.getId() == userExtId.getId()) {
             return completeLogin(ctx, dbc, user);
         } else {
@@ -109,10 +108,10 @@ public class LoginFacebookEp extends ForgeDbSecureEndpoint {
 
 
     private ForgeResponse processLoggedFirstFbLogin(RequestContext ctx, Connection dbc, User user,
-                                                    SimpleFacebookUser fbUser) throws SQLException {
+                                                    ExternalUser fbUser) throws SQLException {
 
 
-        mUserExtIdDbh.createNew(dbc, user.getId(), fbUser.getFacebookId(), UserExtId.Type.FACEBOOK);
+        mUserExtIdDbh.createNew(dbc, user.getId(), fbUser.getExternalId(), UserExtId.Type.FACEBOOK);
         return completeLogin(ctx, dbc, user);
     }
 

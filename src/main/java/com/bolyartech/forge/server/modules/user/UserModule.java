@@ -10,6 +10,7 @@ import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
 import com.bolyartech.forge.server.modules.user.endpoints.*;
 import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapper;
 import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapperImpl;
+import com.bolyartech.forge.server.modules.user.google.GoogleSignInWrapper;
 import com.bolyartech.forge.server.route.GetRoute;
 import com.bolyartech.forge.server.route.PostRoute;
 import com.bolyartech.forge.server.route.Route;
@@ -33,6 +34,7 @@ public final class UserModule implements HttpModule {
     private final ScreenNameDbh mScreenNameDbh;
     private final UserExtIdDbh mUserExtIdDbh;
     private final FacebookWrapper mFacebookWrapper;
+    private final GoogleSignInWrapper mGoogleSignInWrapper;
 
 
     public UserModule(String pathPrefix,
@@ -42,7 +44,8 @@ public final class UserModule implements HttpModule {
                       ScramDbh scramDbh,
                       ScreenNameDbh screenNameDbh,
                       UserExtIdDbh userExtIdDbh,
-                      FacebookWrapper facebookWrapper) {
+                      FacebookWrapper facebookWrapper,
+                      GoogleSignInWrapper googleSignInWrapper) {
 
         mPathPrefix = pathPrefix;
         mDbPool = dbPool;
@@ -52,6 +55,7 @@ public final class UserModule implements HttpModule {
         mScreenNameDbh = screenNameDbh;
         mUserExtIdDbh = userExtIdDbh;
         mFacebookWrapper = facebookWrapper;
+        mGoogleSignInWrapper = googleSignInWrapper;
     }
 
 
@@ -62,16 +66,11 @@ public final class UserModule implements HttpModule {
             ScramDbh scramDbh,
             ScreenNameDbh screenNameDbh,
             UserExtIdDbh userExtIdDbh,
-            FacebookWrapper facebookWrapper) {
+            FacebookWrapper facebookWrapper,
+            GoogleSignInWrapper googleSignInWrapper) {
 
-        mPathPrefix = DEFAULT_PATH_PREFIX;
-        mDbPool = dbPool;
-        mUserScramDbh = userScramDbh;
-        mUserDbh = userDbh;
-        mScramDbh = scramDbh;
-        mScreenNameDbh = screenNameDbh;
-        mUserExtIdDbh = userExtIdDbh;
-        mFacebookWrapper = facebookWrapper;
+        this(DEFAULT_PATH_PREFIX, dbPool, userScramDbh, userDbh, scramDbh, screenNameDbh,
+                userExtIdDbh, facebookWrapper, googleSignInWrapper);
     }
 
 
@@ -85,6 +84,8 @@ public final class UserModule implements HttpModule {
                 new LoginEp(mDbPool, mUserDbh, mScramDbh, mScreenNameDbh)));
         ret.add(new PostRoute(mPathPrefix + "login_facebook",
                 new LoginFacebookEp(mDbPool, mUserDbh, mUserExtIdDbh, mScreenNameDbh, mFacebookWrapper)));
+        ret.add(new PostRoute(mPathPrefix + "login_google",
+                new LoginGoogleEp(mDbPool, mUserDbh, mUserExtIdDbh, mScreenNameDbh, mGoogleSignInWrapper)));
         ret.add(new PostRoute(mPathPrefix + "register",
                 new RegistrationEp(mDbPool, mUserDbh, mScramDbh, mUserScramDbh, mScreenNameDbh)));
         ret.add(new PostRoute(mPathPrefix + "register_postauto",

@@ -36,7 +36,7 @@ public class RegistrationPostAutoEpTest {
         ScramDbh scramDbh = mock(ScramDbh.class);
         UserScramDbh userScramDbh = mock(UserScramDbh.class);
         ScreenNameDbh screenNameDbh = mock(ScreenNameDbh.class);
-        User user = new User(11, false, UserLoginType.SCRAM);
+        User user = new User(11, false, UserLoginType.SCRAM.getCode());
 
         RegistrationPostAutoEp ep = new RegistrationPostAutoEp(dbPool, userDbh, scramDbh, userScramDbh, screenNameDbh);
 
@@ -70,7 +70,7 @@ public class RegistrationPostAutoEpTest {
         ScramDbh scramDbh = mock(ScramDbh.class);
         UserScramDbh userScramDbh = mock(UserScramDbh.class);
         ScreenNameDbh screenNameDbh = mock(ScreenNameDbh.class);
-        User user = new User(11, false, UserLoginType.SCRAM);
+        User user = new User(11, false, UserLoginType.SCRAM.getCode());
 
         RegistrationPostAutoEp ep = new RegistrationPostAutoEp(dbPool, userDbh, scramDbh, userScramDbh, screenNameDbh);
 
@@ -106,7 +106,7 @@ public class RegistrationPostAutoEpTest {
         ScramDbh scramDbh = mock(ScramDbh.class);
         UserScramDbh userScramDbh = mock(UserScramDbh.class);
         ScreenNameDbh screenNameDbh = mock(ScreenNameDbh.class);
-        User user = new User(11, false, UserLoginType.SCRAM);
+        User user = new User(11, false, UserLoginType.SCRAM.getCode());
 
         RegistrationPostAutoEp ep = new RegistrationPostAutoEp(dbPool, userDbh, scramDbh, userScramDbh, screenNameDbh);
 
@@ -133,7 +133,7 @@ public class RegistrationPostAutoEpTest {
         ScramDbh scramDbh = mock(ScramDbh.class);
         UserScramDbh userScramDbh = mock(UserScramDbh.class);
         ScreenNameDbh screenNameDbh = mock(ScreenNameDbh.class);
-        User user = new User(11, false, UserLoginType.SCRAM);
+        User user = new User(11, false, UserLoginType.SCRAM.getCode());
 
         RegistrationPostAutoEp ep = new RegistrationPostAutoEp(dbPool, userDbh, scramDbh, userScramDbh, screenNameDbh);
 
@@ -160,7 +160,7 @@ public class RegistrationPostAutoEpTest {
         ScramDbh scramDbh = mock(ScramDbh.class);
         UserScramDbh userScramDbh = mock(UserScramDbh.class);
         ScreenNameDbh screenNameDbh = mock(ScreenNameDbh.class);
-        User user = new User(11, false, UserLoginType.SCRAM);
+        User user = new User(11, false, UserLoginType.SCRAM.getCode());
 
         RegistrationPostAutoEp ep = new RegistrationPostAutoEp(dbPool, userDbh, scramDbh, userScramDbh, screenNameDbh);
 

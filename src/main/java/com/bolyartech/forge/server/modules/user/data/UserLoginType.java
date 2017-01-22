@@ -1,6 +1,7 @@
 package com.bolyartech.forge.server.modules.user.data;
 
 public enum UserLoginType {
+    UNKNOWN(-1),
     SCRAM(0),
     GOOGLE(1),
     FACEBOOK(2);
@@ -26,7 +27,7 @@ public enum UserLoginType {
             return UserLoginType.FACEBOOK;
         }
 
-        throw new IllegalArgumentException("No such UserLoginType: " + l);
+        return UserLoginType.UNKNOWN;
     }
 
 

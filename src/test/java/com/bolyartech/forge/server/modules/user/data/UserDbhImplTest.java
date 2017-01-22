@@ -57,7 +57,7 @@ public class UserDbhImplTest {
 
         assertTrue("Not ID", userNew.getId() > 0);
         assertTrue("Not same data", userNew.isDisabled() &&
-                UserLoginType.GOOGLE == userNew.getLoginType());
+                UserLoginType.GOOGLE.getCode() == userNew.getLoginType());
     }
 
 
@@ -97,7 +97,7 @@ public class UserDbhImplTest {
         User changed = userDbh.changeLoginType(dbc, userNew, UserLoginType.FACEBOOK);
         dbc.close();
 
-        assertTrue("not changed", changed.getLoginType() == UserLoginType.FACEBOOK);
+        assertTrue("not changed", changed.getLoginType() == UserLoginType.FACEBOOK.getCode());
     }
 
 

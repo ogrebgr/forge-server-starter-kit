@@ -165,7 +165,7 @@ public class RegistrationEpTest {
         when(rc.getFromPost(RegistrationEp.PARAM_SCREEN_NAME)).thenReturn("some screen name");
         when(screenNameDbh.exists(any(), any())).thenReturn(true);
 
-        UserScram us = new UserScram(new User(11, false, UserLoginType.SCRAM), new Scram(11, "aaa", "aaa", "aaa",
+        UserScram us = new UserScram(new User(11, false, UserLoginType.SCRAM.getCode()), new Scram(11, "aaa", "aaa", "aaa",
                 "aaa", 11));
 
         UserScramDbh.NewNamedResult newNamedResult = new UserScramDbh.NewNamedResult(true, us, false);

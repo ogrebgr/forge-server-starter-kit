@@ -10,10 +10,10 @@ public final class User {
 
     private final long mId;
     private final boolean mIsDisabled;
-    private final UserLoginType mLoginType;
+    private final long mLoginType;
 
 
-    public User(long id, boolean isDisabled, UserLoginType loginType) {
+    public User(long id, boolean isDisabled, long loginType) {
         mId = id;
         mIsDisabled = isDisabled;
         mLoginType = loginType;
@@ -44,7 +44,7 @@ public final class User {
     }
 
 
-    public UserLoginType getLoginType() {
+    public long getLoginType() {
         return mLoginType;
     }
 

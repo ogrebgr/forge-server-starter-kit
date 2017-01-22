@@ -25,7 +25,7 @@ public class ScreenNameEpTest {
     @Test
     public void test() throws ResponseException, SQLException {
         DbPool dbPool = mock(DbPool.class);
-        User user = new User(11, false, UserLoginType.SCRAM);
+        User user = new User(11, false, UserLoginType.SCRAM.getCode());
         ScreenNameDbh screenNameDbh = mock(ScreenNameDbh.class);
 
         RequestContext rc = mock(RequestContext.class);

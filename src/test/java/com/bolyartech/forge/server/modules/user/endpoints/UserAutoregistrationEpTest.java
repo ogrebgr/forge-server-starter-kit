@@ -32,7 +32,7 @@ public class UserAutoregistrationEpTest {
         DbPool dbPool = mock(DbPool.class);
         UserScramDbh userScramDbh = mock(UserScramDbh.class);
 
-        User user = new User(111, false, UserLoginType.SCRAM);
+        User user = new User(111, false, UserLoginType.SCRAM.getCode());
         Scram scram = new Scram(111, "testuser", "aaa", "aaaa", "aaa", 1);
         UserScram userScram = new UserScram(user, scram);
 

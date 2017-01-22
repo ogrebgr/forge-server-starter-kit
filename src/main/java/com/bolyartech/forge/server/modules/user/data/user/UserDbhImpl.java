@@ -22,7 +22,7 @@ public class UserDbhImpl implements UserDbh {
                 if (rs.next()) {
                     return new User(id,
                             rs.getInt(1) == 1,
-                            UserLoginType.fromLong(rs.getLong(2)));
+                            rs.getLong(2));
                 } else {
                     return null;
                 }
@@ -43,7 +43,7 @@ public class UserDbhImpl implements UserDbh {
             ResultSet rs = psInsert.getGeneratedKeys();
             rs.next();
 
-            return new User(rs.getLong(1), isDisabled, lt);
+            return new User(rs.getLong(1), isDisabled, lt.getCode());
         }
     }
 
@@ -72,11 +72,11 @@ public class UserDbhImpl implements UserDbh {
 
         String sql = "UPDATE users SET login_type = ? WHERE id = ?";
         try (PreparedStatement psUpdate = dbc.prepareStatement(sql)) {
-            psUpdate.setLong(1, user.getLoginType().getCode());
+            psUpdate.setLong(1, user.getLoginType());
             psUpdate.setLong(2, user.getId());
             int updated = psUpdate.executeUpdate();
             if (updated == 1) {
-                return new User(user.getId(), user.isDisabled(), lt);
+                return new User(user.getId(), user.isDisabled(), lt.getCode());
             } else {
                 throw new SQLException("Unexpected number of updated records = " + updated);
             }

@@ -23,7 +23,7 @@ public class LogoutEpTest {
         Session session = new TestSession();
         when(rc.getSession()).thenReturn(session);
 
-        session.setVar(SessionVars.VAR_USER, new User(11, false, UserLoginType.FACEBOOK));
+        session.setVar(SessionVars.VAR_USER, new User(11, false, UserLoginType.FACEBOOK.getCode()));
         ep.handleForge(rc);
 
         assertTrue("user session var not cleared", session.getVar(SessionVars.VAR_USER) == null);

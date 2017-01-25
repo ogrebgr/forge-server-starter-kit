@@ -14,7 +14,7 @@ import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtId;
 import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtIdDbh;
 import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapper;
-import com.bolyartech.forge.server.modules.user.facebook.ExternalUser;
+import com.bolyartech.forge.server.modules.user.ExternalUser;
 import com.bolyartech.forge.server.response.ResponseException;
 import com.bolyartech.forge.server.response.forge.ForgeResponse;
 import com.bolyartech.forge.server.response.forge.MissingParametersResponse;

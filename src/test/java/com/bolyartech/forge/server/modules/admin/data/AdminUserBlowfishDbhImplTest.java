@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import static org.junit.Assert.*;
 
 
-public class AdminUserScramDbhImplTest {
+public class AdminUserBlowfishDbhImplTest {
     private DbPool mDbPool;
 
 

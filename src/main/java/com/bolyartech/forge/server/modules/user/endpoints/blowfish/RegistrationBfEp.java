@@ -1,4 +1,4 @@
-package com.bolyartech.forge.server.modules.user.endpoints;
+package com.bolyartech.forge.server.modules.user.endpoints.blowfish;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.handler.ForgeDbSecureEndpoint;
@@ -8,13 +8,13 @@ import com.bolyartech.forge.server.modules.user.SessionVars;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
 import com.bolyartech.forge.server.modules.user.data.RokLogin;
 import com.bolyartech.forge.server.modules.user.data.SessionInfo;
-import com.bolyartech.forge.server.modules.user.data.user.User;
-import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
-import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
+import com.bolyartech.forge.server.modules.user.data.blowfish.BlowfishDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.UserScramUtils;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenName;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbh;
-import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
+import com.bolyartech.forge.server.modules.user.data.user.User;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.user_blowfish.UserBlowfishDbh;
 import com.bolyartech.forge.server.response.ResponseException;
 import com.bolyartech.forge.server.response.forge.ForgeResponse;
 import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
@@ -28,32 +28,29 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 
-public class RegistrationEp extends ForgeDbSecureEndpoint {
+public class RegistrationBfEp extends ForgeDbSecureEndpoint {
     static final String PARAM_USERNAME = "username";
     static final String PARAM_PASSWORD = "password";
     static final String PARAM_SCREEN_NAME = "screen_name";
 
-
     private final Gson mGson;
 
     private final UserDbh mUserDbh;
-    private final ScramDbh mScramDbh;
-    private final UserScramDbh mUserScramDbh;
+    private final BlowfishDbh mBlowfishDbh;
+    private final UserBlowfishDbh mUserBlowfishDbh;
     private final ScreenNameDbh mScreenNameDbh;
 
 
-    public RegistrationEp(DbPool dbPool,
-                          UserDbh userDbh,
-                          ScramDbh scramDbh,
-                          UserScramDbh userScramDbh,
-                          ScreenNameDbh screenNameDbh) {
+    public RegistrationBfEp(DbPool dbPool, UserDbh userDbh, BlowfishDbh blowfishDbh, UserBlowfishDbh userBlowfishDbh,
+                            ScreenNameDbh screenNameDbh) {
 
         super(dbPool);
-        mGson = new Gson();
         mUserDbh = userDbh;
-        mScramDbh = scramDbh;
-        mUserScramDbh = userScramDbh;
+        mBlowfishDbh = blowfishDbh;
+        mUserBlowfishDbh = userBlowfishDbh;
         mScreenNameDbh = screenNameDbh;
+
+        mGson = new Gson();
     }
 
 
@@ -86,14 +83,14 @@ public class RegistrationEp extends ForgeDbSecureEndpoint {
         ScramUtils.NewPasswordStringData data = UserScramUtils.createPasswordData(password);
 
 
-        UserScramDbh.NewNamedResult rez = mUserScramDbh.createNewNamed(dbc, mUserDbh, mScramDbh, mScreenNameDbh,
-                username, data, screenName);
+        UserBlowfishDbh.NewNamedResult rez = mUserBlowfishDbh.createNewNamed(dbc, mUserDbh, mBlowfishDbh,
+                mScreenNameDbh,  username, password, screenName);
 
         if (rez.isOk) {
-            SessionInfo si = new SessionInfo(rez.mUserScram.getUser().getId(), null);
+            SessionInfo si = new SessionInfo(rez.mUserBlowfish.getUser().getId(), null);
 
             Session session = ctx.getSession();
-            session.setVar(SessionVars.VAR_USER, rez.mUserScram.getUser());
+            session.setVar(SessionVars.VAR_USER, rez.mUserBlowfish.getUser());
             session.setVar(SessionVars.VAR_LOGIN_TYPE, LoginType.NATIVE);
             return new OkResponse(
                     mGson.toJson(new RokLogin(

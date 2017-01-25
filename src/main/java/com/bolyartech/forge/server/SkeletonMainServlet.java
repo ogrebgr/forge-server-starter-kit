@@ -6,14 +6,27 @@ import com.bolyartech.forge.server.module.HttpModule;
 import com.bolyartech.forge.server.modules.admin.AdminModule;
 import com.bolyartech.forge.server.modules.admin.data.*;
 import com.bolyartech.forge.server.modules.main.MainModule;
+import com.bolyartech.forge.server.modules.user.BlowfishUserModule;
+import com.bolyartech.forge.server.modules.user.FacebookUserModule;
+import com.bolyartech.forge.server.modules.user.GoogleUserModule;
 import com.bolyartech.forge.server.modules.user.UserModule;
+import com.bolyartech.forge.server.modules.user.data.blowfish.BlowfishDbh;
+import com.bolyartech.forge.server.modules.user.data.blowfish.BlowfishDbhImpl;
+import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
+import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbh;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.user.UserDbhImpl;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbhImpl;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbhImpl;
+import com.bolyartech.forge.server.modules.user.data.user_blowfish.UserBlowfishDbh;
+import com.bolyartech.forge.server.modules.user.data.user_blowfish.UserBlowfishDbhImpl;
+import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtIdDbh;
 import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtIdDbhImpl;
+import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
 import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbhImpl;
 import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapper;
 import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapperImpl;
+import com.bolyartech.forge.server.modules.user.google.GoogleSignInWrapper;
 import com.bolyartech.forge.server.modules.user.google.GoogleSignInWrapperImpl;
 import org.slf4j.LoggerFactory;
 
@@ -39,14 +52,19 @@ public class SkeletonMainServlet extends MainServlet {
     @Override
     protected List<HttpModule> getModules() {
         List<HttpModule> ret = new ArrayList<>();
+
+        UserScramDbh userScramDbh = new UserScramDbhImpl();
+        UserDbh userDbh = new UserDbhImpl();
+        ScramDbh scramDbh = new ScramDbhImpl();
+        ScreenNameDbh screenNameDbh = new ScreenNameDbhImpl();
+        UserExtIdDbh userExtIdDbh = new UserExtIdDbhImpl();
         ret.add(new MainModule());
         ret.add(new UserModule(mDbPool,
-                new UserScramDbhImpl(),
-                new UserDbhImpl(),
-                new ScramDbhImpl(),
-                new ScreenNameDbhImpl(),
-                new UserExtIdDbhImpl(),
-                new FacebookWrapperImpl(),
+                userScramDbh,
+                userDbh,
+                scramDbh,
+                screenNameDbh,
+                userExtIdDbh,
                 new GoogleSignInWrapperImpl()));
         ret.add(new AdminModule(mDbPool,
                 new AdminUserDbhImpl(),
@@ -57,6 +75,16 @@ public class SkeletonMainServlet extends MainServlet {
                 new UserExportedViewDbhImpl(),
                 new AdminUserExportedViewDbhImpl()
         ));
+
+        FacebookWrapper facebookWrapper = new FacebookWrapperImpl();
+        ret.add(new FacebookUserModule(mDbPool, userDbh, scramDbh, screenNameDbh, userExtIdDbh, facebookWrapper));
+
+        GoogleSignInWrapper googleSignInWrapper = new GoogleSignInWrapperImpl();
+        ret.add(new GoogleUserModule(mDbPool, userDbh, scramDbh, screenNameDbh, userExtIdDbh, googleSignInWrapper));
+
+        BlowfishDbh blowfishDbh = new BlowfishDbhImpl();
+        UserBlowfishDbh userBlowfishDbh = new UserBlowfishDbhImpl();
+        ret.add(new BlowfishUserModule(mDbPool, userBlowfishDbh, userDbh, blowfishDbh, screenNameDbh));
 
         return ret;
     }

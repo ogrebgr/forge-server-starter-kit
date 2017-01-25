@@ -4,7 +4,8 @@ public enum UserLoginType {
     UNKNOWN(-1),
     SCRAM(0),
     GOOGLE(1),
-    FACEBOOK(2);
+    FACEBOOK(2),
+    BLOWFISH(3);
 
     private final long mCode;
 

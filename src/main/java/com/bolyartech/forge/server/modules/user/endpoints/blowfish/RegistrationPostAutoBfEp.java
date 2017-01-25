@@ -1,23 +1,20 @@
-package com.bolyartech.forge.server.modules.user.endpoints;
+package com.bolyartech.forge.server.modules.user.endpoints.blowfish;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.misc.Params;
 import com.bolyartech.forge.server.modules.user.ForgeUserDbEndpoint;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
-import com.bolyartech.forge.server.modules.user.data.user.User;
-import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
-import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
-import com.bolyartech.forge.server.modules.user.data.scram.UserScramUtils;
+import com.bolyartech.forge.server.modules.user.data.blowfish.BlowfishDbh;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenName;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbh;
-import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
+import com.bolyartech.forge.server.modules.user.data.user.User;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.user_blowfish.UserBlowfishDbh;
 import com.bolyartech.forge.server.response.ResponseException;
 import com.bolyartech.forge.server.response.forge.ForgeResponse;
 import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
 import com.bolyartech.forge.server.response.forge.OkResponse;
 import com.bolyartech.forge.server.route.RequestContext;
-import com.bolyartech.forge.server.session.Session;
-import com.bolyartech.scram_sasl.common.ScramUtils;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
@@ -25,7 +22,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 
-public class RegistrationPostAutoEp extends ForgeUserDbEndpoint {
+public class RegistrationPostAutoBfEp extends ForgeUserDbEndpoint {
     static final String PARAM_NEW_USERNAME = "new_username";
     static final String PARAM_NEW_PASSWORD = "new_password";
     static final String PARAM_SCREEN_NAME = "screen_name";
@@ -33,22 +30,22 @@ public class RegistrationPostAutoEp extends ForgeUserDbEndpoint {
     private final Gson mGson;
 
     private final UserDbh mUserDbh;
-    private final ScramDbh mScramDbh;
-    private final UserScramDbh mUserScramDbh;
+    private final BlowfishDbh mBlowfishDbh;
+    private final UserBlowfishDbh mUserBlowfishDbh;
     private final ScreenNameDbh mScreenNameDbh;
 
 
-    public RegistrationPostAutoEp(DbPool dbPool,
+    public RegistrationPostAutoBfEp(DbPool dbPool,
                                   UserDbh userDbh,
-                                  ScramDbh scramDbh,
-                                  UserScramDbh userScramDbh,
+                                  BlowfishDbh scramDbh,
+                                  UserBlowfishDbh userBlowfishDbh,
                                   ScreenNameDbh screenNameDbh) {
 
         super(dbPool);
         mGson = new Gson();
         mUserDbh = userDbh;
-        mScramDbh = scramDbh;
-        mUserScramDbh = userScramDbh;
+        mBlowfishDbh = scramDbh;
+        mUserBlowfishDbh = userBlowfishDbh;
         mScreenNameDbh = screenNameDbh;
     }
 
@@ -85,15 +82,13 @@ public class RegistrationPostAutoEp extends ForgeUserDbEndpoint {
         }
 
 
-        ScramUtils.NewPasswordStringData data = UserScramUtils.createPasswordData(newPassword);
-
         boolean rez;
         if (existingScreenName == null) {
-            rez = mUserScramDbh.replaceExisting(dbc, mScramDbh, mScreenNameDbh,
-                    user.getId(), newUsername, data, screenName);
+            rez = mUserBlowfishDbh.replaceExisting(dbc, mBlowfishDbh, mScreenNameDbh,
+                    user.getId(), newUsername, newPassword, screenName);
         } else {
-            mUserScramDbh.replaceExistingNamed(dbc, mScramDbh,
-                    user.getId(), newUsername, data);
+            mUserBlowfishDbh.replaceExistingNamed(dbc, mBlowfishDbh,
+                    user.getId(), newUsername, newPassword);
             rez = true;
         }
 
@@ -103,6 +98,5 @@ public class RegistrationPostAutoEp extends ForgeUserDbEndpoint {
             return new ForgeResponse(UserResponseCodes.Errors.SCREEN_NAME_EXISTS, "Scree name already taken");
         }
     }
-
 
 }

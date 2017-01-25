@@ -1,5 +1,6 @@
 package com.bolyartech.forge.server.modules.user.facebook;
 
+import com.bolyartech.forge.server.modules.user.ExternalUser;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Version;

@@ -1,4 +1,4 @@
-package com.bolyartech.forge.server.modules.user.facebook;
+package com.bolyartech.forge.server.modules.user;
 
 public class ExternalUser {
     private final String mExternalId;

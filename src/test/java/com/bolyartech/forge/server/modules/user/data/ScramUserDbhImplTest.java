@@ -88,7 +88,7 @@ public class ScramUserDbhImplTest {
         dbc.close();
 
         assertTrue("Result not OK", rez.isOk);
-        assertTrue("UserScram is null", rez.mUserScram != null);
+        assertTrue("UserBlowfish is null", rez.mUserScram != null);
     }
 
 

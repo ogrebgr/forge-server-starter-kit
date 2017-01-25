@@ -1,6 +1,6 @@
 package com.bolyartech.forge.server.modules.user.google;
 
-import com.bolyartech.forge.server.modules.user.facebook.ExternalUser;
+import com.bolyartech.forge.server.modules.user.ExternalUser;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;

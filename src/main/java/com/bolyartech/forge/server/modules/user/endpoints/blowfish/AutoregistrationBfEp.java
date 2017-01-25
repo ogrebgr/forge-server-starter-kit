@@ -1,4 +1,4 @@
-package com.bolyartech.forge.server.modules.user.endpoints;
+package com.bolyartech.forge.server.modules.user.endpoints.blowfish;
 
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.handler.ForgeDbEndpoint;
@@ -6,41 +6,37 @@ import com.bolyartech.forge.server.modules.user.LoginType;
 import com.bolyartech.forge.server.modules.user.SessionVars;
 import com.bolyartech.forge.server.modules.user.data.RokResponseAutoregistration;
 import com.bolyartech.forge.server.modules.user.data.SessionInfo;
+import com.bolyartech.forge.server.modules.user.data.blowfish.BlowfishDbh;
 import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
-import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
-import com.bolyartech.forge.server.modules.user.data.scram.UserScramUtils;
-import com.bolyartech.forge.server.modules.user.data.user_scram.UserScram;
-import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
+import com.bolyartech.forge.server.modules.user.data.user_blowfish.UserBlowfish;
+import com.bolyartech.forge.server.modules.user.data.user_blowfish.UserBlowfishDbh;
 import com.bolyartech.forge.server.response.ResponseException;
 import com.bolyartech.forge.server.response.forge.ForgeResponse;
 import com.bolyartech.forge.server.response.forge.OkResponse;
 import com.bolyartech.forge.server.route.RequestContext;
 import com.bolyartech.forge.server.session.Session;
-import com.bolyartech.scram_sasl.common.ScramUtils;
 import com.google.gson.Gson;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 
 
-public class AutoregistrationEp extends ForgeDbEndpoint {
+public class AutoregistrationBfEp extends ForgeDbEndpoint {
     private final Gson mGson;
 
     private final UserDbh mUserDbh;
-    private final ScramDbh mScramDbh;
-    private final UserScramDbh mUserScramDbh;
+    private final BlowfishDbh mBlowfishDbh;
+    private final UserBlowfishDbh mUserBlowfishDbh;
 
 
-    public AutoregistrationEp(DbPool dbPool, UserDbh userDbh, ScramDbh scramDbh, UserScramDbh userScramDbh) {
+    public AutoregistrationBfEp(DbPool dbPool, UserDbh userDbh, BlowfishDbh scramDbh, UserBlowfishDbh userBlowfishDbh) {
         super(dbPool);
         mGson = new Gson();
         mUserDbh = userDbh;
-        mScramDbh = scramDbh;
-        mUserScramDbh = userScramDbh;
+        mBlowfishDbh = scramDbh;
+        mUserBlowfishDbh = userBlowfishDbh;
     }
 
 
@@ -54,34 +50,25 @@ public class AutoregistrationEp extends ForgeDbEndpoint {
 
         String username;
         String password = UUID.randomUUID().toString();
-        UserScram us;
+        UserBlowfish us;
 
         while (true) {
             // adding "g" as a prefix in order to make the username valid when UUID starts with number
             username = "g" + UUID.randomUUID().toString().replace("-", "");
 
-            try {
-                ScramUtils.NewPasswordStringData data = ScramUtils.byteArrayToStringData(
-                        ScramUtils.newPassword(password, salt, UserScramUtils.DEFAULT_ITERATIONS,
-                                UserScramUtils.DEFAULT_DIGEST,
-                                UserScramUtils.DEFAULT_HMAC
-                        )
-                );
-
-                us = mUserScramDbh.createNew(dbc, mUserDbh, mScramDbh, username, data);
-                if (us != null) {
-                    break;
-                }
-            } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-                throw new RuntimeException(e);
+            us = mUserBlowfishDbh.createNew(dbc, mUserDbh, mBlowfishDbh, username, password);
+            if (us != null) {
+                break;
             }
         }
+
 
         SessionInfo si = new SessionInfo(us.getUser().getId(), null);
 
         Session session = ctx.getSession();
         session.setVar(SessionVars.VAR_USER, us.getUser());
         session.setVar(SessionVars.VAR_LOGIN_TYPE, LoginType.NATIVE);
+
         return new OkResponse(
                 mGson.toJson(new RokResponseAutoregistration(username,
                         password,

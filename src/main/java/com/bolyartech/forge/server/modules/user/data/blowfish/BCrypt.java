@@ -1,4 +1,4 @@
-package com.bolyartech.forge.server.modules.user.data.misc;
+package com.bolyartech.forge.server.modules.user.data.blowfish;
 
 // Copyright (c) 2006 Damien Miller <djm@mindrot.org>
 //

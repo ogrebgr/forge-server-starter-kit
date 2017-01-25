@@ -3,6 +3,7 @@ package com.bolyartech.forge.server.modules.user.endpoints;
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.handler.ForgeDbSecureEndpoint;
 import com.bolyartech.forge.server.misc.Params;
+import com.bolyartech.forge.server.modules.user.ExternalUser;
 import com.bolyartech.forge.server.modules.user.LoginType;
 import com.bolyartech.forge.server.modules.user.SessionVars;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
@@ -13,7 +14,6 @@ import com.bolyartech.forge.server.modules.user.data.user.User;
 import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtId;
 import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtIdDbh;
-import com.bolyartech.forge.server.modules.user.ExternalUser;
 import com.bolyartech.forge.server.modules.user.google.GoogleSignInWrapper;
 import com.bolyartech.forge.server.response.ResponseException;
 import com.bolyartech.forge.server.response.forge.ForgeResponse;
@@ -82,19 +82,6 @@ public class LoginGoogleEp extends ForgeDbSecureEndpoint {
         }
     }
 
-    public static class RokLogin {
-        @SerializedName("session_ttl")
-        public final int sessionTtl;
-        @SerializedName("session_info")
-        public final SessionInfo sessionInfo;
-
-
-        public RokLogin(int sessionTtl, SessionInfo sessionInfo) {
-            this.sessionTtl = sessionTtl;
-            this.sessionInfo = sessionInfo;
-        }
-    }
-
 
     private SessionInfo createSessionInfo(Connection dbc, long userId) throws SQLException {
         ScreenName sn = mScreenNameDbh.loadByUser(dbc, userId);
@@ -108,6 +95,7 @@ public class LoginGoogleEp extends ForgeDbSecureEndpoint {
 
         return si;
     }
+
 
     private ForgeResponse completeLogin(RequestContext ctx, Connection dbc, User user) throws SQLException {
         Session session = ctx.getSession();
@@ -134,7 +122,7 @@ public class LoginGoogleEp extends ForgeDbSecureEndpoint {
 
 
     private ForgeResponse processLoggedReturningGoogleUser(RequestContext ctx, UserExtId userExtId, Connection dbc,
-                                                       User user, ExternalUser fbUser) throws SQLException {
+                                                           User user, ExternalUser fbUser) throws SQLException {
 
         UserExtId extIdByFbId = mUserExtIdDbh.loadByExtId(dbc, fbUser.getExternalId(), UserExtId.Type.GOOGLE);
         if (extIdByFbId.getId() == userExtId.getId()) {
@@ -147,10 +135,23 @@ public class LoginGoogleEp extends ForgeDbSecureEndpoint {
 
 
     private ForgeResponse processLoggedFirstGoogleLogin(RequestContext ctx, Connection dbc, User user,
-                                                    ExternalUser fbUser) throws SQLException {
+                                                        ExternalUser fbUser) throws SQLException {
 
 
         mUserExtIdDbh.createNew(dbc, user.getId(), fbUser.getExternalId(), UserExtId.Type.GOOGLE);
         return completeLogin(ctx, dbc, user);
+    }
+
+    public static class RokLogin {
+        @SerializedName("session_ttl")
+        public final int sessionTtl;
+        @SerializedName("session_info")
+        public final SessionInfo sessionInfo;
+
+
+        public RokLogin(int sessionTtl, SessionInfo sessionInfo) {
+            this.sessionTtl = sessionTtl;
+            this.sessionInfo = sessionInfo;
+        }
     }
 }

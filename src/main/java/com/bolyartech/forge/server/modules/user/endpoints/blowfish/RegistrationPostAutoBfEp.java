@@ -36,10 +36,10 @@ public class RegistrationPostAutoBfEp extends ForgeUserDbEndpoint {
 
 
     public RegistrationPostAutoBfEp(DbPool dbPool,
-                                  UserDbh userDbh,
-                                  BlowfishDbh scramDbh,
-                                  UserBlowfishDbh userBlowfishDbh,
-                                  ScreenNameDbh screenNameDbh) {
+                                    UserDbh userDbh,
+                                    BlowfishDbh scramDbh,
+                                    UserBlowfishDbh userBlowfishDbh,
+                                    ScreenNameDbh screenNameDbh) {
 
         super(dbPool);
         mGson = new Gson();

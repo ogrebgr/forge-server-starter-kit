@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 public class AdminUserDbhImplTest {
     private DbPool mDbPool;
 
+
     @Before
     public void setup() throws ForgeConfigurationException, SQLException {
         if (mDbPool == null) {
@@ -77,7 +78,6 @@ public class AdminUserDbhImplTest {
 
         assertTrue("Not same user", loadedUser.isDisabled());
     }
-
 
 
     @Test

@@ -3,12 +3,9 @@ package com.bolyartech.forge.server.modules.user.data.user_blowfish;
 import com.bolyartech.forge.server.modules.user.data.UserLoginType;
 import com.bolyartech.forge.server.modules.user.data.blowfish.Blowfish;
 import com.bolyartech.forge.server.modules.user.data.blowfish.BlowfishDbh;
-import com.bolyartech.forge.server.modules.user.data.scram.Scram;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbh;
 import com.bolyartech.forge.server.modules.user.data.user.User;
 import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
-import com.bolyartech.forge.server.modules.user.data.user_scram.UserScram;
-import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,7 +17,7 @@ public class UserBlowfishDbhImpl implements UserBlowfishDbh {
 
     @Override
     public UserBlowfish createNew(Connection dbc, UserDbh userDbh, BlowfishDbh blowfishDbh,
-                               String username, String passwordClearForm) throws SQLException {
+                                  String username, String passwordClearForm) throws SQLException {
         try {
             String sqlLock = "LOCK TABLES users WRITE, user_blowfish WRITE";
             Statement stLock = dbc.createStatement();

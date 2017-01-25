@@ -84,7 +84,7 @@ public class RegistrationBfEp extends ForgeDbSecureEndpoint {
 
 
         UserBlowfishDbh.NewNamedResult rez = mUserBlowfishDbh.createNewNamed(dbc, mUserDbh, mBlowfishDbh,
-                mScreenNameDbh,  username, password, screenName);
+                mScreenNameDbh, username, password, screenName);
 
         if (rez.isOk) {
             SessionInfo si = new SessionInfo(rez.mUserBlowfish.getUser().getId(), null);

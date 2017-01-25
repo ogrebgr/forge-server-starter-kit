@@ -3,6 +3,7 @@ package com.bolyartech.forge.server.modules.user.endpoints;
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.handler.ForgeDbSecureEndpoint;
 import com.bolyartech.forge.server.misc.Params;
+import com.bolyartech.forge.server.modules.user.ExternalUser;
 import com.bolyartech.forge.server.modules.user.LoginType;
 import com.bolyartech.forge.server.modules.user.SessionVars;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
@@ -14,7 +15,6 @@ import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtId;
 import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtIdDbh;
 import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapper;
-import com.bolyartech.forge.server.modules.user.ExternalUser;
 import com.bolyartech.forge.server.response.ResponseException;
 import com.bolyartech.forge.server.response.forge.ForgeResponse;
 import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
@@ -127,20 +127,6 @@ public class LoginFacebookEp extends ForgeDbSecureEndpoint {
     }
 
 
-    public static class RokLogin {
-        @SerializedName("session_ttl")
-        public final int sessionTtl;
-        @SerializedName("session_info")
-        public final SessionInfo sessionInfo;
-
-
-        public RokLogin(int sessionTtl, SessionInfo sessionInfo) {
-            this.sessionTtl = sessionTtl;
-            this.sessionInfo = sessionInfo;
-        }
-    }
-
-
     private SessionInfo createSessionInfo(Connection dbc, long userId) throws SQLException {
         ScreenName sn = mScreenNameDbh.loadByUser(dbc, userId);
 
@@ -152,6 +138,19 @@ public class LoginFacebookEp extends ForgeDbSecureEndpoint {
         }
 
         return si;
+    }
+
+    public static class RokLogin {
+        @SerializedName("session_ttl")
+        public final int sessionTtl;
+        @SerializedName("session_info")
+        public final SessionInfo sessionInfo;
+
+
+        public RokLogin(int sessionTtl, SessionInfo sessionInfo) {
+            this.sessionTtl = sessionTtl;
+            this.sessionInfo = sessionInfo;
+        }
     }
 
 }

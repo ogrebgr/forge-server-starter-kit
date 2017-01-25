@@ -37,7 +37,7 @@ public class AdminUserExportedViewDbhImpl implements AdminUserExportedViewDbh {
                         rs.getInt(2) == 1,
                         rs.getInt(3) == 1,
                         rs.getString(4)
-                        );
+                );
                 ret.add(tmp);
             }
         }

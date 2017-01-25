@@ -1,6 +1,5 @@
 package com.bolyartech.forge.server.modules.user.data.blowfish;
 
-import com.bolyartech.forge.server.modules.user.data.scram.Scram;
 import com.google.common.base.Strings;
 
 import java.sql.*;
@@ -15,7 +14,6 @@ public class BlowfishDbhImpl implements BlowfishDbh {
     public BlowfishDbhImpl() {
         mTableName = getTableName();
     }
-
 
 
     @Override

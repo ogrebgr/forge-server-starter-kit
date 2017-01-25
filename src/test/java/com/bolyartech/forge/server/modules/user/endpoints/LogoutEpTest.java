@@ -1,8 +1,8 @@
 package com.bolyartech.forge.server.modules.user.endpoints;
 
 import com.bolyartech.forge.server.modules.user.SessionVars;
-import com.bolyartech.forge.server.modules.user.data.user.User;
 import com.bolyartech.forge.server.modules.user.data.UserLoginType;
+import com.bolyartech.forge.server.modules.user.data.user.User;
 import com.bolyartech.forge.server.response.ResponseException;
 import com.bolyartech.forge.server.route.RequestContext;
 import com.bolyartech.forge.server.session.Session;
@@ -28,7 +28,6 @@ public class LogoutEpTest {
 
         assertTrue("user session var not cleared", session.getVar(SessionVars.VAR_USER) == null);
     }
-
 
 
 }

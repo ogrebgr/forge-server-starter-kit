@@ -10,7 +10,6 @@ import com.bolyartech.forge.server.response.forge.BasicResponseCodes;
 import com.bolyartech.forge.server.response.forge.ForgeResponse;
 import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
 import com.bolyartech.forge.server.route.RequestContext;
-import com.bolyartech.forge.server.session.Session;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 

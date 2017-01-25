@@ -3,9 +3,6 @@ package com.bolyartech.forge.server.modules.admin.data;
 import com.bolyartech.forge.server.config.ForgeConfigurationException;
 import com.bolyartech.forge.server.db.*;
 import com.bolyartech.forge.server.modules.DbTools;
-import com.bolyartech.forge.server.modules.user.data.user.User;
-import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
-import com.bolyartech.forge.server.modules.user.data.user.UserDbhImpl;
 import com.bolyartech.forge.server.modules.user.data.UserLoginType;
 import com.bolyartech.forge.server.modules.user.data.scram.Scram;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
@@ -13,6 +10,9 @@ import com.bolyartech.forge.server.modules.user.data.scram.ScramDbhImpl;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenName;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbh;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbhImpl;
+import com.bolyartech.forge.server.modules.user.data.user.User;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbhImpl;
 import com.bolyartech.scram_sasl.common.ScramUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,11 +22,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 
 public class UserExportedViewDbhImplTest {
     private DbPool mDbPool;
+
 
     @Before
     public void setup() throws ForgeConfigurationException, SQLException {

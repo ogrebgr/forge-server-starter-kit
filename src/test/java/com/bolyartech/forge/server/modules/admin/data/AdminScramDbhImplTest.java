@@ -3,7 +3,7 @@ package com.bolyartech.forge.server.modules.admin.data;
 import com.bolyartech.forge.server.config.ForgeConfigurationException;
 import com.bolyartech.forge.server.db.*;
 import com.bolyartech.forge.server.modules.DbTools;
-import com.bolyartech.forge.server.modules.user.data.*;
+import com.bolyartech.forge.server.modules.user.data.UserLoginType;
 import com.bolyartech.forge.server.modules.user.data.scram.Scram;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbhImpl;

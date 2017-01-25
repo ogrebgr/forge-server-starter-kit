@@ -8,15 +8,14 @@ import com.bolyartech.forge.server.modules.admin.data.AdminUserDbh;
 import com.bolyartech.forge.server.modules.admin.data.AdminUserScram;
 import com.bolyartech.forge.server.modules.admin.data.AdminUserScramDbh;
 import com.bolyartech.forge.server.modules.user.UserResponseCodes;
-import com.bolyartech.forge.server.modules.user.data.user.User;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.UserScramUtils;
+import com.bolyartech.forge.server.modules.user.data.user.User;
 import com.bolyartech.forge.server.response.ResponseException;
 import com.bolyartech.forge.server.response.forge.ForgeResponse;
 import com.bolyartech.forge.server.response.forge.MissingParametersResponse;
 import com.bolyartech.forge.server.response.forge.OkResponse;
 import com.bolyartech.forge.server.route.RequestContext;
-import com.bolyartech.forge.server.session.Session;
 import com.bolyartech.scram_sasl.common.ScramUtils;
 
 import java.sql.Connection;
@@ -71,11 +70,7 @@ public class CreateAdminUserEp extends AdminDbEndpoint {
                 }
 
                 boolean superAdmin;
-                if (superAdminRaw != null) {
-                    superAdmin = superAdminRaw.equals("1");
-                } else {
-                    superAdmin = false;
-                }
+                superAdmin = superAdminRaw != null && superAdminRaw.equals("1");
 
                 ScramUtils.NewPasswordStringData data = UserScramUtils.createPasswordData(password);
 

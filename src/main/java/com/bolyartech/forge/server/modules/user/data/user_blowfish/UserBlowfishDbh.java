@@ -10,19 +10,19 @@ import java.sql.SQLException;
 
 public interface UserBlowfishDbh {
     UserBlowfish createNew(Connection dbc,
-                        UserDbh userDbh,
-                        BlowfishDbh BlowfishDbh,
-                        String username,
-                        String passwordClearForm) throws SQLException;
+                           UserDbh userDbh,
+                           BlowfishDbh BlowfishDbh,
+                           String username,
+                           String passwordClearForm) throws SQLException;
 
 
     UserBlowfishDbh.NewNamedResult createNewNamed(Connection dbc,
-                                               UserDbh userDbh,
-                                               BlowfishDbh BlowfishDbh,
-                                               ScreenNameDbh screenNameDbh,
-                                               String username,
-                                               String passwordClearForm,
-                                               String screenName) throws SQLException;
+                                                  UserDbh userDbh,
+                                                  BlowfishDbh BlowfishDbh,
+                                                  ScreenNameDbh screenNameDbh,
+                                                  String username,
+                                                  String passwordClearForm,
+                                                  String screenName) throws SQLException;
 
     boolean replaceExisting(Connection dbc,
                             BlowfishDbh BlowfishDbh,

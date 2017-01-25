@@ -11,7 +11,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 
 public class AdminUserBlowfishDbhImplTest {

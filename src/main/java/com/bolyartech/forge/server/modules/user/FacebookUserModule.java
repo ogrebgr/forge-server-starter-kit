@@ -6,17 +6,8 @@ import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbh;
 import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.user_ext_id.UserExtIdDbh;
-import com.bolyartech.forge.server.modules.user.data.user_scram.UserScramDbh;
 import com.bolyartech.forge.server.modules.user.endpoints.LoginFacebookEp;
-import com.bolyartech.forge.server.modules.user.endpoints.LoginGoogleEp;
-import com.bolyartech.forge.server.modules.user.endpoints.LogoutEp;
-import com.bolyartech.forge.server.modules.user.endpoints.ScreenNameEp;
-import com.bolyartech.forge.server.modules.user.endpoints.scram.AutoregistrationEp;
-import com.bolyartech.forge.server.modules.user.endpoints.scram.LoginEp;
-import com.bolyartech.forge.server.modules.user.endpoints.scram.RegistrationEp;
-import com.bolyartech.forge.server.modules.user.endpoints.scram.RegistrationPostAutoEp;
 import com.bolyartech.forge.server.modules.user.facebook.FacebookWrapper;
-import com.bolyartech.forge.server.modules.user.google.GoogleSignInWrapper;
 import com.bolyartech.forge.server.route.PostRoute;
 import com.bolyartech.forge.server.route.Route;
 

@@ -16,6 +16,7 @@ public class GoogleSignInWrapperImpl implements GoogleSignInWrapper {
     private final JsonFactory mJsonFactory = new GsonFactory();
     private final GoogleIdTokenVerifier mVerifier = new GoogleIdTokenVerifier(transport, mJsonFactory);
 
+
     @Override
     public ExternalUser checkToken(String token) {
         try {

@@ -1,8 +1,8 @@
 package com.bolyartech.forge.server.modules.user.data.user_scram;
 
-import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.forge.server.modules.user.data.scram.ScramDbh;
 import com.bolyartech.forge.server.modules.user.data.screen_name.ScreenNameDbh;
+import com.bolyartech.forge.server.modules.user.data.user.UserDbh;
 import com.bolyartech.scram_sasl.common.ScramUtils;
 
 import java.sql.Connection;

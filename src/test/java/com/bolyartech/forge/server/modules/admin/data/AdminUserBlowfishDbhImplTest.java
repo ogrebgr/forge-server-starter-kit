@@ -2,6 +2,7 @@ package com.bolyartech.forge.server.modules.admin.data;
 
 import com.bolyartech.forge.server.config.ForgeConfigurationException;
 import com.bolyartech.forge.server.db.*;
+import com.bolyartech.forge.server.module.admin.data.*;
 import com.bolyartech.forge.server.modules.DbTools;
 import com.bolyartech.scram_sasl.common.ScramUtils;
 import org.junit.Before;

@@ -1,14 +1,13 @@
-package com.bolyartech.forge.server.modules.admin.data;
+package com.bolyartech.forge.server.module.user.data;
 
 import com.bolyartech.forge.server.config.ForgeConfigurationException;
 import com.bolyartech.forge.server.db.*;
-import com.bolyartech.forge.server.modules.DbTools;
-import com.bolyartech.forge.server.module.user.data.UserLoginType;
 import com.bolyartech.forge.server.module.user.data.scram.Scram;
-import com.bolyartech.forge.server.module.user.data.scram.ScramDbh;
-import com.bolyartech.forge.server.module.user.data.scram.ScramDbhImpl;
 import com.bolyartech.forge.server.module.user.data.user.User;
 import com.bolyartech.forge.server.module.user.data.user.UserDbh;
+import com.bolyartech.forge.server.modules.DbTools;
+import com.bolyartech.forge.server.module.user.data.scram.ScramDbh;
+import com.bolyartech.forge.server.module.user.data.scram.ScramDbhImpl;
 import com.bolyartech.forge.server.module.user.data.user.UserDbhImpl;
 import com.bolyartech.scram_sasl.common.ScramUtils;
 import org.junit.After;
@@ -22,7 +21,8 @@ import java.sql.SQLException;
 import static org.junit.Assert.assertTrue;
 
 
-public class AdminScramDbhImplTest {
+@SuppressWarnings("ConstantConditions")
+public class ScramDbhImplTest {
     private DbPool mDbPool;
 
 
@@ -50,7 +50,7 @@ public class AdminScramDbhImplTest {
     @After
     public void after() throws SQLException {
         Connection dbc = mDbPool.getConnection();
-        DbTools.deleteAllAdminScrams(dbc);
+        DbTools.deleteAllScrams(dbc);
         dbc.close();
     }
 
@@ -63,8 +63,8 @@ public class AdminScramDbhImplTest {
         Connection dbc = mDbPool.getConnection();
         User userNew = userDbh.createNew(dbc, true, UserLoginType.GOOGLE);
 
-        ScramUtils.NewPasswordStringData data = new ScramUtils.NewPasswordStringData("salted password", "salt",
-                "client key", "server_key", "stored_key", 11);
+        ScramUtils.NewPasswordStringData data = new ScramUtils.NewPasswordStringData("salted", "salt", "clientKey",
+                "server_key", "stored_key", 11);
 
         Scram scrNew = dbh.createNew(dbc, userNew.getId(), "username", data);
         Scram scrLoaded = dbh.loadByUser(dbc, userNew.getId());
@@ -85,8 +85,8 @@ public class AdminScramDbhImplTest {
         Connection dbc = mDbPool.getConnection();
         User userNew = userDbh.createNew(dbc, true, UserLoginType.GOOGLE);
 
-        ScramUtils.NewPasswordStringData data = new ScramUtils.NewPasswordStringData("salted password", "salt",
-                "client key", "server_key", "stored_key", 11);
+        ScramUtils.NewPasswordStringData data = new ScramUtils.NewPasswordStringData("salted", "salt", "clientKey",
+                "server_key", "stored_key", 11);
 
         Scram scrNew = dbh.createNew(dbc, userNew.getId(), "username", data);
         Scram scrLoaded = dbh.loadByUsername(dbc, "username");
@@ -104,11 +104,10 @@ public class AdminScramDbhImplTest {
         Connection dbc = mDbPool.getConnection();
         User userNew = userDbh.createNew(dbc, true, UserLoginType.GOOGLE);
 
-        ScramUtils.NewPasswordStringData data = new ScramUtils.NewPasswordStringData("salted password", "salt",
-                "client key", "server_key", "stored_key", 11);
-
-        ScramUtils.NewPasswordStringData data2 = new ScramUtils.NewPasswordStringData("salted password2", "salt2",
-                "client key2", "server_key2", "stored_key2", 11);
+        ScramUtils.NewPasswordStringData data = new ScramUtils.NewPasswordStringData("salted", "salt", "clientKey",
+                "server_key", "stored_key", 11);
+        ScramUtils.NewPasswordStringData data2 = new ScramUtils.NewPasswordStringData("salted2", "salt2", "clientKey2",
+                "server_key2", "stored_key2", 11);
 
         Scram scrNew = dbh.createNew(dbc, userNew.getId(), "username", data);
         Scram scrChanged = dbh.replace(dbc, userNew.getId(), "newusername", data2);

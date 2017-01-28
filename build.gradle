@@ -15,7 +15,11 @@ repositories {
 dependencies {
     compile project(':forge-server')
     compile project(':forge-server-mod-user')
+    compile project(':forge-server-mod-user-blowfish')
+    compile project(':forge-server-mod-user-scram')
     compile project(':forge-server-mod-admin')
+    compile project(':forge-server-mod-user-facebook')
+    compile project(':forge-server-mod-user-google')
     compile project(':forge-server-tple-velocity')
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'org.mindrot:jbcrypt:0.3m'

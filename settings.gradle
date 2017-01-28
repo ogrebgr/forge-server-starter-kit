@@ -12,3 +12,9 @@ project(':forge-server-mod-user').projectDir=new File("$settingsDir/../forge-ser
 
 include ':forge-server-mod-admin'
 project(':forge-server-mod-admin').projectDir=new File("$settingsDir/../forge-server-modules/forge-server-mod-admin")
+
+include ':forge-server-mod-user-scram'
+project(':forge-server-mod-user-scram').projectDir=new File("$settingsDir/../forge-server-modules/forge-server-mod-user-scram")
+
+include ':forge-server-mod-user-blowfish'
+project(':forge-server-mod-user-blowfish').projectDir=new File("$settingsDir/../forge-server-modules/forge-server-mod-user-blowfish")

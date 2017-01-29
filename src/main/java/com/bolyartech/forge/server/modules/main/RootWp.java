@@ -19,7 +19,7 @@ public class RootWp extends WebPage {
 
     @Override
     public String produceHtml(RequestContext ctx, TemplateEngine tple) {
-        tple.assign("chudesni", "chudesni be, ej");
+        tple.assign("from", "Velocity template engine");
 
         return tple.render("root.vm");
     }

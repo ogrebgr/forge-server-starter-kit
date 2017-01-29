@@ -8,8 +8,10 @@ import com.bolyartech.forge.server.misc.TemplateEngineFactory;
 import com.bolyartech.forge.server.module.HttpModule;
 import com.bolyartech.forge.server.route.Route;
 import com.bolyartech.forge.server.route.RouteImpl;
+import com.bolyartech.forge.server.tple.freemarker.FreemarkerTemplateEngineFactory;
 import com.bolyartech.forge.server.tple.velocity.VelocityTemplateEngineFactory;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +21,11 @@ public final class MainModule implements HttpModule {
     private static final int MODULE_VERSION_CODE = 1;
     private static final String MODULE_VERSION_NAME = "1.0.0";
 
-    private final TemplateEngineFactory mTpleFactory;
+    private final TemplateEngineFactory mVelocityTpleFactory;
 
 
     public MainModule() {
-        mTpleFactory = new VelocityTemplateEngineFactory("templates/modules/main/");
+        mVelocityTpleFactory = new VelocityTemplateEngineFactory("templates/modules/main/");
     }
 
 
@@ -33,10 +35,14 @@ public final class MainModule implements HttpModule {
         NotFoundResponse notFoundResponse = new NotFoundResponse();
         MimeTypeResolver mimeTypeResolver = new MimeTypeResolverImpl();
 
-        ret.add(new RouteImpl(HttpMethod.GET, "/presni", new RootWp(mTpleFactory, true)));
-        ret.add(new RouteImpl(HttpMethod.POST, "/presni", new RootWp(mTpleFactory, true)));
+        RootWp rootWp = new RootWp(mVelocityTpleFactory, true);
+        ret.add(new RouteImpl(HttpMethod.GET, "/", rootWp));
+        ret.add(new RouteImpl(HttpMethod.POST, "/", rootWp));
         ret.add(new RouteImpl(HttpMethod.GET, "/css", new StaticFileHandler("/static/css", notFoundResponse,
                 mimeTypeResolver, true)));
+
+        TemplateEngineFactory fmf = new FreemarkerTemplateEngineFactory("/templates/modules/main/");
+        ret.add(new RouteImpl(HttpMethod.GET, "/freemarker", new FreemarkerWp(fmf)));
 
         return ret;
     }

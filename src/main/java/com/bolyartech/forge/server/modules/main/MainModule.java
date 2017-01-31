@@ -9,9 +9,15 @@ import com.bolyartech.forge.server.module.HttpModule;
 import com.bolyartech.forge.server.route.Route;
 import com.bolyartech.forge.server.route.RouteImpl;
 import com.bolyartech.forge.server.tple.freemarker.FreemarkerTemplateEngineFactory;
+import com.bolyartech.forge.server.tple.handlebars.HandlebarsTemplateEngineFactory;
+import com.bolyartech.forge.server.tple.jade.JadeTemplateEngineFactory;
+import com.bolyartech.forge.server.tple.jetbrick.JetbrickTemplateEngineFactory;
+import com.bolyartech.forge.server.tple.jtwig.JtwigTemplateEngineFactory;
+import com.bolyartech.forge.server.tple.mustache.MustacheTemplateEngineFactory;
+import com.bolyartech.forge.server.tple.pebble.PebbleTemplateEngineFactory;
+import com.bolyartech.forge.server.tple.thymeleaf.ThymeleafTemplateEngineFactory;
 import com.bolyartech.forge.server.tple.velocity.VelocityTemplateEngineFactory;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +49,27 @@ public final class MainModule implements HttpModule {
 
         TemplateEngineFactory fmf = new FreemarkerTemplateEngineFactory("/templates/modules/main/");
         ret.add(new RouteImpl(HttpMethod.GET, "/freemarker", new FreemarkerWp(fmf)));
+
+        TemplateEngineFactory mf = new MustacheTemplateEngineFactory("templates/modules/main/");
+        ret.add(new RouteImpl(HttpMethod.GET, "/mustache", new MustacheWp(mf)));
+
+        TemplateEngineFactory hbf = new HandlebarsTemplateEngineFactory("/templates/modules/main/");
+        ret.add(new RouteImpl(HttpMethod.GET, "/handlebars", new HandlebarsWp(hbf)));
+
+        TemplateEngineFactory jf = new JadeTemplateEngineFactory("templates/modules/main/");
+        ret.add(new RouteImpl(HttpMethod.GET, "/jade", new JadeWp(jf)));
+
+        TemplateEngineFactory tlf = new ThymeleafTemplateEngineFactory("templates/modules/main/");
+        ret.add(new RouteImpl(HttpMethod.GET, "/thymeleaf", new ThymeleafWp(tlf)));
+
+        TemplateEngineFactory jbf = new JetbrickTemplateEngineFactory("templates/modules/main/");
+        ret.add(new RouteImpl(HttpMethod.GET, "/jetbrick", new JetbrickWp(jbf)));
+
+        TemplateEngineFactory pf = new PebbleTemplateEngineFactory("templates/modules/main/");
+        ret.add(new RouteImpl(HttpMethod.GET, "/pebble", new PebbleWp(pf)));
+
+        TemplateEngineFactory jtf = new JtwigTemplateEngineFactory("templates/modules/main/");
+        ret.add(new RouteImpl(HttpMethod.GET, "/jtwig", new JtwigWp(jtf)));
 
         return ret;
     }

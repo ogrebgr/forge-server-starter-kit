@@ -21,14 +21,6 @@ dependencies {
     compile project(':forge-server-mod-user-facebook')
     compile project(':forge-server-mod-user-google')
     compile project(':forge-server-tple-velocity')
-    compile project(':forge-server-tple-freemarker')
-    compile project(':forge-server-tple-mustache')
-    compile project(':forge-server-tple-handlebars')
-    compile project(':forge-server-tple-jade')
-    compile project(':forge-server-tple-thymeleaf')
-    compile project(':forge-server-tple-jetbrick')
-    compile project(':forge-server-tple-pebble')
-    compile project(':forge-server-tple-jtwig')
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'org.mindrot:jbcrypt:0.3m'
     compile 'mysql:mysql-connector-java:5.1.37'

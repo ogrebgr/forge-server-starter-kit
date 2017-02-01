@@ -18,8 +18,6 @@ import com.bolyartech.forge.server.module.user_google.GoogleSignInWrapperImpl;
 import com.bolyartech.forge.server.module.user_google.GoogleUserModule;
 import com.bolyartech.forge.server.module.user_scram.data.scram.ScramDbh;
 import com.bolyartech.forge.server.module.user_scram.data.scram.ScramDbhImpl;
-import com.bolyartech.forge.server.module.user_scram.data.user_scram.UserScramDbh;
-import com.bolyartech.forge.server.module.user_scram.data.user_scram.UserScramDbhImpl;
 import com.bolyartech.forge.server.modules.main.MainModule;
 import com.bolyartech.forge.server.module.user.UserModule;
 import com.bolyartech.forge.server.module.user.data.screen_name.ScreenNameDbh;
@@ -53,7 +51,6 @@ public class SkeletonMainServlet extends MainServlet {
     protected List<HttpModule> getModules() {
         List<HttpModule> ret = new ArrayList<>();
 
-        UserScramDbh userScramDbh = new UserScramDbhImpl();
         UserDbh userDbh = new UserDbhImpl();
         ScramDbh scramDbh = new ScramDbhImpl();
         ScreenNameDbh screenNameDbh = new ScreenNameDbhImpl();

@@ -9,7 +9,7 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     jcenter()
-//    mavenLocal();
+    mavenLocal();
 }
 
 dependencies {
@@ -32,7 +32,7 @@ dependencies {
 }
 
 
-war {
-    webXml = file('src/main/resources/web.xml')
-    archiveName 'ROOT.war'
-}
+//war {
+//    webXml = file('src/main/resources/web.xml')
+//    archiveName 'root.war'
+//}

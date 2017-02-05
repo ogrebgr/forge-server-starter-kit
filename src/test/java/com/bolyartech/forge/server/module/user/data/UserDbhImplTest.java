@@ -4,13 +4,14 @@ package com.bolyartech.forge.server.module.user.data;
 import com.bolyartech.forge.server.config.ForgeConfigurationException;
 import com.bolyartech.forge.server.db.*;
 import com.bolyartech.forge.server.module.user.data.user.User;
-import com.bolyartech.forge.server.modules.DbTools;
 import com.bolyartech.forge.server.module.user.data.user.UserDbh;
 import com.bolyartech.forge.server.module.user.data.user.UserDbhImpl;
+import com.bolyartech.forge.server.modules.DbTools;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -24,8 +25,10 @@ public class UserDbhImplTest {
     @Before
     public void setup() throws SQLException, ForgeConfigurationException {
         if (mDbPool == null) {
+            ClassLoader classLoader = getClass().getClassLoader();
+            File file = new File(classLoader.getResource("conf/db.conf").getFile());
+            DbConfigurationLoader loader = new FileDbConfigurationLoader(file.getAbsolutePath());
 
-            DbConfigurationLoader loader = new FileDbConfigurationLoader();
             DbConfiguration dbConf = loader.load();
 
             mDbPool = DbUtils.createC3P0DbPool(dbConf);

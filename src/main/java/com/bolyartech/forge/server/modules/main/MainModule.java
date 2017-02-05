@@ -20,9 +20,11 @@ public final class MainModule implements HttpModule {
     private static final String MODULE_VERSION_NAME = "1.0.0";
 
     private final TemplateEngineFactory mVelocityTpleFactory;
+    private final String mStaticFilesDir;
 
 
-    public MainModule() {
+    public MainModule(String staticFilesDir) {
+        mStaticFilesDir = staticFilesDir;
         mVelocityTpleFactory = new VelocityTemplateEngineFactory("templates/modules/main/");
     }
 
@@ -36,7 +38,7 @@ public final class MainModule implements HttpModule {
         RootWp rootWp = new RootWp(mVelocityTpleFactory, true);
         ret.add(new RouteImpl(HttpMethod.GET, "/", rootWp));
         ret.add(new RouteImpl(HttpMethod.POST, "/", rootWp));
-        ret.add(new RouteImpl(HttpMethod.GET, "/css", new StaticFileHandler("/static/css", notFoundResponse,
+        ret.add(new RouteImpl(HttpMethod.GET, "/css", new StaticFileHandler(mStaticFilesDir + "css/", notFoundResponse,
                 mimeTypeResolver, true)));
 
 

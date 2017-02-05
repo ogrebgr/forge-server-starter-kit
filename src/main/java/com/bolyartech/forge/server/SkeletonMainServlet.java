@@ -1,31 +1,16 @@
 package com.bolyartech.forge.server;
 
-import com.bolyartech.forge.server.config.ForgeConfigurationException;
-import com.bolyartech.forge.server.db.*;
+import com.bolyartech.forge.server.db.DbConfiguration;
+import com.bolyartech.forge.server.db.DbPool;
+import com.bolyartech.forge.server.db.DbUtils;
 import com.bolyartech.forge.server.module.HttpModule;
 import com.bolyartech.forge.server.module.admin.AdminModule;
-import com.bolyartech.forge.server.module.admin.data.*;
-import com.bolyartech.forge.server.module.user_blowfish.BlowfishUserModule;
-import com.bolyartech.forge.server.module.user_blowfish.data.BlowfishDbh;
-import com.bolyartech.forge.server.module.user_blowfish.data.BlowfishDbhImpl;
-import com.bolyartech.forge.server.module.user_blowfish.data.UserBlowfishDbh;
-import com.bolyartech.forge.server.module.user_blowfish.data.UserBlowfishDbhImpl;
-import com.bolyartech.forge.server.module.user_facebook.FacebookUserModule;
-import com.bolyartech.forge.server.module.user_facebook.FacebookWrapper;
-import com.bolyartech.forge.server.module.user_facebook.FacebookWrapperImpl;
-import com.bolyartech.forge.server.module.user_google.GoogleSignInWrapper;
-import com.bolyartech.forge.server.module.user_google.GoogleSignInWrapperImpl;
-import com.bolyartech.forge.server.module.user_google.GoogleUserModule;
-import com.bolyartech.forge.server.module.user_scram.data.scram.ScramDbh;
-import com.bolyartech.forge.server.module.user_scram.data.scram.ScramDbhImpl;
-import com.bolyartech.forge.server.modules.main.MainModule;
 import com.bolyartech.forge.server.module.user.UserModule;
-import com.bolyartech.forge.server.module.user.data.screen_name.ScreenNameDbh;
-import com.bolyartech.forge.server.module.user.data.screen_name.ScreenNameDbhImpl;
-import com.bolyartech.forge.server.module.user.data.user.UserDbh;
-import com.bolyartech.forge.server.module.user.data.user.UserDbhImpl;
-import com.bolyartech.forge.server.module.user.data.user_ext_id.UserExtIdDbh;
-import com.bolyartech.forge.server.module.user.data.user_ext_id.UserExtIdDbhImpl;
+import com.bolyartech.forge.server.module.user_blowfish.BlowfishUserModule;
+import com.bolyartech.forge.server.module.user_facebook.FacebookUserModule;
+import com.bolyartech.forge.server.module.user_google.GoogleUserModule;
+import com.bolyartech.forge.server.module.user_scram.UserScramModule;
+import com.bolyartech.forge.server.modules.main.MainModule;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
@@ -33,10 +18,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Main servlet for the Forge Skeleton server app
+ * <p>
+ * If deployed inside a container (i.e. not using embeded jetty, tomcat, etc) you need to provide parameterless
+ * constructor and load the configuration (staticFileDir, DbConfiguration)
+ */
 public class SkeletonMainServlet extends MainServlet {
     private final org.slf4j.Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
+    private final String mStaticFileDir;
+    private final DbConfiguration mDbConfiguration;
+
     private DbPool mDbPool;
+
+
+    public SkeletonMainServlet(String staticFileDir, DbConfiguration dbConfiguration) {
+        mStaticFileDir = staticFileDir;
+        mDbConfiguration = dbConfiguration;
+    }
 
 
     @Override
@@ -51,44 +51,19 @@ public class SkeletonMainServlet extends MainServlet {
     protected List<HttpModule> getModules() {
         List<HttpModule> ret = new ArrayList<>();
 
-        UserDbh userDbh = new UserDbhImpl();
-        ScramDbh scramDbh = new ScramDbhImpl();
-        ScreenNameDbh screenNameDbh = new ScreenNameDbhImpl();
-        UserExtIdDbh userExtIdDbh = new UserExtIdDbhImpl();
-        ret.add(new MainModule());
-        ret.add(new UserModule(mDbPool, screenNameDbh));
-        ret.add(new AdminModule(mDbPool,
-                new AdminUserDbhImpl(),
-                scramDbh,
-                new AdminScramDbhImpl(),
-                userDbh,
-                new AdminUserScramDbhImpl(),
-                new UserExportedViewDbhImpl(),
-                new AdminUserExportedViewDbhImpl()
-        ));
-
-        FacebookWrapper facebookWrapper = new FacebookWrapperImpl();
-        ret.add(new FacebookUserModule(mDbPool, userDbh, screenNameDbh, userExtIdDbh, facebookWrapper));
-
-        GoogleSignInWrapper googleSignInWrapper = new GoogleSignInWrapperImpl();
-        ret.add(new GoogleUserModule(mDbPool, userDbh, screenNameDbh, userExtIdDbh, googleSignInWrapper));
-
-        BlowfishDbh blowfishDbh = new BlowfishDbhImpl();
-        UserBlowfishDbh userBlowfishDbh = new UserBlowfishDbhImpl();
-        ret.add(new BlowfishUserModule(mDbPool, userBlowfishDbh, userDbh, blowfishDbh, screenNameDbh));
+        ret.add(new MainModule(mStaticFileDir));
+        ret.add(UserModule.createDefault(mDbPool));
+        ret.add(AdminModule.createDefault(mDbPool));
+        ret.add(UserScramModule.createDefault(mDbPool));
+        ret.add(FacebookUserModule.createDefault(mDbPool));
+        ret.add(GoogleUserModule.createDefault(mDbPool));
+        ret.add(BlowfishUserModule.createDefault(mDbPool));
 
         return ret;
     }
 
 
     private DbPool createDbPool() {
-        DbConfigurationLoader dbConfigurationLoader = new FileDbConfigurationLoader();
-        try {
-            DbConfiguration dbConfiguration = dbConfigurationLoader.load();
-            return DbUtils.createC3P0DbPool(dbConfiguration);
-        } catch (ForgeConfigurationException e) {
-            mLogger.error("Cannot initialize SkeletonMainServlet", e);
-            throw new RuntimeException(e);
-        }
+        return DbUtils.createC3P0DbPool(mDbConfiguration);
     }
 }

@@ -2,7 +2,7 @@ group 'com.bolyartech.forge.server'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'war'
+//apply plugin: 'war'
 
 sourceCompatibility = 1.8
 
@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile project(':forge-server')
+    compile 'com.bolyartech.forge:forge-server:4.1.0'
     compile project(':forge-server-mod-user')
     compile project(':forge-server-mod-user-blowfish')
     compile project(':forge-server-mod-user-scram')

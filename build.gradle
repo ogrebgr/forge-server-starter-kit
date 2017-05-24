@@ -9,11 +9,11 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     jcenter()
-    mavenLocal();
+    mavenLocal()
 }
 
 dependencies {
-    compile 'com.bolyartech.forge:forge-server:4.1.0'
+    compile 'com.bolyartech.forge:forge-server:5.1.0'
     compile project(':forge-server-mod-user')
     compile project(':forge-server-mod-user-blowfish')
     compile project(':forge-server-mod-user-scram')

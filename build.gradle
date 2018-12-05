@@ -13,8 +13,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.bolyartech.forge:forge-server:5.2.2'
-//    compile project(':forge-server')
+//    compile 'com.bolyartech.forge:forge-server:5.3.0'
+    compile project(':forge-server')
     compile project(':forge-server-mod-user')
     compile project(':forge-server-mod-user-blowfish')
     compile project(':forge-server-mod-user-scram')

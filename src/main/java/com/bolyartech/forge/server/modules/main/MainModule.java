@@ -19,13 +19,13 @@ public final class MainModule implements HttpModule {
     private static final int MODULE_VERSION_CODE = 1;
     private static final String MODULE_VERSION_NAME = "1.0.0";
 
-    private final TemplateEngineFactory mVelocityTpleFactory;
-    private final String mStaticFilesDir;
+    private final TemplateEngineFactory velocityTpleFactory;
+    private final String staticFilesDir;
 
 
     public MainModule(String staticFilesDir) {
-        mStaticFilesDir = staticFilesDir;
-        mVelocityTpleFactory = new VelocityTemplateEngineFactory("templates/modules/main/");
+        this.staticFilesDir = staticFilesDir;
+        velocityTpleFactory = new VelocityTemplateEngineFactory("templates/modules/main/");
     }
 
 
@@ -35,10 +35,10 @@ public final class MainModule implements HttpModule {
         NotFoundResponse notFoundResponse = new NotFoundResponse();
         MimeTypeResolver mimeTypeResolver = new MimeTypeResolverImpl();
 
-        RootWp rootWp = new RootWp(mVelocityTpleFactory, true);
+        RootWp rootWp = new RootWp(velocityTpleFactory, true);
         ret.add(new RouteImpl(HttpMethod.GET, "/", rootWp));
         ret.add(new RouteImpl(HttpMethod.POST, "/", rootWp));
-        ret.add(new RouteImpl(HttpMethod.GET, "/css", new StaticFileHandler(mStaticFilesDir + "css/", notFoundResponse,
+        ret.add(new RouteImpl(HttpMethod.GET, "/css", new StaticFileHandler(staticFilesDir + "css/", notFoundResponse,
                 mimeTypeResolver, true)));
 
 

@@ -22,20 +22,20 @@ import java.util.List;
  * Main servlet for the Forge Skeleton server app
  * <p>
  * If deployed inside a container (i.e. not using embeded jetty, tomcat, etc) you need to provide parameterless
- * constructor and load the configuration (staticFileDir, DbConfiguration)
+ * constructor and load the configuration (staticFilesDir, DbConfiguration)
  */
-public class SkeletonMainServlet extends MainServlet {
-    private final org.slf4j.Logger mLogger = LoggerFactory.getLogger(this.getClass());
+public class SkeletonBaseServlet extends BaseServlet {
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final String mStaticFileDir;
-    private final DbConfiguration mDbConfiguration;
+    private final String staticFilesDir;
+    private final DbConfiguration dbConfiguration;
 
     private DbPool mDbPool;
 
 
-    public SkeletonMainServlet(String staticFileDir, DbConfiguration dbConfiguration) {
-        mStaticFileDir = staticFileDir;
-        mDbConfiguration = dbConfiguration;
+    public SkeletonBaseServlet(String staticFilesDir, DbConfiguration dbConfiguration) {
+        this.staticFilesDir = staticFilesDir;
+        this.dbConfiguration = dbConfiguration;
     }
 
 
@@ -51,7 +51,7 @@ public class SkeletonMainServlet extends MainServlet {
     protected List<HttpModule> getModules() {
         List<HttpModule> ret = new ArrayList<>();
 
-        ret.add(new MainModule(mStaticFileDir));
+        ret.add(new MainModule(staticFilesDir));
         ret.add(UserModule.createDefault(mDbPool));
         ret.add(AdminModule.createDefault(mDbPool));
         ret.add(UserScramModule.createDefault(mDbPool));
@@ -64,6 +64,6 @@ public class SkeletonMainServlet extends MainServlet {
 
 
     private DbPool createDbPool() {
-        return DbUtils.createC3P0DbPool(mDbConfiguration);
+        return DbUtils.createC3P0DbPool(dbConfiguration);
     }
 }

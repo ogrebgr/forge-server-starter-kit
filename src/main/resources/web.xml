@@ -8,7 +8,7 @@
 
     <servlet>
         <servlet-name>skeletonMain</servlet-name>
-        <servlet-class>com.bolyartech.forge.server.SkeletonMainServlet</servlet-class>
+        <servlet-class>com.bolyartech.forge.server.SkeletonBaseServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

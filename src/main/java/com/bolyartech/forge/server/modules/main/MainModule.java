@@ -32,14 +32,12 @@ public final class MainModule implements HttpModule {
     public List<Route> createRoutes() {
         List<Route> ret = new ArrayList<>();
 
-        NotFoundResponse notFoundResponse = new NotFoundResponse();
         MimeTypeResolver mimeTypeResolver = new MimeTypeResolverImpl();
 
         RootWp rootWp = new RootWp(velocityTpleFactory, true);
         ret.add(new RouteImpl(HttpMethod.GET, "/", rootWp));
         ret.add(new RouteImpl(HttpMethod.POST, "/", rootWp));
-        ret.add(new RouteImpl(HttpMethod.GET, "/css", new StaticFileHandler(staticFilesDir + "css/", notFoundResponse,
-                mimeTypeResolver, true)));
+        ret.add(new RouteImpl(HttpMethod.GET, "/css", new StaticFileHandler(staticFilesDir + "css/", mimeTypeResolver, true)));
 
 
         return ret;

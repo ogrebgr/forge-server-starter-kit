@@ -1,4 +1,4 @@
-rootProject.name = 'FS skeleton'
+rootProject.name = 'FS Starter Kit'
 
 
 include ':forge-server'

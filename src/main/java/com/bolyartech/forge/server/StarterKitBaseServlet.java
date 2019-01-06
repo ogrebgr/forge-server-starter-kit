@@ -16,7 +16,7 @@ import java.util.List;
  * If deployed inside a container (i.e. not using embeded jetty, tomcat, etc) you need to provide parameterless
  * constructor and load the configuration (staticFilesDir, DbConfiguration)
  */
-public class SkeletonBaseServlet extends BaseServletDefaultImpl {
+public class StarterKitBaseServlet extends BaseServletDefaultImpl {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String staticFilesDir;
@@ -25,7 +25,7 @@ public class SkeletonBaseServlet extends BaseServletDefaultImpl {
     private DbPool mDbPool;
 
 
-    public SkeletonBaseServlet(List<HttpModule> modules, String staticFilesDir, DbConfiguration dbConfiguration) {
+    public StarterKitBaseServlet(List<HttpModule> modules, String staticFilesDir, DbConfiguration dbConfiguration) {
         super(modules);
         this.staticFilesDir = staticFilesDir;
         this.dbConfiguration = dbConfiguration;

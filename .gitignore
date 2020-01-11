@@ -11,4 +11,4 @@
 logs/*
 conf/
 src/main/resources/forge.keystore
-
+out/

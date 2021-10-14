@@ -4,9 +4,9 @@ import com.bolyartech.forge.server.db.DbConfiguration;
 import com.bolyartech.forge.server.db.DbPool;
 import com.bolyartech.forge.server.db.DbUtils;
 import com.bolyartech.forge.server.module.HttpModule;
+import jakarta.servlet.ServletException;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
 import java.util.List;
 
 
@@ -26,7 +26,7 @@ public class StarterKitBaseServlet extends BaseServletDefaultImpl {
 
 
     public StarterKitBaseServlet(List<HttpModule> modules, String staticFilesDir, DbConfiguration dbConfiguration) {
-        super(modules);
+        super(modules, true, 5);
         this.staticFilesDir = staticFilesDir;
         this.dbConfiguration = dbConfiguration;
     }
